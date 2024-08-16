@@ -21,7 +21,7 @@ const page = () => {
         </div>
       </div>
       <div className=" grid grid-flow-row justify-items-center   bg-pattern4-bg   my-8  shadow-lg ">
-        <div className="h-[400px] w-[1000px] py-8 px-20 space-y-6" >
+        <div className="h-[700px] w-[1000px] py-8 px-20 space-y-6">
           <h1 className="text-3xl text-sky-700 font-semibold">
             About Jagannath Hospital & Research Centre
           </h1>
@@ -45,7 +45,21 @@ const page = () => {
             includes five OTs with 100% fresh laminar air flow facilities,
             well-equipped intensive care units.
           </p>
+
+          <h1 className="text-lg">Orthopedic Surgery:</h1>
+          <p className="">
+            ARTHROPLASTY, Primary and Revision- Hip, Knee, Shoulder, Elbow
+            TRAUMA, Complex trauma and reconstructive surgery Flaps, Ilizarov,
+            Reimplantation, Interlocking and surface device, External Fixation
+            Hand and reconstructive Microvascular surgery. Oncology, Tumour
+            excision and reconstruction Megaprosthesis replacement. SPINE,
+            Spinal Instrumentation of all segments of spine, Minimally invasive
+            Spine Surgery, Sagittal balancing of spine and corrective surgery,
+            Endoscopic spinal procedures, Deformities correction of spine
+          </p>
         </div>
+
+        {/* <img src="/downback.png" alt="img" className="h-96 w-full" /> */}
       </div>
       <div className="grid justify-center gap-y-14">
         <div className=" bg-slate-50 grid grid-flow-col  bg-pattern4-bg h-[200px] w-[1000px] shadow-lg  ">
@@ -152,8 +166,8 @@ const page = () => {
                   alt="img"
                   className=" size-24 rounded-full place-self-center  "
                 />
-                <h1 className="text-sky-700 font-medium">IRON MAN</h1>
-                <p className="text-xs">Stark Owner</p>
+                <h1 className="text-sky-700 font-medium">Patient</h1>
+                <p className="text-xs">User</p>
               </CarouselItem>
               <CarouselItem className="font-light grid grid-flow-row  ">
                 "Medical Centre is a great place to get all of your medical
@@ -165,8 +179,8 @@ const page = () => {
                   alt="img"
                   className=" size-24 rounded-full place-self-center  "
                 />
-                <h1 className="text-sky-700 font-medium">IRON MAN</h1>
-                <p className="text-xs">Stark Owner</p>
+                <h1 className="text-sky-700 font-medium">Patient</h1>
+                <p className="text-xs">User</p>
               </CarouselItem>
               <CarouselItem className="font-light grid grid-flow-row  ">
                 "Medical Centre is a great place to get all of your medical
@@ -178,8 +192,8 @@ const page = () => {
                   alt="img"
                   className=" size-24 rounded-full place-self-center  "
                 />
-                <h1 className="text-sky-700 font-medium">IRON MAN</h1>
-                <p className="text-xs">Stark Owner</p>
+                <h1 className="text-sky-700 font-medium">Patient</h1>
+                <p className="text-xs">User</p>
               </CarouselItem>
             </CarouselContent>
             <CarouselPrevious />

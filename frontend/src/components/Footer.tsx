@@ -61,37 +61,7 @@ const Footer = () => {
             </div>
           </Link>
         </div>
-        {/* Latest News */}
-        {/* <div className="grid grid-flow-row max-w-56 max-h-56  p-2  ">
-          <h1 className="text-slate-300 font-medium border-b-2 ">
-            Latest News
-          </h1>
-          <Link href="">
-            <div className="text-slate-300 text-xs font-light grid grid-flow-row gap-y-4 my-6 ">
-              <div className="grid grid-flow-col">
-                <img src="news-1.png" alt="img" className="size-14" />
-                <div className="grid px-2">
-                  <p>Integrative Medicine & Cancer Treatment.</p>
-                  <p>July 11, 2020</p>
-                </div>
-              </div>
-              <div className="grid grid-flow-col">
-                <img src="news-1.png" alt="img" className="size-14" />
-                <div className="grid px-2">
-                  <p>Achieving Better Health Care Time.</p>
-                  <p>July 11, 2020</p>
-                </div>
-              </div>
-              <div className="grid grid-flow-col">
-                <img src="news-1.png" alt="img" className="size-14" />
-                <div className="grid px-2">
-                  <p>Great Health Care For Patients.</p>
-                  <p>July 11, 2020</p>
-                </div>
-              </div>
-            </div>
-          </Link>
-        </div> */}
+        
         <div className="grid grid-flow-row max-w-56 min-h-48  p-2  ">
           <h1 className="text-slate-300 font-medium border-b-2 ">Contact Us</h1>
           <Link href="">

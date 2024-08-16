@@ -19,8 +19,8 @@ const Getappointment = () => {
             Just Make an Appointment and You’re Done!
           </h2>
           <p>Get Your Quote or Call:</p>
-          <p className="text-xl font-semibold">(0080) 123-453-789</p>
-          <Button className="w-48 rounded-sm">Get an Appointment</Button>
+          <p className="text-xl font-semibold">+91 8987999200</p>
+         
         </div>
         <div className="grid">
           <img

@@ -40,9 +40,15 @@ const Appointmentform = () => {
 
     <ScrollArea className="">
       <div className="grid grid-flow-col justify-between shadow-md shadow-sky-700">
-        <img src="/hospitallogo.png" alt="img" className="mx-8 size-32" />
+        <img
+          src="hospital/hospitallogo.png"
+          alt="img"
+          className="mx-8 size-32"
+        />
         <ul className="mx-8">
-          <h1 className="font-semibold text-lg">Shree Jagannath Hospital & Research Center</h1>
+          <h1 className="font-semibold text-lg">
+            Shree Jagannath Hospital & Research Center
+          </h1>
           <p>sjhrc.ranchi@gmail.com</p>
           <p>https://sjhrc.in</p>
           <p>+91 8987999200</p>
@@ -50,12 +56,25 @@ const Appointmentform = () => {
       </div>
       <div className=" h-96 w-[1200px]">
         <div className="  px-8 py-2  ">
-          <h1 className="text-3xl font-medium my-2">Make an Appointment</h1>
-          <p className="text-slate-600 my-2">
-            Fill the form below and we will get back soon to you for more
-            updates and plan your appointment.
-          </p>
+          <h1 className="text-2xl font-medium ">Make an Appointment</h1>
         </div>
+        {/* OLD PATIENT OPTION */}
+        <div className="grid  justify-center m-4">
+          <h1 className="text-lg ">
+            Have you ever applied to our facility before?
+          </h1>
+          <RadioGroup defaultValue="option-one " className="grid grid-flow-col">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="option-one" id="option-one" />
+              <Label htmlFor="option-one">Yes</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="option-two" id="option-two" />
+              <Label htmlFor="option-two">No</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
         <div className=" grid grid-cols-2  mx-4 ">
           <Input
             type="name"
@@ -109,10 +128,15 @@ const Appointmentform = () => {
               />
             </PopoverContent>
           </Popover>
+          <Input
+            type="postal zip code"
+            placeholder=" pin code"
+            className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg px-3"
+          />
 
           <Textarea
             placeholder="Your Address"
-            className="bg-white text-lg shadow-sm  rounded-sm m-4 max-w-[1130px] max-h-[14px] "
+            className="bg-white text-lg shadow-sm  rounded-sm m-4 max-w-[1130px] max-h-[14px] col-span-2 "
           />
 
           <Select>
@@ -207,29 +231,6 @@ const Appointmentform = () => {
               </SelectGroup>
             </SelectContent>
           </Select>
-
-          {/* <Textarea
-          placeholder="Type your message here."
-          className="bg-white text-lg shadow-sm  rounded-sm m-4 min-w-[1150px] min-h-[120px]"
-        /> */}
-          <div className="grid  justify-center m-6">
-            <h1 className="text-lg ">
-              Have you ever applied to our facility before?
-            </h1>
-            <RadioGroup
-              defaultValue="option-one "
-              className="grid grid-flow-col"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="option-one" id="option-one" />
-                <Label htmlFor="option-one">Yes</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="option-two" id="option-two" />
-                <Label htmlFor="option-two">No</Label>
-              </div>
-            </RadioGroup>
-          </div>
         </div>
         <Button type="submit" className="m-8">
           Submit Now

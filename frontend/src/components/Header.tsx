@@ -8,7 +8,7 @@ import React from "react";
 
 const Header = () => {
   return (
-    <div >
+    <div>
       {/* header */}
       <div className="bg-sky-700  w-full min-h-3 "></div>
 
@@ -16,8 +16,8 @@ const Header = () => {
         <div className="grid grid-flow-col gap-4">
           <div className="  flex  ">
             <MapPinPlusInside strokeWidth={0.5} className="mx-3" />
-           (Mayor Road, Behind Machhli Ghar, Ranchi,
-            Jharkhand - 834001), Ranchi, Jharkhand, INDIA
+            (Mayor Road, Behind Machhli Ghar, Ranchi, Jharkhand - 834001),
+            Ranchi, Jharkhand, INDIA
           </div>
           <div className=" flex">
             <Clock10Icon strokeWidth={0.5} className="mx-3" />
@@ -26,7 +26,9 @@ const Header = () => {
         </div>
 
         <div className="grid grid-flow-col gap-8  text-lg ">
-          <a href="https://www.facebook.com/sjhrc.in/"><FaFacebookF className=" text-muted-foreground transition-colors hover:text-foreground" /></a>
+          <a href="https://www.facebook.com/sjhrc.in/">
+            <FaFacebookF className=" text-muted-foreground transition-colors hover:text-foreground" />
+          </a>
 
           <FaTwitter className="  text-muted-foreground transition-colors hover:text-foreground" />
 
@@ -35,6 +37,24 @@ const Header = () => {
           <FaLinkedinIn className="  text-muted-foreground transition-colors hover:text-foreground" />
         </div>
       </nav>
+      {/* LOGO */}
+      <div className="grid grid-flow-col justify-center m-4">
+        <img src="/hospital/hospitallogo.png" alt="logo" />
+        <div className="grid grid-flow-row place-items-center ">
+          <h1 className="text-4xl font-serif font-semibold ">
+            SHREE JAGANNATH HOSPITAL & RESEARCH CENTRE
+          </h1>
+          <h2 className="text-lg text-sky-700 ">
+            MULTY SPECIALITY HOSPITAL AND TRAUMA CENTRE
+          </h2>
+          <p className="text-sm text-slate-600 ">
+            ISO 9001 : 2015 Certified Hospital
+          </p>
+          <p className="text-destructive text-lg animate-pulse  ">Ambulance No:
+          0651-2360045</p>
+        </div>
+        <img src="/hospital/nabhlogo.png" alt="logo" />
+      </div>
       {/* NAVBAR */}
       <Navbar />
     </div>
