@@ -38,28 +38,29 @@ const Appointmentform = () => {
   return (
     // FORM AREA
 
-    <ScrollArea className="">
-      <div className="grid grid-flow-col justify-between shadow-md shadow-sky-700">
+    <ScrollArea className=" bg-appointment bg-opacity-90 bg-cover ">
+    
+      <div className="grid grid-flow-col justify-between shadow-md shadow-sky-700 ">
         <img
           src="hospital/hospitallogo.png"
           alt="img"
-          className="mx-8 size-32"
+          className="mx-8 size-44"
         />
-        <ul className="mx-8">
-          <h1 className="font-semibold text-lg">
+        <div className="mx-8 py-8">
+          <h1 className="font-bold text-lg">
             Shree Jagannath Hospital & Research Center
           </h1>
           <p>sjhrc.ranchi@gmail.com</p>
           <p>https://sjhrc.in</p>
           <p>+91 8987999200</p>
-        </ul>
+        </div>
       </div>
-      <div className=" h-96 w-[1200px]">
+      <div className=" h-96 w-[1200px]   ">
         <div className="  px-8 py-2  ">
           <h1 className="text-2xl font-medium ">Make an Appointment</h1>
         </div>
         {/* OLD PATIENT OPTION */}
-        <div className="grid  justify-center m-4">
+        <div className="grid  justify-center m-4 ">
           <h1 className="text-lg ">
             Have you ever applied to our facility before?
           </h1>
@@ -74,26 +75,26 @@ const Appointmentform = () => {
             </div>
           </RadioGroup>
         </div>
-
-        <div className=" grid grid-cols-2  mx-4 ">
+       {/* FORM AREA */}
+        <div className=" grid grid-cols-2  mx-4  ">
           <Input
             type="name"
             placeholder="Your Name"
-            className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg px-3"
+            className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg px-3 border-2"
           />
           <Input
             type="phone"
             placeholder="Your Phone"
-            className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg px-3"
+            className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg px-3 border-2"
           />
           <Input
             type="mail"
             placeholder="Email Address"
-            className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg px-3"
+            className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg px-3 border-2"
           />
 
           <Select>
-            <SelectTrigger className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg text-slate-500">
+            <SelectTrigger className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg text-slate-500 border-2  ">
               <SelectValue placeholder="Select Gender" />
             </SelectTrigger>
             <SelectContent className="text-slate-500 ">
@@ -111,7 +112,7 @@ const Appointmentform = () => {
               <Button
                 variant={"outline"}
                 className={cn(
-                  " justify-start text-left font-normal bg-white rounded-sm m-4 h-14 w-[550px] text-lg text-slate-500",
+                  " justify-start text-left font-normal bg-white rounded-sm m-4 h-14 w-[550px] text-lg text-slate-500 border-2",
                   !date && "text-muted-foreground"
                 )}
               >
@@ -131,16 +132,16 @@ const Appointmentform = () => {
           <Input
             type="postal zip code"
             placeholder=" pin code"
-            className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg px-3"
+            className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg px-3 border-2"
           />
 
           <Textarea
             placeholder="Your Address"
-            className="bg-white text-lg shadow-sm  rounded-sm m-4 max-w-[1130px] max-h-[14px] col-span-2 "
+            className="bg-white text-lg shadow-sm  rounded-sm m-4 max-w-[1130px] max-h-[14px] col-span-2 border-2"
           />
 
           <Select>
-            <SelectTrigger className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg text-slate-500">
+            <SelectTrigger className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg text-slate-500 border-2">
               <SelectValue placeholder="-select state-" />
             </SelectTrigger>
             <SelectContent className="text-slate-500 ">
@@ -152,7 +153,7 @@ const Appointmentform = () => {
           </Select>
 
           <Select>
-            <SelectTrigger className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg text-slate-500">
+            <SelectTrigger className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg text-slate-500 border-2">
               <SelectValue placeholder="-select city-" />
             </SelectTrigger>
             <SelectContent className="text-slate-500 ">
@@ -164,7 +165,7 @@ const Appointmentform = () => {
           </Select>
 
           <Select>
-            <SelectTrigger className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg text-slate-500">
+            <SelectTrigger className="bg-white rounded-sm m-4 h-14 w-[550px] text-lg text-slate-500 border-2">
               <SelectValue placeholder="Select Department" />
             </SelectTrigger>
             <SelectContent className="text-slate-500 ">
@@ -178,7 +179,7 @@ const Appointmentform = () => {
           </Select>
 
           <Select>
-            <SelectTrigger className=" bg-white rounded-sm m-4 h-14 w-[550px] text-lg text-slate-500">
+            <SelectTrigger className=" bg-white rounded-sm m-4 h-14 w-[550px] text-lg text-slate-500 border-2">
               <SelectValue placeholder="Choose Shift" />
             </SelectTrigger>
             <SelectContent className="text-slate-500 ">
@@ -193,7 +194,7 @@ const Appointmentform = () => {
             </SelectContent>
           </Select>
 
-          <div className=" bg-white rounded-sm m-4   ">
+          <div className=" bg-white rounded-sm m-4 border-2   ">
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -204,7 +205,7 @@ const Appointmentform = () => {
                   )}
                 >
                   {date ? format(date, "PPP") : <span>dd-mm-yyyy</span>}
-                  <CalendarIcon className="ml-96" />
+                  <CalendarIcon className="ml-96 " />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0 ">

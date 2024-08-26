@@ -5,40 +5,58 @@ import React from "react";
 import SimpleImageSlider from "react-simple-image-slider";
 import Ourmedical from "@/components/Ourmedical";
 import Ourservice from "@/components/Ourservice";
-import Ourdoctor from "@/components/Ourdoctor";
+
 import Getappointment from "@/components/Getappointment";
 import Priceboard from "@/components/Priceboard";
+import { CarouselDemo } from "@/components/sliderImg";
+import OurHeads from "@/components/OurHeads";
+import { NoticeSlider } from "@/components/NoticeSlider";
 
-const images = [
-  { url: "/sliderPic/Dialysis.png" },
-  { url: "/sliderPic/eyeopd.png." },
-  { url: "/sliderPic/frontpage4.png" },
-  { url: "/sliderPic/frontpage7.png" },
-  { url: "/sliderPic/newicu.png" },
-  { url: "/sliderPic/newreception.png" },
-  { url: "/sliderPic/sjhrchos1.png" },
-];
+
 const Dashboard = () => {
   return (
     <>
-      {/* <div className="sticky grid flex-1 items-start gap-2  mt-6 sm:px-6 sm:py-0 md:gap-8   w-full h-full"> */}
-        <div className="sticky  mt-6 sm:px-6 sm:py-0     inset to-background h-full w-full overflow-hidden  ">
-          <SimpleImageSlider
-            width={1470}
-            height={800}
-            images={images}
-            showBullets={true}
-            showNavs={true}
-          />
+      <div className="sticky grid flex-1 items-start gap-2  mt-6 sm:px-6 sm:py-0 md:gap-8   w-full h-full">
+        <div className="sticky   sm:px-6 sm:py-0     inset to-background h-[500px] w-full overflow-hidden  ">
+          <CarouselDemo />
         </div>
-      {/* </div> */}
+      </div>
+      {/* Medical Section */}
+      <div className="py-8 px-4 sm:px-6 lg:px-8 bg-gray-100">
+        <Ourmedical />
+      </div>
+      {/* Notice Slider */}
       <div>
+        <NoticeSlider/>
+      </div>
+
+      {/* Services Section */}
+      <div className="py-8 px-4 sm:px-6 lg:px-8 bg-white">
+        <Ourservice />
+      </div>
+
+      {/* Doctors Section */}
+      <div className="py-8 px-4 sm:px-6 lg:px-8 bg-gray-100">
+        <OurHeads />
+      </div>
+
+      {/* Appointment Section */}
+      <div className="py-8 px-4 sm:px-6 lg:px-8 bg-white">
+        <Getappointment />
+      </div>
+
+      {/* Price Board Section */}
+      <div className="py-8 px-4 sm:px-6 lg:px-8 bg-gray-100">
+        <Priceboard />
+      </div>
+
+      {/* <div>
         <Ourmedical />
       </div>
       <Ourservice />
       <Ourdoctor />
       <Getappointment />
-      <Priceboard />
+      <Priceboard /> */}
     </>
   );
 };

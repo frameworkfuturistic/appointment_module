@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "./ui/button";
+
 import { CalendarDays, Hospital, Stethoscope, User, Users } from "lucide-react";
 import {
   Carousel,
@@ -8,6 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+
 
 const Getappointment = () => {
   return (
@@ -71,10 +72,10 @@ const Getappointment = () => {
       </div>
 
           {/* Happy Patient */}
-      <div className="bg-dottedmap bg-cover bg-slate-200">
+       <div className="bg-dottedmap bg-cover bg-slate-200">
         <div className="  flex flex-col items-center text-center py-8 gap-2 ">
-          <h1>Happy Patients</h1>
-          <h2 className="text-2xl font-semibold">What Says Our Patients</h2>
+        <h1 className="text-xl font-semibold text-gray-800">HAPPY PATIENTS</h1>
+        <h2 className="text-2xl font-semibold text-sky-700">What says our Patients</h2>
           <img src="/activity.png" alt="icon" className="  h-10 w-10" />
           <Carousel className="h-52 w-[700px] ">
             <CarouselContent>
@@ -84,12 +85,12 @@ const Getappointment = () => {
                 minutes before I was seen. I can only imagine the type of
                 service you get for more serious issues. Thanks!"
                 <img
-                  src="/PROFPIC.jpg"
+                  src="/PROFPIC.png"
                   alt="img"
                   className=" size-24 rounded-full place-self-center  "
                 />
-                <h1 className="text-sky-700 font-medium">IRON MAN</h1>
-                <p className="text-xs">Stark Owner</p>
+                <h1 className="text-sky-700 font-medium">Patient</h1>
+                <p className="text-xs">User</p>
               </CarouselItem>
               <CarouselItem className="font-light grid grid-flow-row  ">
                 "Medical Centre is a great place to get all of your medical
@@ -97,12 +98,12 @@ const Getappointment = () => {
                 minutes before I was seen. I can only imagine the type of
                 service you get for more serious issues. Thanks!"
                 <img
-                  src="/PROFPIC.jpg"
+                  src="/PROFPIC.png"
                   alt="img"
                   className=" size-24 rounded-full place-self-center  "
                 />
-                <h1 className="text-sky-700 font-medium">IRON MAN</h1>
-                <p className="text-xs">Stark Owner</p>
+                <h1 className="text-sky-700 font-medium">Patient</h1>
+                <p className="text-xs">User</p>
               </CarouselItem>
               <CarouselItem className="font-light grid grid-flow-row  ">
                 "Medical Centre is a great place to get all of your medical
@@ -110,19 +111,21 @@ const Getappointment = () => {
                 minutes before I was seen. I can only imagine the type of
                 service you get for more serious issues. Thanks!"
                 <img
-                  src="/PROFPIC.jpg"
+                  src="/PROFPIC.png"
                   alt="img"
                   className=" size-24 rounded-full place-self-center  "
                 />
-                <h1 className="text-sky-700 font-medium">IRON MAN</h1>
-                <p className="text-xs">Stark Owner</p>
+                <h1 className="text-sky-700 font-medium">Patient</h1>
+                <p className="text-xs">User</p>
               </CarouselItem>
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
           </Carousel>
         </div>
-      </div>
+      </div> 
+    
+     
     </div>
   );
 };

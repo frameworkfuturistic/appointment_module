@@ -7,11 +7,9 @@ import { Toggle } from "./ui/toggle";
 
 const Priceboard = () => {
   return (
-    
     <>
-    {/* OUR PRICING */}
-  
-    <div className="bg-pattern6 bg-cover" id="Priceboard">
+      {/* OUR PRICING */}
+      {/* <div className="bg-pattern6 bg-cover" id="Priceboard">
         
       <div className="  flex flex-col items-center text-center py-8 gap-2 ">
         <h1>OUR PRICING</h1>
@@ -20,7 +18,7 @@ const Priceboard = () => {
       </div>
 
       <div className="grid grid-cols-4 gap-4 justify-center mx-60 p-4 ">
-        {/* CARD-1 */}
+      
         <Card className="max-w-48 min-h-80 grid  justify-center hover:shadow-2xl hover:shadow-sky-700">
           <div className="bg-slate-200  h-14 w-28 text-center place-self-center">
             <p className="text-2xl text-sky-700 font-mono">$200</p>
@@ -70,7 +68,7 @@ const Priceboard = () => {
             </Button>
           </div>
         </Card>
-        {/* CARD-2 */}
+       
         <Card className="max-w-48 min-h-80 grid  justify-center hover:shadow-2xl hover:shadow-sky-700">
           <div className="bg-slate-200  h-14 w-28 text-center place-self-center">
             <p className="text-2xl text-sky-700 font-mono">$200</p>
@@ -120,7 +118,7 @@ const Priceboard = () => {
             </Button>
           </div>
         </Card>
-        {/* CARD-3 */}
+      
         <Card className="max-w-48 min-h-80 grid  justify-center hover:shadow-2xl hover:shadow-sky-700">
           <div className="bg-slate-200  h-14 w-28 text-center place-self-center">
             <p className="text-2xl text-sky-700 font-mono">$200</p>
@@ -170,7 +168,7 @@ const Priceboard = () => {
             </Button>
           </div>
         </Card>
-        {/* CARD-4 */}
+      
         <Card className="max-w-48 min-h-80 grid  justify-center hover:shadow-2xl hover:shadow-sky-700">
           <div className="bg-slate-200  h-14 w-28 text-center place-self-center">
             <p className="text-2xl text-sky-700 font-mono">$200</p>
@@ -227,62 +225,92 @@ const Priceboard = () => {
           Explore all Dr. Team
         </Link>
       </p>
-    </div>
-
-    {/* OUR BLOG */}
-    <div className="bg-slate-50 py-8">
-       {/* Header */}
-       <div className="flex flex-col items-center text-center py-8 gap-2 ">
-        <h1>OUR BLOG</h1>
-        <h2 className="text-2xl font-semibold">Recent Articles and News</h2>
-        <img src="/activity.png" alt="icon" className="  h-10 w-10" />
-      </div>
-      {/* CARDS */}
-      <div className="grid md:grid-cols-3 justify-items-center ">
-        {/* Card-1 */}
-        <Card className="bg-white sm:min-h-96 sm:max-w-80 grid grid-flow-row justify-center...transition duration-500 transform hover:-translate-y-4 motion-reduce:transition-none motion-reduce:hover:transform-none hover:border-b-8 hover:opacity-80 hover:border-b-sky-700  ... ">
-          <img src="/news-1.png" alt="img" className="rounded-t-lg " />
-          <Toggle className="bg-sky-600 max-w-32 text-white place-self-end -mt-10 rounded-b-none rounded-r-none ">Sept 19, 2020</Toggle>
-          <div className="grid grid-flow-row p-6 gap-y-4 ">
-            <h1 className="text-lg font-semibold">What is The Succes rate of a root canal?</h1>
-            <p className="text-xs font-extralight pb-4 border-b-2">Nullam mauris vitae tortor sodales efficitur. Quisque orci ante. Proin amet turpis</p>
-            <p className="grid grid-flow-col justify-around">
-            <Link href=""><Heart size={16} color="#1a1a1a" strokeWidth={1} /></Link>
-            <Link href=""><MessageCircle size={16} color="#141414" strokeWidth={1} /></Link>
-            </p>
-          </div>
-        </Card>
+    </div> */}
+      {/* OUR BLOG */}
+      <div className="bg-slate-50 py-8">
+        {/* Header */}
+        <div className="flex flex-col items-center text-center py-8 gap-2 ">
+        <h1 className="text-xl font-semibold text-gray-800">OUR BLOGS</h1>
+        <h2 className="text-2xl font-semibold text-sky-700">Recent Articles and News</h2>
+          <img src="/activity.png" alt="icon" className="  h-10 w-10" />
+        </div>
+        {/* CARDS */}
+        <div className="grid md:grid-cols-3 justify-items-center ">
+          {/* Card-1 */}
+          <Card className="bg-white sm:min-h-96 sm:max-w-80 grid grid-flow-row justify-center...transition duration-500 transform hover:-translate-y-4 motion-reduce:transition-none motion-reduce:hover:transform-none hover:border-b-8 hover:opacity-80 hover:border-b-sky-700  ... ">
+            <img src="/news-1.png" alt="img" className="rounded-t-lg " />
+            <Toggle className="bg-sky-600 max-w-32 text-white place-self-end -mt-10 rounded-b-none rounded-r-none ">
+              Sept 19, 2020
+            </Toggle>
+            <div className="grid grid-flow-row p-6 gap-y-4 ">
+              <h1 className="text-lg font-semibold">
+                What is The Succes rate of a root canal?
+              </h1>
+              <p className="text-xs font-extralight pb-4 border-b-2">
+                Nullam mauris vitae tortor sodales efficitur. Quisque orci ante.
+                Proin amet turpis
+              </p>
+              <p className="grid grid-flow-col justify-around">
+                <Link href="">
+                  <Heart size={16} color="#1a1a1a" strokeWidth={1} />
+                </Link>
+                <Link href="">
+                  <MessageCircle size={16} color="#141414" strokeWidth={1} />
+                </Link>
+              </p>
+            </div>
+          </Card>
           {/* Card-2 */}
           <Card className="bg-white sm:min-h-96 sm:max-w-80 grid grid-flow-row justify-center...transition duration-500 transform hover:-translate-y-4 motion-reduce:transition-none motion-reduce:hover:transform-none hover:border-b-8 hover:opacity-80 hover:border-b-sky-700  ... ">
-          <img src="/news-1.png" alt="img" className="rounded-t-lg " />
-          <Toggle className="bg-sky-600 max-w-32 text-white place-self-end -mt-10 rounded-b-none rounded-r-none ">Sept 19, 2020</Toggle>
-          <div className="grid grid-flow-row p-6 gap-y-4 ">
-            <h1 className="text-lg font-semibold">What is The Succes rate of a root canal?</h1>
-            <p className="text-xs font-extralight pb-4 border-b-2">Nullam mauris vitae tortor sodales efficitur. Quisque orci ante. Proin amet turpis</p>
-            <p className="grid grid-flow-col justify-around">
-            <Link href=""><Heart size={16} color="#1a1a1a" strokeWidth={1} /></Link>
-            <Link href=""><MessageCircle size={16} color="#141414" strokeWidth={1} /></Link>
-            </p>
-          </div>
-        </Card>
-        {/* Card-3 */}
-        <Card className="bg-white sm:min-h-96 sm:max-w-80 grid grid-flow-row justify-center...transition duration-500 transform hover:-translate-y-4 motion-reduce:transition-none motion-reduce:hover:transform-none hover:border-b-8 hover:opacity-80 hover:border-b-sky-700  ... ">
-          <img src="/news-1.png" alt="img" className="rounded-t-lg " />
-          <Toggle className="bg-sky-600 max-w-32 text-white place-self-end -mt-10 rounded-b-none rounded-r-none ">Sept 19, 2020</Toggle>
-          <div className="grid grid-flow-row p-6 gap-y-4 ">
-            <h1 className="text-lg font-semibold">What is The Succes rate of a root canal?</h1>
-            <p className="text-xs font-extralight pb-4 border-b-2">Nullam mauris vitae tortor sodales efficitur. Quisque orci ante. Proin amet turpis</p>
-            <p className="grid grid-flow-col justify-around">
-            <Link href=""><Heart size={16} color="#1a1a1a" strokeWidth={1} /></Link>
-            <Link href=""><MessageCircle size={16} color="#141414" strokeWidth={1} /></Link>
-            </p>
-          </div>
-        </Card>
+            <img src="/news-1.png" alt="img" className="rounded-t-lg " />
+            <Toggle className="bg-sky-600 max-w-32 text-white place-self-end -mt-10 rounded-b-none rounded-r-none ">
+              Sept 19, 2020
+            </Toggle>
+            <div className="grid grid-flow-row p-6 gap-y-4 ">
+              <h1 className="text-lg font-semibold">
+                What is The Succes rate of a root canal?
+              </h1>
+              <p className="text-xs font-extralight pb-4 border-b-2">
+                Nullam mauris vitae tortor sodales efficitur. Quisque orci ante.
+                Proin amet turpis
+              </p>
+              <p className="grid grid-flow-col justify-around">
+                <Link href="">
+                  <Heart size={16} color="#1a1a1a" strokeWidth={1} />
+                </Link>
+                <Link href="">
+                  <MessageCircle size={16} color="#141414" strokeWidth={1} />
+                </Link>
+              </p>
+            </div>
+          </Card>
+          {/* Card-3 */}
+          <Card className="bg-white sm:min-h-96 sm:max-w-80 grid grid-flow-row justify-center...transition duration-500 transform hover:-translate-y-4 motion-reduce:transition-none motion-reduce:hover:transform-none hover:border-b-8 hover:opacity-80 hover:border-b-sky-700  ... ">
+            <img src="/news-1.png" alt="img" className="rounded-t-lg " />
+            <Toggle className="bg-sky-600 max-w-32 text-white place-self-end -mt-10 rounded-b-none rounded-r-none ">
+              Sept 19, 2020
+            </Toggle>
+            <div className="grid grid-flow-row p-6 gap-y-4 ">
+              <h1 className="text-lg font-semibold">
+                What is The Succes rate of a root canal?
+              </h1>
+              <p className="text-xs font-extralight pb-4 border-b-2">
+                Nullam mauris vitae tortor sodales efficitur. Quisque orci ante.
+                Proin amet turpis
+              </p>
+              <p className="grid grid-flow-col justify-around">
+                <Link href="">
+                  <Heart size={16} color="#1a1a1a" strokeWidth={1} />
+                </Link>
+                <Link href="">
+                  <MessageCircle size={16} color="#141414" strokeWidth={1} />
+                </Link>
+              </p>
+            </div>
+          </Card>
+        </div>
+        
       </div>
-      <div>
-
-      </div>
-    </div>
     </>
   );
 };

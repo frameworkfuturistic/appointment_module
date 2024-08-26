@@ -1,12 +1,84 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
+
 import { Computer, HousePlus, Stethoscope } from "lucide-react";
+import { Button } from "./ui/button";
 
 const Ourmedical = () => {
   return (
     <>
       {/* FACILITY INFO CARDS */}
-      <div className="grid grid-flow-col md:w-full md:h-full  ">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full h-full p-4">
+        <div>
+          <a
+            href="#"
+            className="transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-300 group block max-w-xs mx-auto rounded-lg p-8 bg-white ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-sky-600 hover:ring-sky-600 hover:shadow-2xl hover:shadow-sky-600"
+          >
+            <div className="flex items-center space-x-3">
+              <HousePlus
+                size={56}
+                color="#0284c7"
+                strokeWidth={1.5}
+                className="group-hover:stroke-white"
+              />
+              <h3 className="text-slate-900 group-hover:text-white text-lg font-semibold">
+                Quality & Safety
+              </h3>
+            </div>
+            <p className="text-slate-500 group-hover:text-white text-sm">
+              Our Delmont hospital utilizes state-of-the-art technology and
+              employs a team of true experts.
+            </p>
+          </a>
+        </div>
+
+        <div>
+          <a
+            href="#"
+            className="transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-300 group block max-w-xs mx-auto rounded-lg p-8 bg-white ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-sky-600 hover:ring-sky-600 hover:shadow-2xl hover:shadow-sky-600"
+          >
+            <div className="flex items-center space-x-3">
+              <Computer
+                size={56}
+                color="#0284c7"
+                strokeWidth={1.5}
+                className="group-hover:stroke-white"
+              />
+              <h3 className="text-slate-900 group-hover:text-white text-lg font-semibold">
+                Leading Technology
+              </h3>
+            </div>
+            <p className="text-slate-500 group-hover:text-white text-sm">
+              Our Delmont hospital utilizes state-of-the-art technology and
+              employs a team of true experts.
+            </p>
+          </a>
+        </div>
+
+        <div>
+          <a
+            href="#"
+            className="transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-300 group block max-w-xs mx-auto rounded-lg p-8 bg-white ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-sky-600 hover:ring-sky-600 hover:shadow-2xl hover:shadow-sky-600"
+          >
+            <div className="flex items-center space-x-3">
+              <Stethoscope
+                size={56}
+                color="#0284c7"
+                strokeWidth={1.5}
+                className="group-hover:stroke-white"
+              />
+              <h3 className="text-slate-900 group-hover:text-white text-lg font-semibold">
+                Experts by Experience
+              </h3>
+            </div>
+            <p className="text-slate-500 group-hover:text-white text-sm">
+              Our Delmont hospital utilizes state-of-the-art technology and
+              employs a team of true experts.
+            </p>
+          </a>
+        </div>
+      </div>
+
+      {/* <div className="grid grid-flow-col md:w-full md:h-full   ">
         <div>
           <a
             href="#"
@@ -78,9 +150,9 @@ const Ourmedical = () => {
             </p>
           </a>
         </div>
-      </div>
+      </div> */}
       {/* Our Medical */}
-      <div className="grid grid-cols-2 sm:w-full sm:h-full lg:w-full lg:h-full ">
+      {/* <div className="grid grid-cols-2 sm:w-full sm:h-full lg:w-full lg:h-full ">
         <div className=" w-full  bg-pattern-bg grid grid-flow-col ">
           <div className=" static size-[500px] ml-56">
             <img src="/sthethescope.png" alt="img" />
@@ -92,6 +164,7 @@ const Ourmedical = () => {
             </div>
           </div>
         </div>
+        About Area
         <div className="p-8">
           <h2 className="text-slate-600 text-xl m-8 ">OUR MEDICAL</h2>
           <h3 className="text-slate-800 text-4xl font-medium m-8">
@@ -100,9 +173,9 @@ const Ourmedical = () => {
           <img src="/activity.png" alt="icon" className="mx-8" />
           <p className="text-slate-600 m-8">
             We provide the most full medical services, so every person could
-            have the pportunity o receive qualitative medical help.
+            have the opportunity o receive qualitative medical help.
           </p>
-          <p className="text-slate-600 m-8">
+          <p className="text-slate-600 m-8 ">
             Our Clinic has grown to provide a world class facility for the
             treatment of tooth loss, dental cosmetics and bore advanced
             restorative dentistry. We are among the most qualified implant
@@ -116,7 +189,7 @@ const Ourmedical = () => {
             </Button>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

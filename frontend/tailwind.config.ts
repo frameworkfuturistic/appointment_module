@@ -25,8 +25,8 @@ const config = {
         'pattern4-bg': "url('/pattern-4.png')",
         'pattern5-bg': "url('/pattern-5.png')",
         'dottedmap': "url('/dotted-map.png')",
-        'pattern6': "url('/pattern-6.png')"
-        
+        'pattern6': "url('/pattern-6.png')",
+        'appointment': "url('/appointment1_bg.png')"
       },
       colors: {
         border: "hsl(var(--border))",

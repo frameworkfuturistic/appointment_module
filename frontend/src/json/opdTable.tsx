@@ -89,4 +89,35 @@ const opdTable = [
   },
 ];
 
-export default opdTable
+export default opdTable;
+
+export const consultantTable = [
+  {
+    id: 1,
+    name: "Dr. Ashok Kumar Singh",
+    department: "Emergency & Trauma",
+    timing: "08:00 am To 02:00 pm",
+    days: "Mon to Sat",
+  },
+  {
+    id: 2,
+    name: "Dr. Manoj Thomas Kandulna",
+    department: "Emergency & Trauma",
+    timing: "",
+    days: "Mon & Thur",
+  },
+  {
+    id: 3,
+    name: "Dr. Brajesh Kumar",
+    department: "Emergency & Trauma",
+    timing: "",
+    days: "Tue & Fri",
+  },
+  {
+    id: 4,
+    name: "Dr. Sunil George Kandulna",
+    department: "Emergency & Trauma",
+    timing: "",
+    days: "Wed to Sat",
+  },
+];

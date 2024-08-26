@@ -1,62 +1,71 @@
-import { Clock10Icon, Link, Linkedin, MapPinPlusInside } from "lucide-react";
-import { IoLogoSkype } from "react-icons/io";
-import { FaFacebookF } from "react-icons/fa";
-import { FaTwitter } from "react-icons/fa";
-import { FaLinkedinIn } from "react-icons/fa6";
+import {
+  Clock10Icon,
+  MapPinPlusInside,
+} from "lucide-react";
+import { FaFacebookF, FaInstagram, FaYoutube, FaTwitter } from "react-icons/fa";
 import Navbar from "@/components/Navbar";
 import React from "react";
 
+
 const Header = () => {
   return (
-    <div>
-      {/* header */}
-      <div className="bg-sky-700  w-full min-h-3 "></div>
+    <div className="bg-white">
+      {/* Top Bar */}
+      <div className="bg-sky-700 w-full h-2"></div>
 
-      <nav className=" justify-around p-2 hidden flex-col  text-lg text-slate-500 font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6 ">
-        <div className="grid grid-flow-col gap-4">
-          <div className="  flex  ">
-            <MapPinPlusInside strokeWidth={0.5} className="mx-3" />
-            (Mayor Road, Behind Machhli Ghar, Ranchi, Jharkhand - 834001),
-            Ranchi, Jharkhand, INDIA
+      {/* Contact & Social Info */}
+      <nav className="flex flex-col md:flex-row justify-between p-4 text-slate-500 font-medium text-sm md:text-base lg:gap-6">
+        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+          <div className="flex items-center">
+            <MapPinPlusInside strokeWidth={0.5} className="mr-2" />
+            <span>Mayor Road, Behind Machhli Ghar, Ranchi, Jharkhand - 834001, INDIA</span>
           </div>
-          <div className=" flex">
-            <Clock10Icon strokeWidth={0.5} className="mx-3" />
-            Mon - Sat 6.00AM - 12.00AM Sunday CLOSED
+          <div className="flex items-center">
+            <Clock10Icon strokeWidth={0.5} className="mr-2" />
+            <span>Mon - Sat 6.00AM - 12.00AM, Sunday CLOSED</span>
           </div>
         </div>
 
-        <div className="grid grid-flow-col gap-8  text-lg ">
-          <a href="https://www.facebook.com/sjhrc.in/">
-            <FaFacebookF className=" text-muted-foreground transition-colors hover:text-foreground" />
+        <div className="flex justify-center md:justify-end gap-4 mt-2 md:mt-0">
+          <a href="https://www.facebook.com/sjhrc.in" aria-label="Facebook">
+            <FaFacebookF className="text-muted-foreground transition-colors hover:text-sky-700" />
           </a>
-
-          <FaTwitter className="  text-muted-foreground transition-colors hover:text-foreground" />
-
-          <IoLogoSkype className="  text-muted-foreground transition-colors hover:text-foreground" />
-
-          <FaLinkedinIn className="  text-muted-foreground transition-colors hover:text-foreground" />
+          <a href="https://x.com/Sjhrcranchi" aria-label="Twitter">
+            <FaTwitter className="text-muted-foreground transition-colors hover:text-sky-700" />
+          </a>
+          <a href="https://www.instagram.com/shreejagannathhospital/" aria-label="Instagram">
+            <FaInstagram className="text-muted-foreground transition-colors hover:text-sky-700" />
+          </a>
+          <a href="https://www.youtube.com/@sjhrcjagannath9636" aria-label="YouTube">
+            <FaYoutube className="text-muted-foreground transition-colors hover:text-sky-700" />
+          </a>
         </div>
       </nav>
-      {/* LOGO */}
-      <div className="grid grid-flow-col justify-center m-4">
-        <img src="/hospital/hospitallogo.png" alt="logo" />
-        <div className="grid grid-flow-row place-items-center ">
-          <h1 className="text-4xl font-serif font-semibold ">
+
+      {/* Logo & Info */}
+      <div className="flex flex-col md:flex-row justify-between items-center p-4 text-center md:text-left space-y-4 md:space-y-0">
+        <img src="/hospital/hospitallogo.png" alt="Hospital Logo" className="lg:h-44 lg:w-44 w-auto md:h-16 " />
+        <div className="flex flex-col items-center  md:items-center space-y-1">
+          <h1 className="text-2xl md:text-3xl font-serif font-semibold">
             SHREE JAGANNATH HOSPITAL & RESEARCH CENTRE
           </h1>
-          <h2 className="text-lg text-sky-700 ">
-            MULTY SPECIALITY HOSPITAL AND TRAUMA CENTRE
+          <h2 className="text-sm md:text-lg text-sky-700">
+            MULTI SPECIALITY HOSPITAL AND TRAUMA CENTRE
           </h2>
-          <p className="text-sm text-slate-600 ">
+          <p className="text-xs md:text-sm text-slate-600">
             ISO 9001 : 2015 Certified Hospital
           </p>
-          <p className="text-destructive text-lg animate-pulse  ">Ambulance No:
-          0651-2360045</p>
+          <p className="text-red-500 text-sm md:text-base animate-pulse">
+            Ambulance No: 0651-2360045
+          </p>
         </div>
-        <img src="/hospital/nabhlogo.png" alt="logo" />
+        <img src="/hospital/nabhlogo.png" alt="NABH Logo" className="lg:h-40 lg:w-40 w-auto md:h-16" />
       </div>
-      {/* NAVBAR */}
+
+      {/* Navbar */}
       <Navbar />
+      {/* <Nav/> */}
+      {/* <Nav/> */}
     </div>
   );
 };

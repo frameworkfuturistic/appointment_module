@@ -5,106 +5,158 @@ import { Textarea } from "@/components/ui/textarea";
 import { Globe, Mail, Smartphone } from "lucide-react";
 import React from "react";
 
-const page = () => {
+
+const ContactPage = () => {
   return (
     <>
+      {/* Hero Section with Image and Overlay */}
       <div className="relative">
-        <img src="/contact-img/cover.png" alt="img" className="" />
-        <div className="absolute inset-0 flex items-center justify-end mr-80">
-          <h1 className="text-2xl font-semibold text-sky-700   ">Contact Us</h1>
+        <img
+          src="/contact-img/cover.png"
+          alt="Contact Cover"
+          className="w-full h-auto object-cover"
+        />
+        <div className="absolute inset-0 flex items-center justify-center sm:justify-end px-4 sm:px-20">
+          <h1 className="text-3xl sm:text-4xl font-semibold text-sky-700">
+            Contact Us
+          </h1>
         </div>
       </div>
-      <div className=" grid place-content-center ">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m19!1m8!1m3!1d3662.1559012644075!2d85.3203445!3d23.3825767!3m2!1i1024!2i768!4f13.1!4m8!3e6!4m0!4m5!1s0x39f4e1cabc58c68b%3A0xacb8529b237fb943!2sShree%20Jagannath%20Hospital%2C%20Mayor&#39;s%20Road%20-%20Booty%20Road%2C%20Radium%20Rd%2C%20behind%20Machali%20Ghar%20(Aqua%20World)%20and%20Nakshatra%20Van%2C%20Ranchi%20University%2C%20Morabadi%2C%20Ranchi%2C%20Jharkhand%20834001!3m2!1d23.3824796!2d85.32252129999999!5e0!3m2!1sen!2sin!4v1723537495368!5m2!1sen!2sin"
-          width="800"
-          height="350"
-          // style="border:0;"
-          // allowfullscreen=""
-          loading="lazy"
-          // referrerpolicy="no-referrer-when-downgrade"
-          className="py-8"
-        ></iframe>
-      </div>
-      <div className="bg-slate-50 grid justify-center py-6 ">
-        <div className="flex flex-col items-center text-center py-8 gap-2 ">
-          <h1>Contact Now</h1>
-          <h2 className="text-2xl font-semibold">Write us a Message!</h2>
-          <img src="/activity.png" alt="icon" className="  h-10 w-10" />
+
+      {/* Google Maps Iframe */}
+      <div className="container mx-auto px-4 py-2 h-96">
+        <h1 className="text-2xl font-semibold text-center m-4 text-sky-700">
+          Find Us
+        </h1>
+        <div className="w-full h-0 pb-[56.25%] relative">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m19!1m8!1m3!1d3662.1559012644075!2d85.3203445!3d23.3825767!3m2!1i1024!2i768!4f13.1!4m8!3e6!4m0!4m5!1s0x39f4e1cabc58c68b%3A0xacb8529b237fb943!2sShree%20Jagannath%20Hospital%2C%20Mayor&#39;s%20Road%20-%20Booty%20Road%2C%20Radium%20Rd%2C%20behind%20Machali%20Ghar%20(Aqua%20World)%20and%20Nakshatra%20Van%2C%20Ranchi%20University%2C%20Morabadi%2C%20Ranchi%2C%20Jharkhand%20834001!3m2!1d23.3824796!2d85.32252129999999!5e0!3m2!1sen!2sin!4v1723537495368!5m2!1sen!2sin"
+            allowFullScreen
+            loading="lazy"
+            className="absolute top-0 left-0 w-full h-96 border-0"
+            title="Google Maps"
+          ></iframe>
         </div>
-        <div className="grid grid-cols-3 justify-items-center">
-          <Card className="bg- sm:min-h-28 sm:min-w-52 grid grid-flow-col justify-center rounded-none shadow-none  ... transition duration-500 transform hover:-translate-y-4 motion-reduce:transition-none motion-reduce:hover:transform-none hover:border-b-2  hover:border-b-sky-700 hover:bg-white ">
+      </div>
+
+      {/* Contact Information and Form */}
+      <div className="bg-slate-50 py-8 px-4">
+        {/* Contact Info Section */}
+        <div className="text-center  py-4 ">
+          <h1 className="text-xl font-semibold text-sky-700 mt-8">Contact Now</h1>
+          <h2 className="text-xl font-medium text-sky-700">
+            Write us a Message!
+          </h2>
+          <img
+            src="/activity.png"
+            alt="Icon"
+            className="mx-auto mt-4 h-10 w-10"
+          />
+        </div>
+
+        {/* Contact Info Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+          {/* Phone Card */}
+          <Card className="flex items-center p-4 bg-white rounded shadow hover:shadow-lg  transition">
             <Smartphone
               size={48}
               color="#0284c7"
               strokeWidth={1}
-              className="place-self-center"
+              className="mr-4 flex-shrink-0"
             />
-            <div className="grid items-center p-2">
+            <div>
               <p className="text-lg font-medium">Phone</p>
-              <p className="text-xs"> 0651-2360045</p>
+              <p className="text-sm text-gray-600">0651-2360045</p>
             </div>
           </Card>
 
-          <Card className="bg- sm:min-h-28 sm:min-w-52 grid grid-flow-col justify-center rounded-none shadow-none  ... transition duration-500 transform hover:-translate-y-4 motion-reduce:transition-none motion-reduce:hover:transform-none hover:border-b-2  hover:border-b-sky-700 hover:bg-white ">
+          {/* Address Card */}
+          <Card className="flex items-center p-4 bg-white rounded shadow hover:shadow-lg transition">
             <Globe
               size={48}
               color="#0284c7"
               strokeWidth={1}
-              className="place-self-center"
+              className="mr-4 flex-shrink-0"
             />
-            <div className="grid items-center p-2 text-nowrapx` ">
-              <h1 className="text-xs font-medium">
+            <div>
+              <p className="text-lg font-medium">
                 SHREE JAGANNATH HOSPITAL & RESEARCH CENTRE
-              </h1>
-              <a href="" className="text-xs">
-                (Mayor Road, Behind Machhli Ghar, Ranchi, Jharkhand - 834001)
+              </p>
+              <a
+                href="https://www.google.com/maps/place/Shree+Jagannath+Hospital"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-blue-600 underline"
+              >
+                Mayor Road, Behind Machhli Ghar, Ranchi, Jharkhand - 834001
               </a>
             </div>
           </Card>
-          <Card className="bg- sm:min-h-28 sm:min-w-52 grid grid-flow-col justify-center rounded-none shadow-none  ... transition duration-500 transform hover:-translate-y-4 motion-reduce:transition-none motion-reduce:hover:transform-none hover:border-b-2  hover:border-b-sky-700 hover:bg-white ">
+
+          {/* Email Card */}
+          <Card className="flex items-center p-4 bg-white rounded  hover:shadow-sky-700 transition">
             <Mail
               size={48}
               color="#0284c7"
               strokeWidth={1}
-              className="place-self-center"
+              className="mr-4 flex-shrink-0"
             />
-            <div className="grid items-center p-2">
+            <div>
               <p className="text-lg font-medium">Email</p>
-              <p className="text-xs">sjhrc.ranchi@gmail.com</p>
+              <p className="text-sm text-gray-600">sjhrc.ranchi@gmail.com</p>
             </div>
           </Card>
         </div>
+
         {/* Contact Form */}
-        <div className="grid grid-flow-col justify-center">
-          <div className=" grid grid-rows-3  mx-4 ">
+        <form className="bg-pattern5-bg shadow-lg justify-center max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 p-4 my-4 hover:shadow-sky-700">
+          <div className="grid grid-flow-row gap-4">
             <Input
               type="name"
               placeholder="Your Name"
-              className="bg-white rounded-sm m-4 max-h-12 max-w-32 text-lg px-3"
+              className="bg-white rounded-sm max-h-12 w-full text-lg px-3 border-2"
             />
             <Input
               type="phone"
               placeholder="Your Phone"
-              className="bg-white rounded-sm m-4 max-h-12 max-w-32 text-lg px-3"
+              className="bg-white rounded-sm max-h-12 w-full text-lg px-3 border-2"
             />
             <Input
               type="mail"
               placeholder="Email Address"
-              className="bg-white rounded-sm m-4 max-h-12 max-w-32 text-lg px-3"
+              className="bg-white rounded-sm max-h-12 w-full text-lg px-3 border-2"
             />
+            <Textarea
+              placeholder="Type your message here."
+              className="bg-white text-lg shadow-sm rounded-sm w-full h-32"
+            />
+            <Button type="submit" className="place-self-center">
+              Submit Query
+            </Button>
           </div>
-          <Textarea
-            placeholder="Type your message here."
-            className="bg-white text-lg shadow-sm  rounded-sm m-4 min-w-96 max-h-32 "
-          />
-        </div>
-        <Button type="submit" className="place-self-center ">
-          Send
-        </Button>
+          <div className="grid grid-flow-row text-wrap p-4 space-y-2">
+            <ul>
+              <h1 className="text-sm text-sky-700">
+                Need a Doctor for Check-up?
+              </h1>
+              <h1 className="text-2xl font-medium">
+                Just Make an Appointment!
+              </h1>
+              <p className="font-medium">Call:</p>
+              <p className="text-xl font-light">+91 8987999200</p>
+            </ul>
+            <ul>
+              <h2 className="text-3xl font-medium text-sky-700">
+                Opening Hours
+              </h2>
+              <p className="font-light">Monday - Saturday 08:00 - 20:00</p>
+              <p className="font-light">Sunday 12:00 - 16:00</p>
+            </ul>
+          </div>
+        </form>
       </div>
     </>
   );
 };
 
-export default page;
+export default ContactPage;

@@ -9,14 +9,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import opdTable from "@/json/opdTable";
+import opdTable, {consultantTable}from "@/json/opdTable";
 
 const page = () => {
   return (
-    <div>
+    <div className="gird grid-flow-row p-8 m-8 space-y-8">
       <div>
         <Table>
-          <TableCaption>Caption</TableCaption>
+          {/* <TableCaption>Caption</TableCaption> */}
           <TableHeader>
             <TableRow>
               <TableHead className="w-[200px]">Consultant</TableHead>
@@ -27,12 +27,39 @@ const page = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {opdTable.map((row) => (
-              <TableRow>
+            {opdTable?.map((row) => (
+              <TableRow key={row.id}>
                 <TableCell className="font-medium">{row?.name}</TableCell>
                 <TableCell>{row?.department}</TableCell>
                 <TableCell>{row?.designation}</TableCell>
                 <TableCell>{row?.opd_timing}</TableCell>
+                <TableCell>{row?.days}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+      
+        </Table>
+      </div>
+      {/* CONSULTANT TABLE */}
+      <div>
+        <Table>
+          <TableCaption>Caption</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[200px]">Name of Faculty</TableHead>
+              <TableHead className="w-[200px]">Department</TableHead>
+
+              <TableHead className="w-[200px]"> Timing</TableHead>
+              <TableHead className="w-[200px]">Days</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {consultantTable.map((row) => (
+              <TableRow>
+                <TableCell className="font-medium">{row?.name}</TableCell>
+                <TableCell>{row?.department}</TableCell>
+                
+                <TableCell>{row?.timing}</TableCell>
                 <TableCell>{row?.days}</TableCell>
               </TableRow>
             ))}
@@ -44,12 +71,4 @@ const page = () => {
 };
 
 export default page;
-// const mappedData = tableData.rows.map(row => ({
-//     consultant: row.Consultant,
-//     department: row.Department,
-//     designation: row.Designation,
-//     opdTiming: row.OPD_Timing,
-//     days: row.Days
-//   }));
 
-//   console.log(mappedData);
