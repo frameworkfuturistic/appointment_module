@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -61,13 +64,20 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border ;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground ;
   }
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+.section {
+  border-width: 5px;
+  border-color: aqua;
+  margin-bottom: 3rem ;
+  padding: 3rem;
 }

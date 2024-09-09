@@ -31,18 +31,23 @@ const superSpeciality = [
 const page = () => {
   return (
     <div className="bg-pattern5-bg  grid justify-items-center relative p-4 sm:p-6 md:p-8">
-      <img
-        src="/hospital/speciality.png"
-        alt="img"
-        className="w-full h-64 md:h-80 sm:w-full object-cover"
-      />
-      <h1 className="p-4 text-3xl font-bold text-sky-700 text-center">
-        Our Speciality
-      </h1>
-      <div className=" grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
+      <div className="relative ">
+        <img
+          src="/hospital/speciality.png"
+          alt="img"
+          className="w-full h-96 object-fill"
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+          <h1 className="text-4xl sm:text-4xl font-bold text-white">
+            Our Speciality
+          </h1>
+        </div>
+      </div>
+
+      <div className=" grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 md:gap-8 p-4">
         <Card
           id="CARD1"
-          className="bg-sky-100 grid grid-flow-row text-wrap max-w-full sm:max-w-96 min-h-96 hover:shadow-2xl hover:shadow-sky-700"
+          className="bg-rose-100 grid grid-flow-row text-wrap max-w-full sm:max-w-96 min-h-96 hover:shadow-2xl hover:shadow-rose-200"
         >
           <div className="place-items-start grid grid-flow-row m-4">
             <h1 className="text-xl font-medium border-b-2 place-self-center">
@@ -64,7 +69,7 @@ const page = () => {
         </Card>
         <Card
           id="CARD2"
-          className="bg-sky-100 grid grid-flow-row text-wrap max-w-full sm:max-w-96 min-h-96 hover:shadow-2xl hover:shadow-sky-700"
+          className="bg-rose-100 grid grid-flow-row text-wrap max-w-full sm:max-w-96 min-h-96 hover:shadow-2xl hover:shadow-rose-200"
         >
           <div className="place-items-start grid grid-flow-row m-4">
             <h1 className="text-xl font-medium border-b-2 place-self-center ">

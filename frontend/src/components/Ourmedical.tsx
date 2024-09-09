@@ -5,26 +5,26 @@ import { Button } from "./ui/button";
 
 const Ourmedical = () => {
   return (
-    <>
+    <div className="section">
       {/* FACILITY INFO CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full h-full p-4">
         <div>
           <a
             href="#"
-            className="transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-300 group block max-w-xs mx-auto rounded-lg p-8 bg-white ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-sky-600 hover:ring-sky-600 hover:shadow-2xl hover:shadow-sky-600"
+            className="transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-300 group block max-w-xs mx-auto rounded-lg p-8 bg-white ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-rose-200 hover:ring-rose-200 hover:shadow-2xl hover:shadow-rose-200"
           >
             <div className="flex items-center space-x-3">
               <HousePlus
                 size={56}
-                color="#0284c7"
+                color="#e22222"
                 strokeWidth={1.5}
-                className="group-hover:stroke-white"
+                className=""
               />
-              <h3 className="text-slate-900 group-hover:text-white text-lg font-semibold">
+              <h3 className="text-slate-900  text-lg font-semibold">
                 Quality & Safety
               </h3>
             </div>
-            <p className="text-slate-500 group-hover:text-white text-sm">
+            <p className="text-slate-500  text-sm">
               Our Delmont hospital utilizes state-of-the-art technology and
               employs a team of true experts.
             </p>
@@ -34,20 +34,20 @@ const Ourmedical = () => {
         <div>
           <a
             href="#"
-            className="transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-300 group block max-w-xs mx-auto rounded-lg p-8 bg-white ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-sky-600 hover:ring-sky-600 hover:shadow-2xl hover:shadow-sky-600"
+            className="transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-300 group block max-w-xs mx-auto rounded-lg p-8 bg-white ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-rose-200 hover:ring-rose-200 hover:shadow-2xl hover:shadow-rose-200"
           >
             <div className="flex items-center space-x-3">
               <Computer
                 size={56}
-                color="#0284c7"
+                color="#e22222"
                 strokeWidth={1.5}
-                className="group-hover:stroke-white"
+                className=""
               />
-              <h3 className="text-slate-900 group-hover:text-white text-lg font-semibold">
+              <h3 className="text-slate-900  text-lg font-semibold">
                 Leading Technology
               </h3>
             </div>
-            <p className="text-slate-500 group-hover:text-white text-sm">
+            <p className="text-slate-500  text-sm">
               Our Delmont hospital utilizes state-of-the-art technology and
               employs a team of true experts.
             </p>
@@ -57,20 +57,20 @@ const Ourmedical = () => {
         <div>
           <a
             href="#"
-            className="transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-300 group block max-w-xs mx-auto rounded-lg p-8 bg-white ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-sky-600 hover:ring-sky-600 hover:shadow-2xl hover:shadow-sky-600"
+            className="transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-300 group block max-w-xs mx-auto rounded-lg p-8 bg-white ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-rose-200 hover:ring-rose-200 hover:shadow-2xl hover:shadow-rose-200"
           >
             <div className="flex items-center space-x-3">
               <Stethoscope
                 size={56}
-                color="#0284c7"
+                color="#e22222"
                 strokeWidth={1.5}
-                className="group-hover:stroke-white"
+                className=""
               />
-              <h3 className="text-slate-900 group-hover:text-white text-lg font-semibold">
+              <h3 className="text-slate-900  text-lg font-semibold">
                 Experts by Experience
               </h3>
             </div>
-            <p className="text-slate-500 group-hover:text-white text-sm">
+            <p className="text-slate-500  text-sm">
               Our Delmont hospital utilizes state-of-the-art technology and
               employs a team of true experts.
             </p>
@@ -190,7 +190,7 @@ const Ourmedical = () => {
           </div>
         </div>
       </div> */}
-    </>
+    </div>
   );
 };
 

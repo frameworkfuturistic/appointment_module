@@ -1,5 +1,10 @@
 import type { Config } from "tailwindcss"
 
+const colors = require("tailwindcss/colors");
+const {
+  default: flattenColorPalette,
+} = require("tailwindcss/lib/util/flattenColorPalette");
+ 
 const config = {
   darkMode: ["class"],
   content: [
@@ -20,14 +25,21 @@ const config = {
     extend: {
       backgroundImage: {
         'hero-bg': "url('/images/doctorimg1.png')", // Add your image path here
-        'pattern-bg': "url('/pattern-2.png')",
-        'pattern2-bg': "url('/pattern-3.png')",
-        'pattern4-bg': "url('/pattern-4.png')",
-        'pattern5-bg': "url('/pattern-5.png')",
+        'pattern1': "url('/pattern-2.png')",
+        'pattern2': "url('/pattern-3.png')",
+        'pattern3': "url('/pattern-4.png')",
+        'pattern4': "url('/pattern-5.png')",
         'dottedmap': "url('/dotted-map.png')",
-        'pattern6': "url('/pattern-6.png')",
-        'appointment': "url('/appointment1_bg.png')"
+        'pattern5': "url('/pattern-6.png')",
+        'appointment': "url('/appointment1_bg.png')",
+        'pattern7': "url('/pattern7.png')",
+        'pattern8': "url('/pattern8.png')",
+        'pattern9': "url('/pattern9.png')",
+        'pattern10': "url('/pattern10.png')",
+        'pattern11': "url('/pattern11.png')"
+
       },
+     
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -84,7 +96,22 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    addVariablesForColors
+  ],
 } satisfies Config
+
+// This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
+function addVariablesForColors({ addBase, theme }: any) {
+  let allColors = flattenColorPalette(theme("colors"));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
+ 
+  addBase({
+    ":root": newVars,
+  });
+}
 
 export default config

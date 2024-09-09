@@ -21,16 +21,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Search } from "lucide-react";
+import { Home, Menu, Package2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import Appointmentform from "./Appointmentform";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import Link from "next/link";
 
 function CustomNavigationMenu() {
   return (
-    <>
-      <div className="bg-slate-50 grid grid-flow-col   max-w-[1000px] min-h-[60px]  gap-x-4  hover:z-10 top-0 mx-auto rounded-full items-center  border-b bg-background px-6 sm:grid-rows-1">
+    <div className="hidden md:flex">
+      <div className="bg-rose-50 grid lg:grid-flow-col max-w-[900px] min-h-[60px]   gap-x-2  hover:z-10 top-0 mx-auto rounded-full items-center  border-b bg-background px-4 ">
+
         <NavigationMenuComponent>
           <NavigationMenuList>
             <NavigationMenuItem>
@@ -94,7 +97,7 @@ function CustomNavigationMenu() {
               <NavigationMenuItem>
                 <NavigationMenuTrigger>DEPARTMENTS</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid gap-1  p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
+                  <ul className="grid  p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
                     <ListItem href="/opd" title="OPD Schedule"></ListItem>
 
                     <ListItem
@@ -106,23 +109,7 @@ function CustomNavigationMenu() {
               </NavigationMenuItem>
             </NavigationMenuComponent>
 
-            {/* <NavigationMenuComponent>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>BLOG</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid gap-1  p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
-                    <ListItem
-                      href="/blog/ourBlogs"
-                      title="Our Blogs"
-                    ></ListItem>
-                    <ListItem
-                      href="/blogs/addBlogs"
-                      title="Add Blog"
-                    ></ListItem>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuComponent> */}
+           
 
             <NavigationMenuItem>
               <NavigationMenuContent></NavigationMenuContent>
@@ -131,13 +118,11 @@ function CustomNavigationMenu() {
               </a>
             </NavigationMenuItem>
 
-            
-
             <NavigationMenuComponent>
               <NavigationMenuItem>
                 <NavigationMenuTrigger>CAREER</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid gap-1  p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
+                  <ul className="grid   p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
                     <ListItem
                       href="/career/currentOpenings"
                       title="Current Openings"
@@ -149,7 +134,11 @@ function CustomNavigationMenu() {
 
             <NavigationMenuItem>
               <NavigationMenuContent></NavigationMenuContent>
-              <a className="font-medium text-sm mr-4" href="/dashboard">
+              <a
+                className="font-medium text-sm mr-4"
+                href="/blogDash/blog"
+                target="_"
+              >
                 BLOG{" "}
               </a>
             </NavigationMenuItem>
@@ -165,17 +154,17 @@ function CustomNavigationMenu() {
 
         <div>
           <Dialog>
-            <DialogTrigger className="shadow-xl  rounded-full  min-w-8 min-h-8 hover:border-2 hover:border-sky-600   ">
-              <Search className="m-2 size-8 text-sky-700" />
+            <DialogTrigger className="shadow-xl  rounded-full   min-w-8 min-h-8 hover:border-2 hover:border-rose-600   ">
+              <Search className="m-2 size-8 text-rose-700" />
             </DialogTrigger>
-            <DialogContent className="min-h-16 w-">
+            <DialogContent className="min-h-16 ">
               <div className="flex  items-center justify-between">
                 <Input
                   type="input"
                   placeholder="search"
                   className=" w-full mx-6"
                 />
-                <Button className=" bg-sky-700 h-full ">
+                <Button className=" bg-destructive h-full ">
                   <Search />
                 </Button>
               </div>
@@ -185,7 +174,7 @@ function CustomNavigationMenu() {
         <div className="animate-bounce">
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="bg-sky-700 ">Appointment</Button>
+              <Button className="bg-destructive  ">Appointment</Button>
             </DialogTrigger>
             <DialogContent className=" bg-slate-100  ">
               <DialogHeader>
@@ -198,7 +187,7 @@ function CustomNavigationMenu() {
           </Dialog>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

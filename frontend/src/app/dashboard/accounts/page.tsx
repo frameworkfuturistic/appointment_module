@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { MoreHorizontal } from "lucide-react"
+import Image from "next/image";
+import { MoreHorizontal } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,14 +12,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -27,14 +27,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
+import BlogData from "@/json/BlogData";
 
 export default function Component() {
   return (
-    <Card>
+    <Card className="">
       <CardHeader>
         <CardTitle>User's Accounts</CardTitle>
-        
       </CardHeader>
       <CardContent>
         <Table>
@@ -43,40 +43,37 @@ export default function Component() {
               <TableHead className="hidden w-[100px] sm:table-cell">
                 <span className="sr-only">Image</span>
               </TableHead>
-              <TableHead>User name</TableHead>
+              <TableHead>User Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead className="hidden md:table-cell">ID no</TableHead>
-              <TableHead className="hidden md:table-cell">
-               Edit
-              </TableHead>
-              <TableHead className="hidden md:table-cell">Delete</TableHead>
+              <TableHead className="hidden md:table-cell">Department</TableHead>
+              <TableHead className="hidden md:table-cell">Blogs</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
+            {BlogData.map((blog) =>(
+            <TableRow key={blog.id}>
               <TableCell className="hidden sm:table-cell">
                 <Image
-                  alt="Product image"
+                  alt=" image"
                   className="aspect-square rounded-md object-cover"
                   height="64"
-                  src="/placeholder.svg"
+                  src="/PROFPIC.png"
                   width="64"
                 />
               </TableCell>
               <TableCell className="font-medium">
-                Laser Lemonade Machine
+                {blog.author}
               </TableCell>
               <TableCell>
-                <Badge variant="outline">Draft</Badge>
+                <a href="/">@gmail.com</a>
               </TableCell>
-              <TableCell className="hidden md:table-cell">$499.99</TableCell>
-              <TableCell className="hidden md:table-cell">25</TableCell>
-              <TableCell className="hidden md:table-cell">
-                2023-07-12 10:42 AM
-              </TableCell>
+              <TableCell className="hidden md:table-cell">{blog.id}</TableCell>
+              <TableCell className="hidden md:table-cell">{blog.category}</TableCell>
+              <TableCell className="hidden md:table-cell">null</TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -93,7 +90,7 @@ export default function Component() {
                 </DropdownMenu>
               </TableCell>
             </TableRow>
-            
+            ))}
           </TableBody>
         </Table>
       </CardContent>
@@ -103,5 +100,5 @@ export default function Component() {
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }

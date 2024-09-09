@@ -14,10 +14,10 @@ const ContactPage = () => {
         <img
           src="/contact-img/cover.png"
           alt="Contact Cover"
-          className="w-full h-auto object-cover"
+          className="w-full h-96 object-fill"
         />
-        <div className="absolute inset-0 flex items-center justify-center sm:justify-end px-4 sm:px-20">
-          <h1 className="text-3xl sm:text-4xl font-semibold text-sky-700">
+        <div className="absolute inset-0 flex items-center justify-center  px-4 sm:px-20 bg-black bg-opacity-40 ">
+          <h1 className="text-4xl sm:text-4xl font-semibold text-white">
             Contact Us
           </h1>
         </div>
@@ -25,7 +25,7 @@ const ContactPage = () => {
 
       {/* Google Maps Iframe */}
       <div className="container mx-auto px-4 py-2 h-96">
-        <h1 className="text-2xl font-semibold text-center m-4 text-sky-700">
+        <h1 className="text-2xl font-semibold text-center m-4 text-black">
           Find Us
         </h1>
         <div className="w-full h-0 pb-[56.25%] relative">
@@ -43,8 +43,8 @@ const ContactPage = () => {
       <div className="bg-slate-50 py-8 px-4">
         {/* Contact Info Section */}
         <div className="text-center  py-4 ">
-          <h1 className="text-xl font-semibold text-sky-700 mt-8">Contact Now</h1>
-          <h2 className="text-xl font-medium text-sky-700">
+          <h1 className="text-xl font-semibold text-black mt-8">Contact Now</h1>
+          <h2 className="text-xl font-medium text-black">
             Write us a Message!
           </h2>
           <img
@@ -94,7 +94,7 @@ const ContactPage = () => {
           </Card>
 
           {/* Email Card */}
-          <Card className="flex items-center p-4 bg-white rounded  hover:shadow-sky-700 transition">
+          <Card className="flex items-center p-4 bg-white rounded  hover:shadow-rose-500 transition">
             <Mail
               size={48}
               color="#0284c7"
@@ -109,7 +109,7 @@ const ContactPage = () => {
         </div>
 
         {/* Contact Form */}
-        <form className="bg-pattern5-bg shadow-lg justify-center max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 p-4 my-4 hover:shadow-sky-700">
+        <form className="bg-pattern5-bg shadow-lg justify-center max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 p-4 my-4 hover:shadow-rose-500 ">
           <div className="grid grid-flow-row gap-4">
             <Input
               type="name"
@@ -136,7 +136,7 @@ const ContactPage = () => {
           </div>
           <div className="grid grid-flow-row text-wrap p-4 space-y-2">
             <ul>
-              <h1 className="text-sm text-sky-700">
+              <h1 className="text-sm text-black">
                 Need a Doctor for Check-up?
               </h1>
               <h1 className="text-2xl font-medium">
@@ -146,7 +146,7 @@ const ContactPage = () => {
               <p className="text-xl font-light">+91 8987999200</p>
             </ul>
             <ul>
-              <h2 className="text-3xl font-medium text-sky-700">
+              <h2 className="text-3xl font-medium text-black">
                 Opening Hours
               </h2>
               <p className="font-light">Monday - Saturday 08:00 - 20:00</p>

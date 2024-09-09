@@ -6,11 +6,12 @@ import SimpleImageSlider from "react-simple-image-slider";
 import Ourmedical from "@/components/Ourmedical";
 import Ourservice from "@/components/Ourservice";
 
-import Getappointment from "@/components/Getappointment";
-import Priceboard from "@/components/Priceboard";
+import Getappointment from "@/components/PatientReview";
+
 import { CarouselDemo } from "@/components/sliderImg";
 import OurHeads from "@/components/OurHeads";
 import { NoticeSlider } from "@/components/NoticeSlider";
+import BlogCards from "@/components/BlogCards";
 
 
 const Dashboard = () => {
@@ -26,29 +27,19 @@ const Dashboard = () => {
         <Ourmedical />
       </div>
       {/* Notice Slider */}
-      <div>
         <NoticeSlider/>
-      </div>
 
       {/* Services Section */}
-      <div className="py-8 px-4 sm:px-6 lg:px-8 bg-white">
         <Ourservice />
-      </div>
 
       {/* Doctors Section */}
-      <div className="py-8 px-4 sm:px-6 lg:px-8 bg-gray-100">
         <OurHeads />
-      </div>
 
       {/* Appointment Section */}
-      <div className="py-8 px-4 sm:px-6 lg:px-8 bg-white">
         <Getappointment />
-      </div>
 
       {/* Price Board Section */}
-      <div className="py-8 px-4 sm:px-6 lg:px-8 bg-gray-100">
-        <Priceboard />
-      </div>
+        <BlogCards />
 
       {/* <div>
         <Ourmedical />

@@ -99,9 +99,9 @@ const ImageGrid: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-100">
+    <div className="bg-pattern4-bg">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="bg-sky-600 text-4xl font-bold text-center mb-8 p-8 ">Media & Gallery</h1>
+        <h1 className="bg-rose-200 text-4xl font-bold text-center mb-8 p-8 ">Media & Gallery</h1>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {paginatedImages.map((image, index) => (
             <div

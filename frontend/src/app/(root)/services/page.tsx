@@ -53,7 +53,7 @@ const page = () => {
     <>
       <div className="bg-pattern5-bg  grid grid-cols-3 gap-6 justify-center m-10 p-10 ">
         {/* CARD-1 */}
-        <Card className="bg-sky-100 grid grid-flow-row text-wrap max-w-72 min-h-96  hover:shadow-2xl hover:shadow-sky-700 ">
+        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-72 min-h-96  hover:shadow-2xl hover:shadow-rose-200 ">
           <div className=" place-items-center grid grid-flow-row   ">
             <h1 className="text-lg font-medium border-b-2 place-self-center">
               24x7 Services
@@ -75,7 +75,7 @@ const page = () => {
 
         {/* CARD-2 */}
 
-        <Card className="bg-sky-100 grid grid-flow-row text-wrap max-w-72 min-h-96  hover:shadow-2xl hover:shadow-sky-700">
+        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-72 min-h-96  hover:shadow-2xl hover:shadow-rose-200">
           <div className=" place-items-start grid grid-flow-row   ">
             <h1 className="text-lg font-medium border-b-2 place-self-center">
               Rooms & Bed Services
@@ -96,7 +96,7 @@ const page = () => {
         </Card>
 
         {/* CARD-3 */}
-        <Card className="bg-sky-100 grid grid-flow-row text-wrap max-w-72 min-h-96   hover:shadow-2xl hover:shadow-sky-700">
+        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-72 min-h-96   hover:shadow-2xl hover:shadow-rose-200">
           <div className=" place-items-start grid grid-flow-row   ">
             <h1 className="text-lg font-medium border-b-2 place-self-center">
               Diagnostic Services
@@ -116,7 +116,7 @@ const page = () => {
           </div>
         </Card>
         {/* CARD-4 */}
-        <Card className="bg-sky-100 grid grid-flow-row text-wrap max-w-72 min-h-96  hover:shadow-2xl hover:shadow-sky-700">
+        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-72 min-h-96  hover:shadow-2xl hover:shadow-rose-200">
           <div className=" place-items-start grid grid-flow-row   ">
             <h1 className="text-lg font-medium border-b-2 place-self-center">
               Pathology Services
@@ -136,7 +136,7 @@ const page = () => {
           </div>
         </Card>
         {/* CARD-5 */}
-        <Card className=" bg-sky-100 grid grid-flow-row text-wrap max-w-72 min-h-96  hover:shadow-2xl hover:shadow-sky-700">
+        <Card className=" bg-rose-100 grid grid-flow-row text-wrap max-w-72 min-h-96  hover:shadow-2xl hover:shadow-rose-200">
           <div className=" place-items-start grid grid-flow-row   ">
             <h1 className="text-lg font-medium border-b-2 place-self-center">
               Other Services
@@ -156,8 +156,8 @@ const page = () => {
           </div>
         </Card>
       </div>
-      <div className="bg-sky-100 rounded-lg bg-pattern5-bg  bg-contain grid grid-flow-row max-w-[1000px] mx-64 my-10 p-4 space-y-4">
-        <h1 className=" bg-sky-300 rounded-lg p-4 text-xl font-semibold text-sky-700">Emergency Services:-</h1>
+      <div className="bg-rose-100 rounded-lg bg-pattern5-bg  bg-contain grid grid-flow-row max-w-[1000px] mx-64 my-10 p-4 space-y-4">
+        <h1 className=" bg-rose-300 rounded-lg p-4 text-xl font-semibold text-black ">Emergency Services:-</h1>
         <ul className="list-disc pl-8 space-y-4">
           <li>
             {" "}

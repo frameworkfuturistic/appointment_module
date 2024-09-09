@@ -5,47 +5,50 @@ import {
 import { FaFacebookF, FaInstagram, FaYoutube, FaTwitter } from "react-icons/fa";
 import Navbar from "@/components/Navbar";
 import React from "react";
-
+import NavMobile from "./NavMobile";
 
 const Header = () => {
   return (
-    <div className="bg-white">
+    <section className="bg-rose-100 bg-pattern4 bg-contain">
       {/* Top Bar */}
-      <div className="bg-sky-700 w-full h-2"></div>
-
-      {/* Contact & Social Info */}
-      <nav className="flex flex-col md:flex-row justify-between p-4 text-slate-500 font-medium text-sm md:text-base lg:gap-6">
-        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-          <div className="flex items-center">
-            <MapPinPlusInside strokeWidth={0.5} className="mr-2" />
-            <span>Mayor Road, Behind Machhli Ghar, Ranchi, Jharkhand - 834001, INDIA</span>
+      <div className="bg-rose-400 py-2 hidden md:flex text-sm text-slate-500">
+        <nav className="container mx-auto flex flex-col md:flex-row justify-between items-center px-4">
+          {/* Contact Info */}
+          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+            <div className="flex items-center">
+              <MapPinPlusInside strokeWidth={0.5} className="mr-2 text-white" />
+              <span className="text-white">Mayor Road, Behind Machhli Ghar, Ranchi, Jharkhand - 834001, INDIA</span>
+            </div>
+            <div className="flex items-center">
+              <Clock10Icon strokeWidth={0.5} className="mr-2 text-white" />
+              <span className="text-white">Mon - Sat 6.00AM - 12.00AM, Sunday CLOSED</span>
+            </div>
           </div>
-          <div className="flex items-center">
-            <Clock10Icon strokeWidth={0.5} className="mr-2" />
-            <span>Mon - Sat 6.00AM - 12.00AM, Sunday CLOSED</span>
-          </div>
-        </div>
 
-        <div className="flex justify-center md:justify-end gap-4 mt-2 md:mt-0">
-          <a href="https://www.facebook.com/sjhrc.in" aria-label="Facebook">
-            <FaFacebookF className="text-muted-foreground transition-colors hover:text-sky-700" />
-          </a>
-          <a href="https://x.com/Sjhrcranchi" aria-label="Twitter">
-            <FaTwitter className="text-muted-foreground transition-colors hover:text-sky-700" />
-          </a>
-          <a href="https://www.instagram.com/shreejagannathhospital/" aria-label="Instagram">
-            <FaInstagram className="text-muted-foreground transition-colors hover:text-sky-700" />
-          </a>
-          <a href="https://www.youtube.com/@sjhrcjagannath9636" aria-label="YouTube">
-            <FaYoutube className="text-muted-foreground transition-colors hover:text-sky-700" />
-          </a>
-        </div>
-      </nav>
+          {/* Social Media Icons */}
+          <div className="flex gap-4 mt-2 md:mt-0">
+            <a href="https://www.facebook.com/sjhrc.in" aria-label="Facebook" className="text-white hover:text-sky-700 transition-colors">
+              <FaFacebookF />
+            </a>
+            <a href="https://x.com/Sjhrcranchi" aria-label="Twitter" className="text-sky-400  hover:text-sky-700 transition-colors">
+              <FaTwitter />
+            </a>
+            <a href="https://www.instagram.com/shreejagannathhospital/" aria-label="Instagram" className="text-rose-600 hover:text-sky-700 transition-colors">
+              <FaInstagram />
+            </a>
+            <a href="https://www.youtube.com/@sjhrcjagannath9636" aria-label="YouTube" className="text-red-500 hover:text-sky-700 transition-colors">
+              <FaYoutube />
+            </a>
+          </div>
+        </nav>
+      </div>
+
+      <NavMobile/>
 
       {/* Logo & Info */}
-      <div className="flex flex-col md:flex-row justify-between items-center p-4 text-center md:text-left space-y-4 md:space-y-0">
-        <img src="/hospital/hospitallogo.png" alt="Hospital Logo" className="lg:h-44 lg:w-44 w-auto md:h-16 " />
-        <div className="flex flex-col items-center  md:items-center space-y-1">
+      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center px-4 py-4 text-center md:text-left">
+        <img src="/hospital/hospitallogo.png" alt="Hospital Logo" className="h-24 w-auto md:h-16 lg:h-24" />
+        <div className="flex flex-col items-center md:items-center space-y-2 md:space-y-0">
           <h1 className="text-2xl md:text-3xl font-serif font-semibold">
             SHREE JAGANNATH HOSPITAL & RESEARCH CENTRE
           </h1>
@@ -55,18 +58,17 @@ const Header = () => {
           <p className="text-xs md:text-sm text-slate-600">
             ISO 9001 : 2015 Certified Hospital
           </p>
-          <p className="text-red-500 text-sm md:text-base animate-pulse">
+          <p className="text-red-700 text-sm md:text-base animate-pulse">
             Ambulance No: 0651-2360045
           </p>
         </div>
-        <img src="/hospital/nabhlogo.png" alt="NABH Logo" className="lg:h-40 lg:w-40 w-auto md:h-16" />
+        <img src="/hospital/nabhlogo.png" alt="NABH Logo" className="h-20 w-auto md:h-16 lg:h-20" />
       </div>
 
       {/* Navbar */}
       <Navbar />
-      {/* <Nav/> */}
-      {/* <Nav/> */}
-    </div>
+     
+    </section>
   );
 };
 

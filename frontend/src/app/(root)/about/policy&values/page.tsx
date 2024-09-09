@@ -3,12 +3,23 @@ import React from "react";
 const page = () => {
   return (
     <div className="grid relative justify-self-center">
-      <img src="/hospital/facility.png" alt="img" className="h-80" />
+      <div className="relative">
+        <img
+          src="/hospital/facility.png"
+          alt="img"
+          className="w-full h-96 object-fill"
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+          {/* <h1 className="text-4xl sm:text-4xl font-bold text-white">
+            News And Events
+          </h1> */}
+        </div>
+      </div>
       <div className="  grid grid-cols-2 items-center justify-center bg-pattern5-bg ">
         {/* OUR VALUES */}
-       
-        <div className="bg-sky-100 rounded-lg bg-pattern5-bg bg-contain grid grid-flow-row min-w-72  m-8 px-4  text-wrap">
-          <h1 className=" bg-sky-300 rounded-lg p-4 text-xl h-16 font-semibold text-sky-700 text-center m-4">
+
+        <div className="bg-rose-100 rounded-lg bg-pattern5-bg bg-contain grid grid-flow-row min-w-72  m-8 px-4  text-wrap">
+          <h1 className=" bg-rose-200 rounded-lg p-4 text-xl h-16 font-semibold text-black text-center m-4">
             Our Values
           </h1>
           <ol className="list-decimal flex gap-x-10 place-self-center text-lg">
@@ -67,9 +78,9 @@ const page = () => {
         </div>
 
         {/* OUR POLICY */}
-     
-        <div className="bg-sky-100 rounded-lg bg-pattern5-bg bg-contain grid grid-flow-row min-w-72 m-8 px-4 text-wrap">
-          <h1 className="bg-sky-300 rounded-lg p-4 text-xl font-semibold text-sky-700 text-center m-4">
+
+        <div className="bg-rose-100 rounded-lg bg-pattern5-bg bg-contain grid grid-flow-row min-w-72 m-8 px-4 text-wrap">
+          <h1 className="bg-rose-200 rounded-lg p-4 text-xl font-semibold text-black text-center m-4">
             Our Policy
           </h1>
 
