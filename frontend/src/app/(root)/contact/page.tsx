@@ -12,7 +12,7 @@ const ContactPage = () => {
       {/* Hero Section with Image and Overlay */}
       <div className="relative">
         <img
-          src="/contact-img/cover.png"
+          src="/contact-img/map.png"
           alt="Contact Cover"
           className="w-full h-96 object-fill"
         />

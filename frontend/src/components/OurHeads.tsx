@@ -11,18 +11,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
+import Title from "./Title";
+import Subtitle from "./Subtitle";
+
+// const Heads = [
+// {
+//   id:1,
+//   img:"",
+//   name:"",
+//   designation:""
+// }
+// ];
 
 const OurHeads = () => {
   return (
-    <div className="section">
+    <section className="section">
 
     
-    <div className="bg-pattern4-bg bg-slate-50 py-8 w-full" id="gallery-page">
+    <div className="bg-pattern4 grid place-content-center  bg-slate-50 py-8 w-full" >
       <div className="flex flex-col items-center text-center gap-2 px-4">
-        <h1 className="text-xl font-semibold text-gray-800">OUR HEADS</h1>
-        <h2 className="text-2xl font-semibold text-black">
-          Heads Of Medical Department
-        </h2>
+        <Title title={"OUR HEADS"}/>
+        <Subtitle subtitle={"Heads Of Medical Department"}/>
         <img src="/activity.png" alt="icon" className="h-10 w-10" />
       </div>
 
@@ -42,10 +51,10 @@ const OurHeads = () => {
               Chairman Cum Managing Director
             </p>
             <Dialog>
-              <DialogTrigger className="bg-destructive text-white rounded-sm px-4 py-2">
+              <DialogTrigger className="bg-destructive text-white rounded-sm px-4 py-2 hidden md:block">
                 Details
               </DialogTrigger>
-              <DialogContent className="w-full  max-w-xl rounded-lg">
+              <DialogContent className="w-full  max-w-xl rounded-lg  ">
                 <DialogHeader>
                   <DialogTitle className="text-center text-xl font-semibold text-gray-800 border-b-2 border-rose-700 py-2">
                     Dr. Sudhir Kumar
@@ -97,7 +106,7 @@ const OurHeads = () => {
             </h1>
             <p className="text-sm text-gray-600 ">Director</p>
             <Dialog>
-              <DialogTrigger className="bg-destructive text-white rounded-sm px-4 py-2">
+              <DialogTrigger className="bg-destructive text-white rounded-sm px-4 py-2 hidden md:block">
                 Details
               </DialogTrigger>
               <DialogContent className="w-full max-w-4xl rounded-lg">
@@ -144,7 +153,7 @@ const OurHeads = () => {
               Chief Medical Superintendent
             </p>
             <Dialog>
-              <DialogTrigger className="bg-destructive text-white rounded-sm px-4 py-2">
+              <DialogTrigger className="bg-destructive text-white rounded-sm px-4 py-2 hidden md:block">
                 Details
               </DialogTrigger>
               <DialogContent className="w-full max-w-4xl rounded-lg">
@@ -181,7 +190,7 @@ const OurHeads = () => {
           <img
             src="/departmentHeads/spmishra.png"
             alt="Dr. S.P. Mishra"
-            className="rounded-t-lg min-w-60"
+            className="rounded-t-lg min-w-60  object-cover"
           />
           <div className="p-4">
             <h1 className="text-lg font-semibold font-serif text-gray-800">
@@ -191,7 +200,7 @@ const OurHeads = () => {
               Medical Superintendent
             </p>
             <Dialog>
-              <DialogTrigger className="bg-destructive text-white rounded-sm px-4 py-2">
+              <DialogTrigger className="bg-destructive text-white rounded-sm px-4 py-2 hidden md:block">
                 Details
               </DialogTrigger>
               <DialogContent className="w-full max-w-4xl rounded-lg">
@@ -230,7 +239,7 @@ const OurHeads = () => {
         </Link>
       </p>
     </div>
-    </div>
+    </section>
   );
 };
 

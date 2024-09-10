@@ -56,12 +56,7 @@ export function CarouselDemo({ userImages = [] }) {
     setIsHovered(false);
   };
 
-  // const handleAddImage = () => {
-  //   if (newImageUrl.trim() !== "") {
-  //     setImages([...images, { url: newImageUrl }]);
-  //     setNewImageUrl(""); // Clear the input field after adding the image
-  //   }
-  // };
+ 
 
   return (
     <div className="section">
@@ -83,11 +78,11 @@ export function CarouselDemo({ userImages = [] }) {
             <CarouselItem key={index} className="min-w-full">
               <div className="p-1">
                 <Card className="rounded-lg shadow-lg overflow-hidden">
-                  <CardContent className="flex items-center justify-center p-0">
+                  <CardContent className="flex items-center justify-center p-0 h-[450px]">
                     <img
                       src={image.url}
                       alt={`Slide ${index + 1}`}
-                      className="w-full h-[450px] object-fill transition-transform duration-700 ease-in-out transform hover:scale-105"
+                      className="w-full h-full object-fill transition-transform duration-700 ease-in-out transform hover:scale-105"
                     />
                   </CardContent>
                 </Card>

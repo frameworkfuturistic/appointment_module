@@ -4,12 +4,12 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="bg-rose-100 bg-pattern3 bg-contain py-8">
+    <footer className="bg-rose-50 bg-pattern3 bg-contain py-6 ">
       <div className="container mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Contact Us Section */}
           <div className="space-y-4">
-            <h2 className="text-lg font-medium border-b-2 border-rose-500 pb-2">Contact Us</h2>
+            <h2 className="text-lg font-medium border-b-2 border-rose-300 pb-2">Contact Us</h2>
             <div className="space-y-4 text-sm">
               <div className="flex items-start space-x-2">
                 <MapPin size={28} color="black" strokeWidth={0.5} />
@@ -43,8 +43,8 @@ const Footer = () => {
 
           {/* About Section */}
           <div className="space-y-4 ">
-            <h2 className="text-lg font-medium border-b-2 border-rose-500 pb-2">About</h2>
-            <div className="space-y-2 text-sm flex-row">
+            <h2 className="text-lg font-medium border-b-2 border-rose-300 pb-2">About</h2>
+            <div className="space-y-2 text-sm grid grid-flow-row">
               <Link href="/about" className="hover:underline">About Us
                
               </Link>
@@ -61,9 +61,9 @@ const Footer = () => {
           </div>
 
           {/* Departments Section */}
-          <div className="space-y-4">
-            <h2 className="text-lg font-medium border-b-2 border-rose-500 pb-2">Departments</h2>
-            <div className="space-y-2 text-sm">
+          <div className="space-y-4 hidden md:block ">
+            <h2 className="text-lg font-medium border-b-2 border-rose-300 pb-2">Departments</h2>
+            <div className="space-y-2 grid grid-flow-row text-sm">
               <Link href="/orthopedics "  className="hover:underline">ORTHOPEDICS
                 
               </Link>
@@ -88,9 +88,9 @@ const Footer = () => {
       </div>
 
       {/* Footer Bottom */}
-      <div className="bg-rose-400 text-white py-4">
+      <div className="bg-rose-300  py-2">
         <div className="container mx-auto px-4 text-center text-sm">
-          <p className="mb-2">
+          <p className="">
             &copy; {new Date().getFullYear()} SHREE JAGANNATH HOSPITAL & RESEARCH CENTRE. All Rights Reserved.
           </p>
           

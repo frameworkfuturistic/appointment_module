@@ -76,8 +76,8 @@ html {
 }
 
 .section {
-  border-width: 5px;
-  border-color: aqua;
+  /* border-width: 5px;
+  border-color: aqua; */
   margin-bottom: 3rem ;
   padding: 3rem;
 }

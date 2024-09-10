@@ -32,8 +32,7 @@ import Link from "next/link";
 function CustomNavigationMenu() {
   return (
     <div className="hidden md:flex">
-      <div className="bg-rose-50 grid lg:grid-flow-col max-w-[900px] min-h-[60px]   gap-x-2  hover:z-10 top-0 mx-auto rounded-full items-center  border-b bg-background px-4 ">
-
+      <div className="bg-rose-100 shadow-sm grid lg:grid-flow-col max-w-[1000px] min-h-[60px]   gap-x-2  hover:z-10 top-0 mx-auto rounded-full items-center  border-b bg-background px-4 ">
         <NavigationMenuComponent>
           <NavigationMenuList>
             <NavigationMenuItem>
@@ -45,7 +44,9 @@ function CustomNavigationMenu() {
 
             <NavigationMenuComponent>
               <NavigationMenuItem>
-                <NavigationMenuTrigger>ABOUT</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="bg-transparent">
+                  ABOUT
+                </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <NavigationMenuLink>
                     <ul className="grid gap-1  p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
@@ -77,7 +78,9 @@ function CustomNavigationMenu() {
 
             <NavigationMenuComponent>
               <NavigationMenuItem>
-                <NavigationMenuTrigger>SPECIALITY</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="bg-transparent">
+                  SPECIALITY
+                </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid gap-1  p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
                     <ListItem
@@ -95,7 +98,9 @@ function CustomNavigationMenu() {
 
             <NavigationMenuComponent>
               <NavigationMenuItem>
-                <NavigationMenuTrigger>DEPARTMENTS</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="bg-transparent">
+                  DEPARTMENTS
+                </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid  p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
                     <ListItem href="/opd" title="OPD Schedule"></ListItem>
@@ -109,8 +114,6 @@ function CustomNavigationMenu() {
               </NavigationMenuItem>
             </NavigationMenuComponent>
 
-           
-
             <NavigationMenuItem>
               <NavigationMenuContent></NavigationMenuContent>
               <a className="font-medium text-sm mr-4" href="/docs">
@@ -120,7 +123,9 @@ function CustomNavigationMenu() {
 
             <NavigationMenuComponent>
               <NavigationMenuItem>
-                <NavigationMenuTrigger>CAREER</NavigationMenuTrigger>
+                <NavigationMenuTrigger className="bg-transparent">
+                  CAREER
+                </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <ul className="grid   p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
                     <ListItem
@@ -154,8 +159,8 @@ function CustomNavigationMenu() {
 
         <div>
           <Dialog>
-            <DialogTrigger className="shadow-xl  rounded-full   min-w-8 min-h-8 hover:border-2 hover:border-rose-600   ">
-              <Search className="m-2 size-8 text-rose-700" />
+            <DialogTrigger className="shadow-xl  rounded-full   min-w-8 min-h-8 hover:border-2 hover:border-rose-300   ">
+              <Search className="m-2 size-8 text-slate-600" />
             </DialogTrigger>
             <DialogContent className="min-h-16 ">
               <div className="flex  items-center justify-between">
@@ -174,7 +179,7 @@ function CustomNavigationMenu() {
         <div className="animate-bounce">
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="bg-destructive  ">Appointment</Button>
+              <Button variant="hms" className="  ">Appointment</Button>
             </DialogTrigger>
             <DialogContent className=" bg-slate-100  ">
               <DialogHeader>
