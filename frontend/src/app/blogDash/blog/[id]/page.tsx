@@ -61,7 +61,7 @@ const BlogContent: React.FC = () => {
   }
 
   return (
-    <div className="mt-8 ">
+    <section className=" mx-10 mb-8 mt-8 ">
       {/* Single Blog Page */}
       <TracingBeam className="px-2">
         <div className="w-full antialiased pt-4 relative">
@@ -96,7 +96,7 @@ const BlogContent: React.FC = () => {
               </div>
              
             </div>
-            <div className="p-8 w-96 rounded-md shadow-2xl lg:col-span-1 mt-8 lg:mt-0">
+            <div className="p-8 w-auto rounded-md shadow-2xl lg:col-span-1  mt-8 lg:mt-0">
               <div className="grid grid-flow-row">
                 <ul className="items-center gap-y-8 gap-6">
                   <strong className="py-2">Category:</strong>
@@ -116,7 +116,7 @@ const BlogContent: React.FC = () => {
                     </li>
                   ))}
                 </ul>
-                <div className="shadow-inner  h-64 w-80 my-10 p-4 rounded-lg ">
+                <div className="shadow-inner  h-64 w-auto  my-10 p-4 rounded-lg ">
                   <TextareaForm />
                 </div>
               </div>
@@ -126,9 +126,9 @@ const BlogContent: React.FC = () => {
       </TracingBeam>
 
       {/* Related Blogs */}
-      <div className="w-full max-w-6xl mx-auto   mt-4">
+      <div className="w-full max-w-6xl mx-auto    mt-4">
         <h2 className="text-2xl font-semibold">Related Posts</h2>
-        <Carousel opts={{ align: "start" }} className="flex w-full mt-4 h-full">
+        <Carousel opts={{ align: "start" }} className="flex w-full px-4 mt-4 h-full">
           <CarouselContent className="flex">
             {blogData.map((blog) => (
               <CarouselItem key={blog.id} className="md:basis-1/3 lg:basis-1/3">
@@ -172,7 +172,7 @@ const BlogContent: React.FC = () => {
           <CarouselNext />
         </Carousel>
       </div>
-    </div>
+    </section>
   );
 };
 

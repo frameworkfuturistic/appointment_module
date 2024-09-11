@@ -70,7 +70,7 @@ const Ourservice = () => {
         id="Speciality"
       >
         <div className="">
-          <div className="  flex flex-col items-center text-center py-2   ">
+          <div className="  flex flex-col items-center text-center   ">
             <Title title={"OUR SERVICES"} />
             <Subtitle subtitle={"We Care Our Patients"}/>
             {/* <img src="/activity.png" alt="icon" className="  h-10 w-10 py-2" /> */}

@@ -23,7 +23,7 @@ const Dashboard = () => {
           <CarouselDemo />
         </div>
 
-        {/* Medical Section */}
+        {/* Medical Cards Section */}
         <div className="py-2  sm:px-4 lg:px-4 ">
           <Ourmedical />
         </div>
@@ -52,9 +52,7 @@ const Dashboard = () => {
         {/* Price Board Section */}
         <BlogCards />
 
-        <div>
-        <Ourmedical />
-      </div>
+        
      
       </main>
     </>

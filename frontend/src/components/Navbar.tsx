@@ -179,7 +179,7 @@ function CustomNavigationMenu() {
         <div className="animate-bounce">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="hms" className="  ">Appointment</Button>
+              <Button variant="hms" >Appointment</Button>
             </DialogTrigger>
             <DialogContent className=" bg-slate-100  ">
               <DialogHeader>

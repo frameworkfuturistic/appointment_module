@@ -13,9 +13,9 @@ import Login from "@/app/blogDash/login/page";
 
 const BlogPage = () => {
   return (
-    <>
-      <nav className=" w-full h-full">
-        <Login />
+    <section className=" ">
+      <nav className=" w-full h-full  bg-rose-200" >
+        <Login  />
       </nav>
       <div className="">
         {/* Hero Section with Image and Overlay */}
@@ -40,7 +40,7 @@ const BlogPage = () => {
 
         {/* Blog Grid Section */}
         <div className=" container mx-auto py-12 px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 gap-y-12"> 
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 gap-y-12"> 
             {blogData.map((blog) => (
               <Card
                 key={blog.id}
@@ -83,7 +83,7 @@ const BlogPage = () => {
           </div>
         </div>
       </div>
-    </>
+    </section>
   );
 };
 

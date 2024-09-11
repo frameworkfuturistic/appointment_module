@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { GraduationCap } from "lucide-react";
 import Marquee from "react-fast-marquee";
 import Title from "./Title";
+import Link from "next/link";
 
 export function NoticeSlider() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -93,8 +94,8 @@ export function NoticeSlider() {
               among the most qualified implant providers in Australia.
             </p>
             <div className="flex justify-center">
-              <Button className="bg-destructive text-white rounded-md h-12 w-36">
-                <a href="/about/aboutUs">More About</a>
+              <Button variant="hms" >
+                <Link href="/about/aboutUs">More About</Link>
               </Button>
             </div>
           </div>

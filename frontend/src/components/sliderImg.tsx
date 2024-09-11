@@ -8,8 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
 
 export function CarouselDemo({ userImages = [] }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -17,7 +16,7 @@ export function CarouselDemo({ userImages = [] }) {
   const [isHovered, setIsHovered] = useState(false);
   const [images, setImages] = useState(userImages.length > 0 ? userImages : [
     { url: "/sliderPic/Dialysis.png" },
-    { url: "/sliderPic/eyeopd.png" },
+    // { url: "/sliderPic/eyeopd.png" },
     { url: "/sliderPic/frontpage4.png" },
     { url: "/sliderPic/frontpage7.png" },
     { url: "/sliderPic/newicu.png" },
@@ -82,7 +81,7 @@ export function CarouselDemo({ userImages = [] }) {
                     <img
                       src={image.url}
                       alt={`Slide ${index + 1}`}
-                      className="w-full h-full object-fill transition-transform duration-700 ease-in-out transform hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-700 ease-in-out transform hover:scale-105"
                     />
                   </CardContent>
                 </Card>

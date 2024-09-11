@@ -50,11 +50,11 @@ const otherTypes = [
 ];
 const page = () => {
   return (
-    <>
-      <div className="bg-pattern5-bg  grid grid-cols-3 gap-6 justify-center m-10 p-10 ">
+    <section>
+      <div className="bg-pattern5-bg grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-center m-6 md:m-10 p-6 md:p-10">
         {/* CARD-1 */}
-        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-72 min-h-96  hover:shadow-2xl hover:shadow-rose-200 ">
-          <div className=" place-items-center grid grid-flow-row   ">
+        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-full md:max-w-xs min-h-96 hover:shadow-2xl hover:shadow-rose-200 transition-shadow duration-300 ease-in-out">
+          <div className="place-items-center grid grid-flow-row">
             <h1 className="text-lg font-medium border-b-2 place-self-center">
               24x7 Services
             </h1>
@@ -74,9 +74,8 @@ const page = () => {
         </Card>
 
         {/* CARD-2 */}
-
-        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-72 min-h-96  hover:shadow-2xl hover:shadow-rose-200">
-          <div className=" place-items-start grid grid-flow-row   ">
+        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-full md:max-w-xs min-h-96 hover:shadow-2xl hover:shadow-rose-200 transition-shadow duration-300 ease-in-out">
+          <div className="place-items-start grid grid-flow-row">
             <h1 className="text-lg font-medium border-b-2 place-self-center">
               Rooms & Bed Services
             </h1>
@@ -96,8 +95,8 @@ const page = () => {
         </Card>
 
         {/* CARD-3 */}
-        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-72 min-h-96   hover:shadow-2xl hover:shadow-rose-200">
-          <div className=" place-items-start grid grid-flow-row   ">
+        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-full md:max-w-xs min-h-96 hover:shadow-2xl hover:shadow-rose-200 transition-shadow duration-300 ease-in-out">
+          <div className="place-items-start grid grid-flow-row">
             <h1 className="text-lg font-medium border-b-2 place-self-center">
               Diagnostic Services
             </h1>
@@ -115,9 +114,10 @@ const page = () => {
             </ul>
           </div>
         </Card>
+
         {/* CARD-4 */}
-        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-72 min-h-96  hover:shadow-2xl hover:shadow-rose-200">
-          <div className=" place-items-start grid grid-flow-row   ">
+        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-full md:max-w-xs min-h-96 hover:shadow-2xl hover:shadow-rose-200 transition-shadow duration-300 ease-in-out">
+          <div className="place-items-start grid grid-flow-row">
             <h1 className="text-lg font-medium border-b-2 place-self-center">
               Pathology Services
             </h1>
@@ -135,9 +135,10 @@ const page = () => {
             </ul>
           </div>
         </Card>
+
         {/* CARD-5 */}
-        <Card className=" bg-rose-100 grid grid-flow-row text-wrap max-w-72 min-h-96  hover:shadow-2xl hover:shadow-rose-200">
-          <div className=" place-items-start grid grid-flow-row   ">
+        <Card className="bg-rose-100 grid grid-flow-row text-wrap max-w-full md:max-w-xs min-h-96 hover:shadow-2xl hover:shadow-rose-200 transition-shadow duration-300 ease-in-out">
+          <div className="place-items-start grid grid-flow-row">
             <h1 className="text-lg font-medium border-b-2 place-self-center">
               Other Services
             </h1>
@@ -156,12 +157,15 @@ const page = () => {
           </div>
         </Card>
       </div>
-      <div className="bg-rose-100 rounded-lg bg-pattern5-bg  bg-contain grid grid-flow-row max-w-[1000px] mx-64 my-10 p-4 space-y-4">
-        <h1 className=" bg-rose-300 rounded-lg p-4 text-xl font-semibold text-black ">Emergency Services:-</h1>
-        <ul className="list-disc pl-8 space-y-4">
+
+      {/* Emergency Services Section */}
+      <div className="bg-rose-100 rounded-lg bg-pattern5-bg bg-contain max-w-[95%] lg:max-w-[1000px] mx-auto my-10 p-6 space-y-6">
+        <h1 className="bg-rose-300 rounded-lg p-4 text-xl font-semibold text-black">
+          Emergency Services:
+        </h1>
+        <ul className="list-disc pl-8 space-y-4 text-sm md:text-base">
           <li>
-            {" "}
-             The policy at SJHRC is to provide initial medical care to all
+            The policy at SJHRC is to provide initial medical care to all
             emergency patients & also to guide transfer of patients who do not
             match with the scope of services to a suitable facility.The
             emergency protocol and procedure for emergency care is documented in
@@ -176,33 +180,33 @@ const page = () => {
             subsequently.
           </li>
           <li>
-            {" "}
-             Patient care is provided in consonance with documented procedure
+            Patient care is provided in consonance with documented procedure
             described in Doc. No. SJHRC/COP/QSP/01. All the staffs working in
             emergency area are oriented to the policies & procedures through
             periodic internal training and EMOs and Nursing Staff in the
             emergency are trained in BLS as well as ACLS.
           </li>
           <li>
-             Admission of patients is documented in patient’s records as well
-            as in and Discharge Summary (SJHRC/RG/16).In case of transfer to
+            Admission of patients is documented in patient’s records as well as
+            in and Discharge Summary (SJHRC/RG/16).In case of transfer to
             another organization the evidence is documented in patient’s medical
             record.For emergency cases initial medical care is given & then the
             patient is admitted or transferred to another facility with a
-            treatment Sheet (SJHRC /FM/03) or sent home as per patient condition
+            treatment Sheet (SJHRC /FM/03) or sent home as per patient
+            condition.
           </li>
           <li>
-             The records are maintained in the Emergency Master Register Doc.
-            No/ PATIENT TRANSFER RECORD (SJHRC/FM/23)
+            The records are maintained in the Emergency Master Register Doc. No/
+            PATIENT TRANSFER RECORD (SJHRC/FM/23)
           </li>
           <li>
-             SJHRC is having two in-house ambulances which are equipped with
+            SJHRC is having two in-house ambulances which are equipped with
             Basic Life Support (BLS) facilities. The outsourced ambulance is
             equipped with Advanced Cardiac Life Support (ACLS) facilities and
-            MOU
+            MOU{" "}
           </li>
           <li>
-             Personnel, allotted in the ambulance are trained in BLS and are
+            Personnel, allotted in the ambulance are trained in BLS and are
             competent to handle medical emergency situations. A critical care
             ambulance is arranged in case of patient is in a critical condition
             or the patient is on ventilator. A doctor & a nurse/GDA staff
@@ -211,7 +215,7 @@ const page = () => {
           </li>
         </ul>
       </div>
-    </>
+    </section>
   );
 };
 

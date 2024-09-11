@@ -56,7 +56,7 @@ export function TextareaForm() {
               <FormControl>
                 <Textarea
                   placeholder="Tell us..if any query related to blogs"
-                  className="resize-none"
+                  className="resize-none w-44"
                   {...field}
                 />
               </FormControl>

@@ -79,7 +79,7 @@ export function PatientReview() {
         </div>
       </div> */}
 
-        <div className="bg-slate-50 bg-pattern4-bg h-[200px] w-[80%] sm:w-[1000px] text-center  place-self-center grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center "> 
+        <div className="bg-slate-50 bg-pattern4-bg rounded-md  h-[150px] w-[80%] sm:w-[1000px] text-center  place-self-center grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center "> 
           <div className="grid grid-flow-row place-items-center py-4">
             <CalendarDays
               color="#e22222"
@@ -120,7 +120,7 @@ export function PatientReview() {
 
         {/*  Patient's Review */}
         <div className="bg-dottedmap bg-cover bg-slate-200">
-          <div className="flex flex-col items-center text-center py-4 gap-2">
+          <div className="flex flex-col items-center text-center gap-2">
             <Title title={"HAPPY PATIENTS"} />
             <Subtitle subtitle={" What says our Patients"}/>
             <img

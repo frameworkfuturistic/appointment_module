@@ -8,7 +8,7 @@ import React from "react";
 
 const ContactPage = () => {
   return (
-    <>
+    <section className="section ">
       {/* Hero Section with Image and Overlay */}
       <div className="relative">
         <img
@@ -24,7 +24,7 @@ const ContactPage = () => {
       </div>
 
       {/* Google Maps Iframe */}
-      <div className="container mx-auto px-4 py-2 h-96">
+      <div className=" container mx-auto px-4 py-2 h-96">
         <h1 className="text-2xl font-semibold text-center m-4 text-black">
           Find Us
         </h1>
@@ -40,7 +40,7 @@ const ContactPage = () => {
       </div>
 
       {/* Contact Information and Form */}
-      <div className="bg-slate-50 py-8 px-4">
+      <div className=" py-8 px-4">
         {/* Contact Info Section */}
         <div className="text-center  py-4 ">
           <h1 className="text-xl font-semibold text-black mt-8">Contact Now</h1>
@@ -55,7 +55,7 @@ const ContactPage = () => {
         </div>
 
         {/* Contact Info Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 ">
           {/* Phone Card */}
           <Card className="flex items-center p-4 bg-white rounded shadow hover:shadow-lg  transition">
             <Smartphone
@@ -94,7 +94,7 @@ const ContactPage = () => {
           </Card>
 
           {/* Email Card */}
-          <Card className="flex items-center p-4 bg-white rounded  hover:shadow-rose-500 transition">
+          <Card className="flex items-center p-4 bg-white rounded  transition">
             <Mail
               size={48}
               color="#0284c7"
@@ -109,7 +109,7 @@ const ContactPage = () => {
         </div>
 
         {/* Contact Form */}
-        <form className="bg-pattern5-bg shadow-lg justify-center max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 p-4 my-4 hover:shadow-rose-500 ">
+        <form className="bg-pattern5-bg  justify-center max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 p-4 my-4 shadow-xl hover:shadow-slate-200 ">
           <div className="grid grid-flow-row gap-4">
             <Input
               type="name"
@@ -130,7 +130,7 @@ const ContactPage = () => {
               placeholder="Type your message here."
               className="bg-white text-lg shadow-sm rounded-sm w-full h-32"
             />
-            <Button type="submit" className="place-self-center">
+            <Button variant="hms" type="submit" className="place-self-center">
               Submit Query
             </Button>
           </div>
@@ -155,7 +155,7 @@ const ContactPage = () => {
           </div>
         </form>
       </div>
-    </>
+    </section>
   );
 };
 

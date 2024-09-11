@@ -9,7 +9,7 @@ const Ourmedical = () => {
     <section className="section">
       {/* FACILITY INFO CARDS */}
       <div className="grid  justify-center" >
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 space-y-2 space-x-6 items-center   w-full h-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 space-y-2 space-x-6 items-baseline   w-full h-full">
         
         <Card className="transition ease-in-out delay-100 hover:-translate-y-1 hover:scale-110 duration-300 group block max-w-xs mx-auto rounded-lg p-6 bg-white ring-1 ring-slate-900/5 shadow-lg space-y-3 hover:bg-rose-100 hover:ring-rose-100 hover:shadow-2xl hover:shadow-rose-200">
           <div className="flex items-center space-x-3 ">

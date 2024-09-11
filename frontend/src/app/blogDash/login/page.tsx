@@ -20,7 +20,7 @@ const page = () => {
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <CircleUserRound color="#0f57a3" />
+          <CircleUserRound className="size-10" color="black" />
         </DialogTrigger>
         <DialogContent className="  justify-center items-center sm:max-w-[425px] ">
           <div>

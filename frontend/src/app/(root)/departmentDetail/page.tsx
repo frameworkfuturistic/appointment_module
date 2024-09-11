@@ -5,10 +5,11 @@ import { Check, HousePlus } from "lucide-react";
 import React from "react";
 
 import departmentData from "@/json/departmentData";
+import Link from "next/link";
 
 const page = () => {
   return (
-    // <div className="grid w-full md:max-w-full ">
+    <section className="section">
     <div className="relative justify-self-center">
       <div className="relative">
         <img
@@ -18,7 +19,7 @@ const page = () => {
         />
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
           <h1 className="text-4xl sm:text-4xl font-semibold text-white">
-            Department Details
+          Department Details
           </h1>
         </div>
       </div>
@@ -28,9 +29,9 @@ const page = () => {
           {departmentData.map((item) => (
             <Card
               key={item?.id}
-              className="h-full min-w-full md:min-w-80 p-4 grid justify-center hover:shadow-lg hover:shadow-rose-100"
+              className="h-full min-w-full md:min-w-80 p-4 grid justify-center bg-rose-50 hover:shadow-lg hover:shadow-rose-100"
             >
-              <div className="grid bg-slate-200  h-14 w-24  place-self-center justify-center">
+              <div className="grid   h-12 w-20  place-self-center justify-center">
                 <HousePlus color="#e22222" size="60" strokeWidth={1.25} />
               </div>
               <div className="text-center py-2 px-4 grid grid-flow-row space-y-2 ">
@@ -38,18 +39,18 @@ const page = () => {
                 <p className="text-sm font-light text-slate-500 border-b-2 border-dotted ">
                   {item?.description}
                 </p>
-                <a href={item?.indepartment?.redirect}>
-                  <Button className=" bg-destructive  shadow-md  place-self-center rounded-md">
+                <Link href={item?.indepartment?.redirect} className="grid">
+                  <Button variant="hms" className="  shadow-md  place-self-center  hidden md:block">
                     Get In
                   </Button>
-                </a>
+                </Link>
               </div>
             </Card>
           ))}
         </div>
       </div>
     </div>
-    // </div>
+    </section>
   );
 };
 
