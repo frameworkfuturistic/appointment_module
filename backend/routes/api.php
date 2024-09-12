@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\API\V1\AppointmentController;
-use App\Http\API\V1\PaymentController;
+use App\Http\Controllers\API\V1\AppointmentController;
+use App\Http\Controllers\API\V1\PaymentController;
 
 
 
@@ -48,7 +48,10 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\API\V1'],function () {
         ->name('appointments.patientAppointmentById');
     
     // 1.1.7 WEBHOOK : Callback for Razorpay payment   
-    Route::post('v1/payment/callback', [PaymentController::class, 'handlePaymentCallback']);
+    Route::post('payment/callback', [PaymentController::class, 'handlePaymentCallback']);
 });
+
+// Version 1 APIs for doctors
+
 
 

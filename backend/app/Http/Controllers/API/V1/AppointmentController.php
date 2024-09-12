@@ -7,7 +7,7 @@
  * Status: Open
  */
 
-namespace App\Http\API\V1;
+namespace App\Http\Controllers\API\V1;
 
 use App\Http\Requests\BookAppointmentRequest;
 use App\Http\Requests\AppointmentListRequest;
@@ -52,11 +52,14 @@ class AppointmentController extends Controller
         if (!empty($validationErrors)) {
             //dd('requesterrorresponse', $validationErrors);
             return responseMsg(
-                'validation_error',
+                'false',
                 $validationErrors,
                 null,
                 $this->apiCodes['API_1.1.1'],
                 $this->apiVersion['v1'],
+                null,
+                'POST',
+                null
             );
         }
 
@@ -72,11 +75,14 @@ class AppointmentController extends Controller
             // Handle repository errors
             if ($result['status'] === 'error') {
                 return responseMsg(
-                    'error',
+                    'false',
                     $result['message'],
                     null,
-                    config('api_code.v1.API_1'),
-                    config('api_code.v1.version')
+                    $this->apiCodes['API_1.1.1'],
+                    $this->apiVersion['v1'],
+                    null,
+                    'POST',
+                    null
                 );
             }
 
@@ -84,21 +90,27 @@ class AppointmentController extends Controller
             $objects = array_to_object($result);
 
             return responseMsg(
-                'success',
-                config('http_response_messages.success.appointment_booked'),
+                'true',
+                $this->httpMessages['success']['default'],
                 $objects,
-                config('api_code.v1.API_1'),
-                config('api_code.v1.version')
+                $this->apiCodes['API_1.1.1'],
+                $this->apiVersion['v1'],
+                null,
+                'POST',
+                null
             );
 
         } catch (\Exception $e) {
             // Handle other exceptions
             return responseMsg(
-                'error',
-                'An unexpected error occurred',
+                'false',
+                $this->httpMessages['error']['default'],
                 null,
-                config('api_code.v1.API_1'),
-                config('api_code.v1.version')
+                $this->apiCodes['API_1.1.1'],
+                $this->apiVersion['v1'],
+                null,
+                'POST',
+                null
             );
         }
     }
@@ -109,9 +121,9 @@ class AppointmentController extends Controller
     {
         $appointments = $this->appointmentService->getAllAppointments();
         if (count($appointments) === 0) {
-            return responseMsg('not_found', $this->httpMessages['not_found']['no_appointments_found'], null, $this->apiCodes['API_2'], $this->apiVersion);
+            return responseMsg('false', $this->httpMessages['not_found']['no_appointments_found'], null, $this->apiCodes['API_1.1.2'], $this->apiVersion['v1'],null,'GET',null);
         }
-        return responseMsg('success', $this->httpMessages['success']['appointments_retrieved'], new AppointmentCollection($appointments), $this->apiCodes['API_2'], $this->apiVersion);
+        return responseMsg('true', $this->httpMessages['success']['appointments_retrieved'], new AppointmentCollection($appointments), $this->apiCodes['API_1.1.2'], $this->apiVersion['v1'],null,'GET',null);
     }
 
     // Method to show a specific appointment by ID
@@ -121,10 +133,10 @@ class AppointmentController extends Controller
         $appointment = $this->appointmentService->getAppointmentById($appointmentId);
 
         if ($appointment === null) {
-            return responseMsg('not_found', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_3'], $this->apiVersion);
+            return responseMsg('false', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_1.1.3'], $this->apiVersion['v1'],null,'GET',null);
         }
 
-        return responseMsg('success', $this->httpMessages['success']['appointment_retrieved'], new AppointmentResource($appointment), $this->apiCodes['API_3'], $this->apiVersion);
+        return responseMsg('true', $this->httpMessages['success']['appointment_retrieved'], new AppointmentResource($appointment), $this->apiCodes['API_1.1.3'], $this->apiVersion['v1'],null,'GET',null);
     }
 
     // Method to get appointment history by patient ID
@@ -134,10 +146,10 @@ class AppointmentController extends Controller
         $appointments = $this->appointmentService->getHistoryByPatientId($patientId);
 
         if (count($appointments) === 0) {
-            return responseMsg('not_found', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_4'], $this->apiVersion);
+            return responseMsg('false', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_1.1.4'], $this->apiVersion['v1'],null,'GET',null);
         }
 
-        return responseMsg('success', $this->httpMessages['success']['appointments_retrieved'], new AppointmentCollection($appointments), $this->apiCodes['API_4'], $this->apiVersion);
+        return responseMsg('true', $this->httpMessages['success']['appointments_retrieved'], new AppointmentCollection($appointments), $this->apiCodes['API_1.1.4'], $this->apiVersion['v1'],null,'GET',null);
     }
 
     // Method to get appointments by doctor ID
@@ -145,7 +157,12 @@ class AppointmentController extends Controller
     {
         $doctorId = $request->input('doctor_id');
         $appointments = $this->appointmentService->getAppointmentsByDoctorId($doctorId);
-        return responseMsg('success', $this->httpMessages['success']['appointments_retrieved'], new AppointmentCollection($appointments), $this->apiCodes['API_5'], $this->apiVersion);
+
+        if (count($appointments) === 0) {
+            return responseMsg('false', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_1.1.5'], $this->apiVersion['v1'],null,'GET',null);
+        }
+
+        return responseMsg('true', $this->httpMessages['success']['appointments_retrieved'], new AppointmentCollection($appointments), $this->apiCodes['API_1.1.5'], $this->apiVersion['v1'],null,'GET',null);
     }
 
     // Method to get a specific patient's appointment by patient ID and appointment ID
@@ -156,9 +173,9 @@ class AppointmentController extends Controller
         $appointment = $this->appointmentService->getPatientAppointmentById($patientId, $appointmentId);
 
         if (!$appointment) {
-            return responseMsg('not_found', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_6'], $this->apiVersion);
+            return responseMsg('false', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_1.1.6'], $this->apiVersion['v1'],null,'GET',null);
         }
 
-        return responseMsg('success', $this->httpMessages['success']['appointment_retrieved'], new AppointmentResource($appointment), $this->apiCodes['API_6'], $this->apiVersion);
+        return responseMsg('true', $this->httpMessages['success']['appointment_retrieved'], new AppointmentResource($appointment), $this->apiCodes['API_1.1.6'], $this->apiVersion['v1'],null,'GET',null);
     }
 }

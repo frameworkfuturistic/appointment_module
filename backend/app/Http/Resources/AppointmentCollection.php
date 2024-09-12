@@ -16,7 +16,7 @@ class AppointmentCollection extends ResourceCollection
     public function toArray($request)
     {
         return [
-            'data' => $this->collection->map(function ($appointment) {
+            $this->collection->map(function ($appointment) {
                 return new AppointmentResource($appointment);
             }),
         ];
