@@ -13,14 +13,7 @@ import Title from "./Title";
 import Subtitle from "./Subtitle";
 import { Button } from "./ui/button";
 
-// const Heads = [
-// {
-//   id:1,
-//   img:"",
-//   name:"",
-//   designation:""
-// }
-// ];
+
 
 const OurHeads = () => {
   return (

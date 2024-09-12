@@ -26,13 +26,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import Appointmentform from "./Appointmentform";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import Link from "next/link";
+import Appointment from "@/app/(root)/Appointment/page";
 
 function CustomNavigationMenu() {
   return (
     <div className="hidden md:flex">
-      <div className="bg-rose-100 shadow-sm grid lg:grid-flow-col max-w-[1000px] min-h-[60px]   gap-x-2  hover:z-10 top-0 mx-auto rounded-full items-center  border-b bg-background px-4 ">
+      <div className="bg-rose-100 shadow-lg grid lg:grid-flow-col max-w-[1000px] min-h-[60px]   gap-x-2  hover:z-10 top-0 mx-auto rounded-full items-center  border-b bg-background px-4 ">
         <NavigationMenuComponent>
           <NavigationMenuList>
             <NavigationMenuItem>
@@ -44,7 +43,7 @@ function CustomNavigationMenu() {
 
             <NavigationMenuComponent>
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">
+                <NavigationMenuTrigger className="bg-transparent ">
                   ABOUT
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
@@ -116,7 +115,7 @@ function CustomNavigationMenu() {
 
             <NavigationMenuItem>
               <NavigationMenuContent></NavigationMenuContent>
-              <a className="font-medium text-sm mr-4" href="/docs">
+              <a className="font-medium text-sm mr-4" href="/">
                 COURSES{" "}
               </a>
             </NavigationMenuItem>
@@ -179,14 +178,19 @@ function CustomNavigationMenu() {
         <div className="animate-bounce">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="hms" >Appointment</Button>
+              <Button
+                variant="hms"
+                className="transition ease-in-out delay-100 hover:translate-4 hover:scale-110 duration-400 group block"
+              >
+                Appointment
+              </Button>
             </DialogTrigger>
             <DialogContent className=" bg-slate-100  ">
               <DialogHeader>
                 <DialogTitle></DialogTitle>
                 <DialogDescription></DialogDescription>
               </DialogHeader>
-
+              {/* <Appointment/> */}
               <Appointmentform />
             </DialogContent>
           </Dialog>

@@ -11,7 +11,7 @@ const Header = () => {
   return (
     <section className="bg-rose-50 bg-pattern4 bg-contain">
       {/* Top Bar */}
-      <div className="bg-rose-300  hidden md:flex ">
+      <div className="bg-rose-300  hidden md:flex">
         <nav className="container mx-auto flex flex-col md:flex-row justify-between items-center px-4">
           {/* Contact Info */}
           <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4  text-slate-800" >
@@ -46,7 +46,7 @@ const Header = () => {
       <NavMobile/>
 
       {/* Logo & Info */}
-      <div className="container mx-auto flex flex-col md:flex-row justify-center items-center px-4 py-4 text-center md:text-left">
+      <div className="container mx-auto flex flex-col md:flex-row justify-center items-center px-4 py-2 text-center md:text-left">
         <img src="/hospital/hospitallogo.png" alt="Hospital Logo" className="h-28 w-auto md:h-16 lg:h-28" />
         <div className="flex flex-col items-center md:items-center space-y-2 md:space-y-0">
           <h1 className="text-2xl md:text-3xl font-serif font-semibold">
@@ -58,11 +58,11 @@ const Header = () => {
           <p className="text-xs md:text-sm text-slate-600">
             ISO 9001 : 2015 Certified Hospital
           </p>
-          <p className="text-red-700 text-sm md:text-base animate-pulse">
+          <p className="text-red-500 text-sm md:text-base animate-pulse">
             Ambulance No: 0651-2360045
           </p>
         </div>
-        <img src="/hospital/nabhlogo.png" alt="NABH Logo" className="h-24 w-auto md:h-16 lg:h-24" />
+        <img src="/hospital/nabhlogo.png" alt="NABH Logo" className="h-24 sm:h-8 w-auto sm: md:h-16 lg:h-24" />
       </div>
 
       {/* Navbar */}
