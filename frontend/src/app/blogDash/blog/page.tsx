@@ -4,18 +4,31 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { Toggle } from "@/components/ui/toggle";
 import Link from "next/link";
-import { Heart, MessageCircle } from "lucide-react";
+import { CircleUserRound, Heart, MessageCircle } from "lucide-react";
 import blogData from "@/json/BlogData";
 
 import Login from "@/app/blogDash/login/page";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import SignUp from "@/components/SignUp";
 
 // Sample JSON Data
 
 const BlogPage = () => {
   return (
     <section className=" ">
-      <nav className=" w-full h-full  bg-rose-200" >
-        <Login  />
+      {/* <Login Nav Icon  /> */}
+      <nav className=" w-full h-full  bg-rose-200">
+        
+        <Dialog>
+          <DialogTrigger asChild>
+            <CircleUserRound className="size-10" color="black" />
+          </DialogTrigger>
+          <DialogContent className="  justify-center items-center sm:max-w-[425px] ">
+            <div>
+              <SignUp />
+            </div>
+          </DialogContent>
+        </Dialog>
       </nav>
       <div className="">
         {/* Hero Section with Image and Overlay */}
@@ -40,7 +53,7 @@ const BlogPage = () => {
 
         {/* Blog Grid Section */}
         <div className=" container mx-auto py-12 px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 gap-y-12"> 
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 gap-y-12">
             {blogData.map((blog) => (
               <Card
                 key={blog.id}

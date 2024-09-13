@@ -9,6 +9,7 @@ import {
 import { Dialog } from "@radix-ui/react-dialog";
 import React from "react";
 import indepartmentData from "@/json/indepartmentData";
+import Title from "@/components/Title";
 const page = () => {
   return (
     <div className="grid ">
@@ -17,9 +18,7 @@ const page = () => {
       </div>
       <div className="grid grid-cols-2 p-2 my-6 ">
         <div className=" bg-pattern5-bg min-w-[800px] space-y-2  mx-8 p-4  text-wrap">
-          <h1 className="text-4xl text-sky-700 font-serif text-wrap">
-            Radiology & Imaging
-          </h1>
+          <Title title={"Radiology & Imaging"}/>
 
           <h2 className="font-medium text-lg">Radiology</h2>
           <p>
@@ -79,7 +78,7 @@ const page = () => {
           {indepartmentData.radiology.map((doctor) => (
             <Card
               key={doctor.id}
-              className="  h-96  max-w-60 grid grid-flow-row justify-center  hover:border-b-4  hover:border-t-sky-600 hover:border-b-sky-600 border-4  "
+              className="  h-96  max-w-60 grid grid-flow-row justify-center    border-2  "
             >
               <div className="min-h-24 min-w-full">
                 <img
@@ -96,7 +95,7 @@ const page = () => {
                   Designation:{doctor.designation}
                 </p>
                 <Dialog>
-                  <DialogTrigger className="bg-sky-700 rounded-sm place-self-center text-white min-w-24 ">
+                  <DialogTrigger className="bg-rose-300 shadow-xl text-slate-800  px-4 hover:bg-rose-200 rounded-md font-medium">
                     Details
                   </DialogTrigger>
                   <DialogContent className="min-h-[500px] min-w-[1000px] rounded-lg ">

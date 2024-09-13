@@ -190,8 +190,8 @@ function CustomNavigationMenu() {
                 <DialogTitle></DialogTitle>
                 <DialogDescription></DialogDescription>
               </DialogHeader>
-              {/* <Appointment/> */}
-              <Appointmentform />
+              <Appointment/>
+              {/* <Appointmentform /> */}
             </DialogContent>
           </Dialog>
         </div>

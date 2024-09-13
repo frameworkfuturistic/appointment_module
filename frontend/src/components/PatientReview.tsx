@@ -79,8 +79,8 @@ export function PatientReview() {
         </div>
       </div> */}
 
-        <div className="bg-slate-50 bg-pattern4-bg rounded-md  h-[150px] w-[80%] sm:w-[1000px] text-center  place-self-center grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center "> 
-          <div className="grid grid-flow-row place-items-center py-4">
+        <div className="bg-slate-50 bg-pattern4-bg rounded-md   h-[160px] w-[80%] sm:w-[1000px] text-center  place-self-center grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center ">
+          <div className="grid grid-flow-row place-items-center py-4 bottom-2">
             <CalendarDays
               color="#e22222"
               strokeWidth={1.25}
@@ -122,7 +122,7 @@ export function PatientReview() {
         <div className="bg-dottedmap bg-cover bg-slate-200">
           <div className="flex flex-col items-center text-center gap-2">
             <Title title={"HAPPY PATIENTS"} />
-            <Subtitle subtitle={" What says our Patients"}/>
+            <Subtitle subtitle={" What says our Patients"} />
             <img
               src="/activity.png"
               alt="icon"
