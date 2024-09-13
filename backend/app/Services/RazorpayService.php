@@ -29,21 +29,14 @@ class RazorpayService
     }
 
     // Verify the payment signature from Razorpay
-    public function verifyPayment($paymentId, $orderId, $signature)
+    public function verifyWebhookSignature($webhookBody, $webhookSignature, $webhookSecret)
     {
-        // Prepare the attributes for signature verification
-        $attributes = [
-            'razorpay_order_id' => $orderId,
-            'razorpay_payment_id' => $paymentId,
-            'razorpay_signature' => $signature,
-        ];
-
         try {
-            // Attempt to verify the payment signature
-            $this->api->utility->verifyPaymentSignature($attributes);
+            // Verify the webhook signature using Razorpay SDK
+            $this->api->utility->verifyWebhookSignature($webhookBody, $webhookSignature, $webhookSecret);
             return true;
         } catch (\Exception $e) {
-            // Return false if verification fails
+            // Return false if the signature verification fails
             return false;
         }
     }

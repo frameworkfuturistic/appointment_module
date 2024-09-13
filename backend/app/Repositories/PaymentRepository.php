@@ -17,7 +17,7 @@ class PaymentRepository implements PaymentRepositoryInterface
     // Define the Payment model instance
     protected $model;
 
-    // Constructor to initialize the Payment model
+    // Constructor to initialize the Payment model through dependency injection
     public function __construct(Payment $payment)
     {
         $this->model = $payment;
@@ -27,12 +27,6 @@ class PaymentRepository implements PaymentRepositoryInterface
     public function create(array $data)
     {
         return $this->model->create($data);
-    }
-
-    // Find a payment by its ID
-    public function find($id)
-    {
-        return $this->model->find($id);
     }
 
     // Find payments by appointment ID
@@ -47,9 +41,9 @@ class PaymentRepository implements PaymentRepositoryInterface
         return $this->model->all();
     }
 
-    // Get a payment by its ID
+    // Get a payment by its ID 
     public function getById($id)
     {
-        return $this->model->find($id);
+        $this->model->findOrFail($id); 
     }
 }
