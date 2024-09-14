@@ -24,7 +24,6 @@ import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
 
-
 // Department, Doctor, and Slot Data
 const departmentsData = {
   departments: [
@@ -133,21 +132,6 @@ const DepartmentDoctorSlotSelection = ({
 
   return (
     <section className="">
-      <div className="grid grid-flow-col md:grid-flow-col justify-center gap-x-10 items-center shadow-md shadow-slate-400 p-2 md:p-4">
-        <img
-          src="hospital/hospitallogo.png"
-          alt="Hospital Logo"
-          className="w-32 h-32 md:mb-0"
-        />
-        <div className="grid text-center sm:text-left md:text-left">
-          <h1 className="font-bold text-xl md:text-2xl">
-            Shree Jagannath Hospital & Research Center
-          </h1>
-          <p>sjhrc.ranchi@gmail.com</p>
-          <a href="https://sjhrc.in">https://sjhrc.in</a>
-          <p>+91 8987999200</p>
-        </div>
-      </div>
       <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg mt-2 p-6">
         <h1 className="text-2xl font-medium text-center mb-6">
           Select Department, Doctor, and Slot
@@ -226,7 +210,10 @@ interface PatientDetailsFormProps {
   bookingId: string | number;
 }
 
-const PatientDetailsForm: React.FC<PatientDetailsFormProps> = ({ handleBack, bookingId }) => {
+const PatientDetailsForm: React.FC<PatientDetailsFormProps> = ({
+  handleBack,
+  bookingId,
+}) => {
   const [name, setName] = useState("");
   const [gender, setGender] = useState("");
   const [dob, setDob] = useState<Date | undefined>(undefined);
@@ -241,9 +228,9 @@ const PatientDetailsForm: React.FC<PatientDetailsFormProps> = ({ handleBack, boo
     e.preventDefault();
     // Submit form logic
     const patientData = {
-      bookingId,  // Including booking ID in the data
+      bookingId, // Including booking ID in the data
       name,
-      dob: dob ? dob.toISOString() : "",  // Example format for the DOB
+      dob: dob ? dob.toISOString() : "", // Example format for the DOB
       phone,
       email,
       state,
@@ -253,37 +240,37 @@ const PatientDetailsForm: React.FC<PatientDetailsFormProps> = ({ handleBack, boo
     };
     console.log(patientData);
   };
-// const PatientDetailsForm = ({ handleBack, bookingId }) => {
-//   const [name, setName] = useState("");
-//   const [gender, setGender] = useState("");
-//   const [dob, setDob] = useState<Date | undefined>(undefined);
-//   const [phone, setPhone] = useState("");
-//   const [email, setEmail] = useState("");
-//   const [state, setState] = useState("");
-//   const [city, setCity] = useState("");
-//   const [address, setAddress] = useState("");
-//   const [pincode, setPinCode] = useState("");
+  // const PatientDetailsForm = ({ handleBack, bookingId }) => {
+  //   const [name, setName] = useState("");
+  //   const [gender, setGender] = useState("");
+  //   const [dob, setDob] = useState<Date | undefined>(undefined);
+  //   const [phone, setPhone] = useState("");
+  //   const [email, setEmail] = useState("");
+  //   const [state, setState] = useState("");
+  //   const [city, setCity] = useState("");
+  //   const [address, setAddress] = useState("");
+  //   const [pincode, setPinCode] = useState("");
 
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     // Submit form logic
-//     const patientData = {
-//       bookingId,
-//       name,
-//       dob: dob ? format(dob, "yyyy-MM-dd") : "",
-//       phone,
-//       email,
-//       state,
-//       city,
-//       address,
-//       pincode,
-//     };
-//     console.log(patientData);
-//   };
+  //   const handleSubmit = (e) => {
+  //     e.preventDefault();
+  //     // Submit form logic
+  //     const patientData = {
+  //       bookingId,
+  //       name,
+  //       dob: dob ? format(dob, "yyyy-MM-dd") : "",
+  //       phone,
+  //       email,
+  //       state,
+  //       city,
+  //       address,
+  //       pincode,
+  //     };
+  //     console.log(patientData);
+  //   };
 
   return (
     <section>
-      <div className="grid grid-flow-col md:grid-flow-col justify-center gap-x-10 items-center shadow-md shadow-slate-400 p-2 md:p-4">
+      {/* <div className="grid grid-flow-col md:grid-flow-col justify-center gap-x-10 items-center shadow-md shadow-slate-400 p-2 md:p-4">
         <img
           src="hospital/hospitallogo.png"
           alt="Hospital Logo"
@@ -297,112 +284,110 @@ const PatientDetailsForm: React.FC<PatientDetailsFormProps> = ({ handleBack, boo
           <a href="https://sjhrc.in">https://sjhrc.in</a>
           <p>+91 8987999200</p>
         </div>
-      </div>
+      </div> */}
 
       <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg mt-2 p-6 ">
-       
         <ScrollArea>
-        <form onSubmit={handleSubmit} className="h-[400px] p-8">
-        <h1 className="text-2xl font-medium text-center mb-6">
-          Patient Details (Booking ID: {bookingId})
-        </h1>
-          <div className="grid grid-cols-1 gap-6">
-            <Input
-              placeholder="Enter Your Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="bg-white rounded-sm h-14 text-lg px-3 border-2"
-            />
+          <form onSubmit={handleSubmit} className="h-[400px] p-4">
+            <h1 className="text-2xl font-medium text-center mb-6">
+              Patient Details (Booking ID: {bookingId})
+            </h1>
+            <div className="grid grid-cols-1 gap-6">
+              <Input
+                placeholder="Enter Your Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="bg-white rounded-sm h-14 text-lg px-3 border-2"
+              />
 
-            <Select onValueChange={(value) => setGender(value)}>
-              <SelectTrigger className="h-14 text-lg">
-                <SelectValue placeholder="Select Gender" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Gender</SelectLabel>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+              <Select onValueChange={(value) => setGender(value)}>
+                <SelectTrigger className="h-14 text-lg">
+                  <SelectValue placeholder="Select Gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Gender</SelectLabel>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
 
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal h-14",
-                    !dob && "text-muted-foreground"
-                  )}
-                >
-                  {dob ? format(dob, "PPP") : "Pick a Date of Birth"}
-                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar mode="single" selected={dob} onSelect={setDob} />
-              </PopoverContent>
-            </Popover>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal h-14",
+                      !dob && "text-muted-foreground"
+                    )}
+                  >
+                    {dob ? format(dob, "PPP") : "Pick a Date of Birth"}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar mode="single" selected={dob} onSelect={setDob} />
+                </PopoverContent>
+              </Popover>
 
-            <Input
-              type="tel"
-              placeholder="Enter Your Phone Number"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              className="bg-white rounded-sm h-14 text-lg px-3 border-2"
-            />
+              <Input
+                type="tel"
+                placeholder="Enter Your Phone Number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="bg-white rounded-sm h-14 text-lg px-3 border-2"
+              />
 
-            <Input
-              type="email"
-              placeholder="Enter Your Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="bg-white rounded-sm h-14 text-lg px-3 border-2"
-            />
+              <Input
+                type="email"
+                placeholder="Enter Your Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-white rounded-sm h-14 text-lg px-3 border-2"
+              />
 
-            <Input
-              placeholder="Enter Your State"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-              className="bg-white rounded-sm h-14 text-lg px-3 border-2"
-            />
+              <Input
+                placeholder="Enter Your State"
+                value={state}
+                onChange={(e) => setState(e.target.value)}
+                className="bg-white rounded-sm h-14 text-lg px-3 border-2"
+              />
 
-            <Input
-              placeholder="Enter Your City"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="bg-white rounded-sm h-14 text-lg px-3 border-2"
-            />
+              <Input
+                placeholder="Enter Your City"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="bg-white rounded-sm h-14 text-lg px-3 border-2"
+              />
 
-            <Textarea
-              placeholder="Enter Your Address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="bg-white rounded-sm h-14 text-lg px-3 border-2"
-            />
+              <Textarea
+                placeholder="Enter Your Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="bg-white rounded-sm h-14 text-lg px-3 border-2"
+              />
 
-            <Input
-              placeholder="Enter Your Pin Code"
-              value={pincode}
-              onChange={(e) => setPinCode(e.target.value)}
-              className="bg-white rounded-sm h-14 text-lg px-3 border-2"
-            />
-          </div>
+              <Input
+                placeholder="Enter Your Pin Code"
+                value={pincode}
+                onChange={(e) => setPinCode(e.target.value)}
+                className="bg-white rounded-sm h-14 text-lg px-3 border-2"
+              />
+            </div>
 
-          <div className="flex justify-between mt-8">
-            <Button variant="ghost" onClick={handleBack}>
-              Back
-            </Button>
-            <Button variant="hms" type="submit">
-              Submit
-            </Button>
-          </div>
-        </form>
+            <div className="flex justify-between mt-8">
+              <Button variant="ghost" onClick={handleBack}>
+                Back
+              </Button>
+              <Button variant="hms" type="submit">
+                Submit
+              </Button>
+            </div>
+          </form>
         </ScrollArea>
       </div>
-     
     </section>
   );
 };

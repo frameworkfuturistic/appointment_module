@@ -13,10 +13,13 @@ import { GraduationCap } from "lucide-react";
 import Marquee from "react-fast-marquee";
 import Title from "./Title";
 import Link from "next/link";
+import { NoticeBoard } from "./NoticeBar";
+import { NoticeInputPage } from "./NoticeInputPage";
 
 export function NoticeSlider() {
   const [activeIndex, setActiveIndex] = useState(0);
   const autoPlayInterval = 3000; // Interval for autoplay in milliseconds
+  const [isHovered, setIsHovered] = useState(false);
 
   const images = [
     { url: "/noticeBoard/AdmissionNotice.png" },
@@ -28,6 +31,7 @@ export function NoticeSlider() {
   const itemLength = images.length;
 
   useEffect(() => {
+    if (!isHovered) {
     const interval = setInterval(() => {
       setActiveIndex((prevIndex) =>
         prevIndex === itemLength - 1 ? 0 : prevIndex + 1
@@ -35,7 +39,8 @@ export function NoticeSlider() {
     }, autoPlayInterval);
 
     return () => clearInterval(interval); // Cleanup the interval on unmount
-  }, [itemLength]);
+  }
+}, [itemLength ,isHovered]);
 
   const handlePrevious = () => {
     setActiveIndex(activeIndex === 0 ? itemLength - 1 : activeIndex - 1);
@@ -44,14 +49,24 @@ export function NoticeSlider() {
   const handleNext = () => {
     setActiveIndex(activeIndex === itemLength - 1 ? 0 : activeIndex + 1);
   };
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
 
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+  const [notices, setNotices] = useState([]);
   return (
     <section className="section">
       <Title title={"EVENTS"}/>
       <div className="grid justify-center ">
         <div className="  grid sm:grid-cols-1 md:grid-cols-2 space-x-6 space-y-4  max-w-7xl h-full">
           <div className="relative px-8 flex  items-center justify-center   max-w-full">
-            <Carousel>
+            <Carousel
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}>
+              
               <CarouselContent
                 style={{
                   transform: `translateX(-${activeIndex * 100}%)`,
@@ -98,7 +113,16 @@ export function NoticeSlider() {
                 <Link href="/about/aboutUs">More About</Link>
               </Button>
             </div>
+               {/* About Section with Notice Board */}
+      <NoticeBoard notices={notices} />
           </div>
+       
+           <div>
+      
+
+      {/* Separate Page to Add Notices */}
+      {/* <NoticeInputPage setNotices={setNotices} /> */}
+    </div>
         </div>
       </div>
     </section>

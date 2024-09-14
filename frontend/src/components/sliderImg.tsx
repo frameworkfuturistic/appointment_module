@@ -152,7 +152,7 @@ export function CarouselDemo({ userImages = [], textInfo = [] }) {
   };
 
   return (
-    <div className="flex justify-between items-center w-full max-w-5xl mx-auto gap-x-16">
+    <div className="flex justify-between  items-center w-full max-w-5xl mx-auto gap-x-16">
       {/* Carousel Section */}
       <div className="w-2/3 relative">
         <Carousel
@@ -184,31 +184,22 @@ export function CarouselDemo({ userImages = [], textInfo = [] }) {
           <CarouselPrevious onClick={handlePrevious} />
           <CarouselNext onClick={handleNext} />
         </Carousel>
-      </div>
+      </div>  
 
       {/* Text Section */}
-      <div className="w-1/3  flex-col justify-center p-4 bg-white shadow-lg rounded-lg h-[350px] hidden md:block">
-        {/* <h3 className="text-xl font-semibold mb-4">Information</h3>
-        <p className="text-md text-gray-600">
-          {textInfo[activeIndex] || "No additional information available."}
-        </p> */}
-         <div className="bg-rose-300 grid grid-cols-1 md:grid-cols-2  w-full items-center">
-        <div className="text-white grid grid-flow-row px-6  ">
-          <h1 className="text-xl md:text-2xl">Need a Doctor for Check-up?</h1>
-          <h2 className="text-2xl md:text-4xl font-semibold">
-            Just Make an Appointment and You’re Done!
-          </h2>
-          <p className="text-lg md:text-xl">Get Your Quote or Call:</p>
-          <p className="text-lg md:text-xl font-semibold">+91 8987999200</p>
-        </div>
-        {/* <div className="grid justify-center md:justify-end">
-          <img
-            src="/doctors/image-4.png"
-            alt="img"
-            className="h-[300px] md:h-[400px] md:mr-60 lg:-mt-40  md:-mt-20"
-          />
-        </div> */}
-      </div> 
+      <div className="w-1/3  flex-col justify-center p-4 bg-rose-200 shadow-lg rounded-lg h-[350px] hidden md:block">
+        
+        {/* <div className="bg-rose-300 grid grid-cols-1 md:grid-cols-2  w-full items-center"> */}
+            <div className="text-white grid grid-flow-row px-6  ">
+              <h1 className="text-xl md:text-2xl">Need a Doctor for Check-up?</h1>
+              <h2 className="text-2xl md:text-4xl font-semibold">
+                Just Make an Appointment and You’re Done!
+              </h2>
+              <p className="text-lg md:text-xl">Get Your Quote or Call:</p>
+              <p className="text-lg md:text-xl font-semibold">+91 8987999200</p>
+            </div>
+          
+        {/* </div> */}
       </div>
     </div>
   );

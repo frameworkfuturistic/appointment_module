@@ -7,7 +7,7 @@ import Link from "next/link";
 import { CircleUserRound, Heart, MessageCircle } from "lucide-react";
 import blogData from "@/json/BlogData";
 
-import Login from "@/app/blogDash/login/page";
+
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import SignUp from "@/components/SignUp";
 
@@ -17,11 +17,11 @@ const BlogPage = () => {
   return (
     <section className=" ">
       {/* <Login Nav Icon  /> */}
-      <nav className=" w-full h-full  bg-rose-200">
-        
+      <nav className="flex w-full h-full justify-end  bg-rose-200">
+       
         <Dialog>
           <DialogTrigger asChild>
-            <CircleUserRound className="size-10" color="black" />
+          <Link href={""} className="p-2 text-lg hover:underline "> User</Link>
           </DialogTrigger>
           <DialogContent className="  justify-center items-center sm:max-w-[425px] ">
             <div>
@@ -29,6 +29,7 @@ const BlogPage = () => {
             </div>
           </DialogContent>
         </Dialog>
+        <CircleUserRound className="size-10" color="black" />
       </nav>
       <div className="">
         {/* Hero Section with Image and Overlay */}
@@ -87,7 +88,7 @@ const BlogPage = () => {
                     </div>
 
                     <Link href={`/blogDash/blog/${blog.id}`}>
-                      <Button>Read More</Button>
+                      <Button variant={"hms"}>Read More</Button>
                     </Link>
                   </div>
                 </div>

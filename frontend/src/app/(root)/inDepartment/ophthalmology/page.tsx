@@ -73,7 +73,7 @@ const page = () => {
           </ul>
         </div>
         {/* DOCTOR's Card */}
-        <div className="grid grid-cols-2 gap-2 p-2 place-items-end ">
+           < div className="grid grid-cols-2 gap-2 p-2 place-items-end ">
           {indepartmentData.ophthalmology.map((doctor) => (
             <Card
               key={doctor.id}
