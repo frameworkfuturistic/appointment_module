@@ -26,51 +26,52 @@ class AppointmentService
 
     // Book a new appointment and initiate payment
     public function bookAppointment($patientId, $doctorId, $timeSlot, $date, $amount)
-    {
-        // Check if an appointment already exists for the same patient, doctor, and datetime
-        $existingAppointment = $this->appointmentRepository->findByPatientDoctorAndTime($patientId, $doctorId, $timeSlot, $date);
+{
+    // Check if an appointment already exists for the same patient, doctor, and datetime
+    $existingAppointment = $this->appointmentRepository->findByPatientDoctorAndTime($patientId, $doctorId, $timeSlot, $date);
 
-        if ($existingAppointment) {
-            return [
-                'status' => 'error',
-                'message' => 'An appointment already exists for this patient and doctor at the same time.'
-            ];
-        }
-
-        // Check if another appointment exists at the same time for the doctor
-        $docAppointmentAtSameTime = $this->appointmentRepository->findByDocTime($doctorId, $timeSlot, $date);
-
-        if ($docAppointmentAtSameTime) {
-            return [
-                'status' => 'error',
-                'message' => 'Doctor appointment already booked at this time. Please choose a different time.'
-            ];
-        }
-
-        // Check if another appointment exists at the same time for the patient
-        $patientAppointmentAtSameTime = $this->appointmentRepository->findByPatientTime($patientId, $timeSlot, $date);
-
-        if ($patientAppointmentAtSameTime) {
-            return [
-                'status' => 'error',
-                'message' => 'Patient appointment with another doctor at this time. Please choose a different time.'
-            ];
-        }
-
-        // Create a new appointment
-        $appointment = $this->appointmentRepository->create([
-            'patient_id' => $patientId,
-            'doctor_id' => $doctorId,
-            'time_slot' => $timeSlot,
-            'date' => $date,
-            'status' => 'pending',
-        ]);
-
-        // Initiate payment for the created appointment
-        $paymentDetails = $this->initiatePayment($appointment->id, $amount);
-
-        return ['status' => 'success', 'data' => $paymentDetails];
+    if ($existingAppointment) {
+        return [
+            'status' => 'error',
+            'message' => 'An appointment already exists for this patient and doctor at the same time.'
+        ];
     }
+
+    // Check if another appointment exists at the same time for the doctor
+    $docAppointmentAtSameTime = $this->appointmentRepository->findByDocTime($doctorId, $timeSlot, $date);
+
+    if ($docAppointmentAtSameTime) {
+        return [
+            'status' => 'error',
+            'message' => 'Doctor appointment already booked at this time. Please choose a different time.'
+        ];
+    }
+
+    // Check if another appointment exists at the same time for the patient
+    $patientAppointmentAtSameTime = $this->appointmentRepository->findByPatientTime($patientId, $timeSlot, $date);
+
+    if ($patientAppointmentAtSameTime) {
+        return [
+            'status' => 'error',
+            'message' => 'Patient appointment with another doctor at this time. Please choose a different time.'
+        ];
+    }
+
+    // Create a new appointment with generated appointment_id
+    $appointment = $this->appointmentRepository->create([
+        'patient_id' => $patientId,
+        'doctor_id' => $doctorId,
+        'time_slot' => $timeSlot,
+        'date' => $date,
+        'status' => 'pending',
+    ]);
+
+    // Initiate payment for the created appointment
+    $paymentDetails = $this->initiatePayment($appointment->id, $amount);
+
+    return ['status' => 'success', 'data' => $paymentDetails];
+}
+
 
     // Handle payment initiation through Razorpay
     protected function initiatePayment($appointmentId, $amount)

@@ -38,7 +38,7 @@ class PaymentController extends Controller
         // Get the raw webhook payload (body) and the signature from headers
         $webhookBody = $request->getContent(); // raw payload
         $webhookSignature = $request->header('X-Razorpay-Signature'); // signature from the header
-        $webhookSecret = config('razorpay.webhook_secret'); // Fetch the secret from the config or .env
+        $webhookSecret = config('razorpay.webhook_secret'); // Fetch the secret from the config 
 
         // Verify the webhook signature using the RazorpayService
         $isSignatureValid = $this->razorpayService->verifyWebhookSignature($webhookBody, $webhookSignature, $webhookSecret);
@@ -52,18 +52,24 @@ class PaymentController extends Controller
         $data = json_decode($webhookBody, true);
 
         // Extract relevant payment and order details from the webhook payload
-        // $paymentId = $data['payload']['payment']['entity']['id'];
-        // $orderId = $data['payload']['order']['entity']['id'];
+        $paymentId = $data['payload']['payment']['entity']['id'];
+        $orderId = $data['payload']['order']['entity']['id'];
+        $reciept = $data['payload']['order']['entity']['receipt'];
         $status = $data['payload']['payment']['entity']['status'];
+        $amount = $data['payload']['payment']['entity']['amount'];
+        $method = $data['payload']['payment']['entity']['method'];
+
+        // Process the payment and update the database
+            $this->paymentRepository->create([
+                'payment_id' => $paymentId,
+                'appointment_id' => $reciept,
+                'status' => $status,
+                'order_id' => $orderId,
+                'amount' => $amount,
+                'method' => $method
+            ]);
 
         if ($status === 'captured') {
-            // Process the payment and update the database
-            // $this->paymentRepository->create([
-            //     'payment_id' => $paymentId,
-            //     'appointment_id' => $orderId,
-            //     'status' => 'success',
-            // ]);
-
             // Return a success response
             return response()->json(['message' => 'Payment successful and verified.'], 200);
         }

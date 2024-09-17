@@ -10,6 +10,7 @@
 namespace App\Services;
 
 use Razorpay\Api\Api;
+use Razorpay\Api\Errors\BadRequestError;
 
 class RazorpayService
 {
@@ -38,6 +39,39 @@ class RazorpayService
         } catch (\Exception $e) {
             // Return false if the signature verification fails
             return false;
+        }
+    }
+
+    // Fetch the payment details from Razorpay for reconciliation
+    public function fetchPaymentDetails($paymentId)
+    {
+        try {
+            // Use Razorpay's payment API to retrieve the payment details
+            $payment = $this->api->payment->fetch($paymentId);
+
+            // Return payment details in an array
+            return [
+                'status' => 'success',
+                'data' => [
+                    'id' => $payment->id,
+                    'status' => $payment->status,
+                    'amount' => $payment->amount,
+                    'method' => $payment->method,
+                    'captured' => $payment->captured,
+                    'created_at' => $payment->created_at,
+                ]
+            ];
+        } catch (BadRequestError $e) {
+            // Handle any errors in the API call
+            return [
+                'status' => 'error',
+                'message' => $e->getMessage(),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 'error',
+                'message' => 'An error occurred while fetching payment details.'
+            ];
         }
     }
 }
