@@ -17,7 +17,7 @@ import { GraduationCap } from "lucide-react";
 
 const Dashboard = () => {
   return (
-    <>
+    <section className="section">
       <main>
         <div className="sticky grid flex-1 items-start   mt-2 rounded-md sm:px-6 sm:py-0 md:gap-8   w-full inset to-background  overflow-hidden ">
           <CarouselDemo />
@@ -28,7 +28,7 @@ const Dashboard = () => {
           <Ourmedical />
         </div>
         {/* Notice Line  */}
-        <Marquee className="bg-rose-300  text-slate-800 font-mono font-semibold text-xl h-10 ">
+        <Marquee className="bg-rose-300  text-slate-800 font-mono font-semibold text-xl w-56 h-10 ">
           <GraduationCap />
           NEWS Ayushman Bharat is available in Ophthalmology Department (All
           types of Retinal surgeries done by Retina specialist- under ayushman
@@ -55,7 +55,7 @@ const Dashboard = () => {
         
      
       </main>
-    </>
+    </section>
   );
 };
 

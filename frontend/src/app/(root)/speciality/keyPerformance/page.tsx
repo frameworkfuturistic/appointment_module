@@ -58,7 +58,7 @@ const page = () => {
     <section className="grid">
   <div className="bg-pattern5-bg grid justify-items-center relative p-4 sm:p-6 md:p-8">
     {/* Image Section with Overlay */}
-    <div className="relative w-full max-w-4xl">
+    <div className="relative w-full">
       <img
         src="/hospital/speciality.png"
         alt="img"

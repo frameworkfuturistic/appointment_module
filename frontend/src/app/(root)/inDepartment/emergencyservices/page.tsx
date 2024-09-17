@@ -9,6 +9,7 @@ import {
 import { Dialog } from "@radix-ui/react-dialog";
 import React from "react";
 import indepartmentData from "@/json/indepartmentData";
+import Title from "@/components/Title";
 
 const page = () => {
   return (
@@ -18,9 +19,7 @@ const page = () => {
       </div>
       <div className="grid grid-cols-2 p-2 my-6 ">
         <div className=" bg-pattern5-bg min-w-[800px] space-y-2  mx-8 p-4  text-wrap">
-          <h1 className="text-4xl text-sky-700 font-serif text-wrap">
-            Emergency & Trauma Unit
-          </h1>
+          <Title title={"Emergency & Trauma Unit"}/>
 
           <h2 className="font-medium text-lg">
             Reasons why Shree Jagannath Hospital & Research Centre's emergency

@@ -68,7 +68,9 @@ const BlogContent: React.FC = () => {
           <div className="mb-12 lg:grid lg:grid-cols-4 lg:gap-8">
             <div className="lg:col-span-3">
               <div className="prose prose-sm dark:prose-invert">
-                <h2 className={twMerge("text-3xl font-semibold font-serif mb-4 ")}>
+                <h2
+                  className={twMerge("text-3xl font-semibold font-serif mb-4 ")}
+                >
                   {blog.title}
                 </h2>
                 <h4
@@ -94,7 +96,6 @@ const BlogContent: React.FC = () => {
                   Note: {blog.note}
                 </Marquee>
               </div>
-             
             </div>
             <div className="p-8 w-auto rounded-md shadow-2xl lg:col-span-1  mt-8 lg:mt-0">
               <div className="grid grid-flow-row">
@@ -128,7 +129,10 @@ const BlogContent: React.FC = () => {
       {/* Related Blogs */}
       <div className="w-full max-w-6xl mx-auto    mt-4">
         <h2 className="text-2xl font-semibold">Related Posts</h2>
-        <Carousel opts={{ align: "start" }} className="flex w-full px-4 mt-4 h-full">
+        <Carousel
+          opts={{ align: "start" }}
+          className="flex w-full px-4 mt-4 h-full"
+        >
           <CarouselContent className="flex">
             {blogData.map((blog) => (
               <CarouselItem key={blog.id} className="md:basis-1/3 lg:basis-1/3">
@@ -160,7 +164,7 @@ const BlogContent: React.FC = () => {
                         </Link>
                       </div>
                       <Link href={`/blogDash/blog/${blog.id}`}>
-                        <Button>Read More</Button>
+                        <Button variant={"hms"}>Read More</Button>
                       </Link>
                     </div>
                   </div>
