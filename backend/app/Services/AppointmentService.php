@@ -25,10 +25,10 @@ class AppointmentService
     }
 
     // Book a new appointment and initiate payment
-    public function bookAppointment($patientId, $doctorId, $appointmentTime, $amount)
+    public function bookAppointment($patientId, $doctorId, $timeSlot, $date, $amount)
     {
         // Check if an appointment already exists for the same patient, doctor, and datetime
-        $existingAppointment = $this->appointmentRepository->findByPatientDoctorAndTime($patientId, $doctorId, $appointmentTime);
+        $existingAppointment = $this->appointmentRepository->findByPatientDoctorAndTime($patientId, $doctorId, $timeSlot, $date);
 
         if ($existingAppointment) {
             return [
@@ -38,7 +38,7 @@ class AppointmentService
         }
 
         // Check if another appointment exists at the same time for the doctor
-        $docAppointmentAtSameTime = $this->appointmentRepository->findByDocTime($doctorId,$appointmentTime);
+        $docAppointmentAtSameTime = $this->appointmentRepository->findByDocTime($doctorId, $timeSlot, $date);
 
         if ($docAppointmentAtSameTime) {
             return [
@@ -48,7 +48,7 @@ class AppointmentService
         }
 
         // Check if another appointment exists at the same time for the patient
-        $patientAppointmentAtSameTime = $this->appointmentRepository->findByPatientTime($patientId,$appointmentTime);
+        $patientAppointmentAtSameTime = $this->appointmentRepository->findByPatientTime($patientId, $timeSlot, $date);
 
         if ($patientAppointmentAtSameTime) {
             return [
@@ -61,7 +61,8 @@ class AppointmentService
         $appointment = $this->appointmentRepository->create([
             'patient_id' => $patientId,
             'doctor_id' => $doctorId,
-            'appointment_time' => $appointmentTime,
+            'time_slot' => $timeSlot,
+            'date' => $date,
             'status' => 'pending',
         ]);
 

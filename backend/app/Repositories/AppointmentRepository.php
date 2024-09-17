@@ -68,27 +68,30 @@ class AppointmentRepository implements AppointmentRepositoryInterface
     }
 
     // check if appointment for patient already exists
-    public function findByPatientDoctorAndTime($patientId, $doctorId, $appointmentTime)
+    public function findByPatientDoctorAndTime($patientId, $doctorId, $timeSlot, $date)
     {
         return Appointment::where('patient_id', $patientId)
             ->where('doctor_id', $doctorId)
-            ->where('appointment_time', $appointmentTime)
+            ->where('time_slot', $timeSlot)
+            ->where('date', operator: $date)
             ->first();
     }
 
     // check if appointment time already occupied for doctor
-    public function findByDocTime($doctorId, $appointmentTime)
+    public function findByDocTime($doctorId, $timeSlot, $date)
     {
         return Appointment::where('doctor_id', $doctorId)
-            ->where('appointment_time', $appointmentTime)
+            ->where('time_slot', $timeSlot)
+            ->where('date', $date)
             ->first();
     }
 
     // check if patient has another appointment at the same time
-    public function findByPatientTime($patientId,$appointmentTime)
+    public function findByPatientTime($patientId, $timeSlot, $date)
     {
         return Appointment::where('patient_id', $patientId)
-            ->where('appointment_time', $appointmentTime)
+            ->where('time_slot', $timeSlot)
+            ->where('date', $date)
             ->first();
     }
 }

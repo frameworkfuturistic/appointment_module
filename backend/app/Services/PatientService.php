@@ -21,6 +21,13 @@ class PatientService
         $this->patientRepository = $patientRepository;
     }
 
+    // Save new patient data using the repository
+    public function saveNewPatient(array $patientData)
+    {
+        $patient = $this->patientRepository->create($patientData);
+        return ['status' => 'success', 'patient_id' => $patient->id];
+    }
+
     // Retrieve all patients
     public function getAllPatients()
     {

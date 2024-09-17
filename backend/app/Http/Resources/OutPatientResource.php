@@ -14,6 +14,8 @@ class OutPatientResource extends JsonResource
             'fatherName' => $this->father_name,
             'address' => $this->address,
             'city' => $this->city,
+            'state' => $this->state,
+            'pincode' => $this->pincode,
             'mobile' => $this->mobile,
             'gender' => $this->gender,
             'refBy' => $this->ref_by,

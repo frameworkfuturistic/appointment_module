@@ -11,7 +11,7 @@ interface AppointmentRepositoryInterface
     public function getHistoryByPatientId($patientId);
     public function getAllByDoctorId($doctorId);
     public function getPatientAppointmentById($patientId, $appointmentId);
-    public function findByPatientDoctorAndTime($patientId, $doctorId, $appointmentTime);
-    public function findByDocTime($doctorId,$appointmentTime);
-    public function findByPatientTime($patientId,$appointmentTime);
+    public function findByPatientDoctorAndTime($patientId, $doctorId, $timeSlot, $date);
+    public function findByDocTime($doctorId, $timeSlot, $date);
+    public function findByPatientTime($patientId, $timeSlot, $date);
 }
