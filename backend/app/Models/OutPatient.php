@@ -12,7 +12,7 @@ class OutPatient extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'patient_name', 'father_name', 'address', 'city', 'mobile', 'gender', 'ref_by'
+        'patient_name', 'father_name', 'address', 'city', 'state', 'pincode', 'mobile', 'gender', 'ref_by'
     ];
 }
 

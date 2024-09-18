@@ -19,12 +19,14 @@ class Payment extends Model
         'appointment_id',
         'payment_id',
         'amount',
+        'order_id',
         'status'
     ];
 
     public function appointment()
     {
-        return $this->belongsTo(Appointment::class);
+        return $this->belongsTo(Appointment::class, 'appointment_id', 'appointment_id'); 
+        // Make sure the foreign key 'appointment_id' in payments references 'appointment_id' in appointments
     }
 
     public function refund()

@@ -17,7 +17,31 @@ class AppointmentRepository implements AppointmentRepositoryInterface
     // Create a new appointment with the given data
     public function create(array $data)
     {
+        // Generate appointment_id
+        $data['appointment_id'] = $this->generateAppointmentId();
+        
         return Appointment::create($data);
+    }
+
+    // Method to generate custom incrementing appointment_id
+    private function generateAppointmentId()
+    {
+        // Get the latest appointment_id from the database
+        $latestAppointment = Appointment::latest('appointment_id')->first();
+
+        if (!$latestAppointment) {
+            // If no previous appointments exist, start with 'APT0001'
+            return 'APT0001';
+        }
+
+        // Extract the numeric part of the latest appointment_id (assuming it's like 'APT0001')
+        $lastIdNumber = intval(substr($latestAppointment->appointment_id, 3));
+
+        // Increment the numeric part and pad with zeroes to keep length 4
+        $newIdNumber = str_pad($lastIdNumber + 1, 4, '0', STR_PAD_LEFT);
+
+        // Return the new appointment_id, e.g., 'APT0002'
+        return 'APT' . $newIdNumber;
     }
 
     // Find an appointment by its ID, including related patient, doctor, and payment details
@@ -68,27 +92,30 @@ class AppointmentRepository implements AppointmentRepositoryInterface
     }
 
     // check if appointment for patient already exists
-    public function findByPatientDoctorAndTime($patientId, $doctorId, $appointmentTime)
+    public function findByPatientDoctorAndTime($patientId, $doctorId, $timeSlot, $date)
     {
         return Appointment::where('patient_id', $patientId)
             ->where('doctor_id', $doctorId)
-            ->where('appointment_time', $appointmentTime)
+            ->where('time_slot', $timeSlot)
+            ->where('date', operator: $date)
             ->first();
     }
 
     // check if appointment time already occupied for doctor
-    public function findByDocTime($doctorId, $appointmentTime)
+    public function findByDocTime($doctorId, $timeSlot, $date)
     {
         return Appointment::where('doctor_id', $doctorId)
-            ->where('appointment_time', $appointmentTime)
+            ->where('time_slot', $timeSlot)
+            ->where('date', $date)
             ->first();
     }
 
     // check if patient has another appointment at the same time
-    public function findByPatientTime($patientId,$appointmentTime)
+    public function findByPatientTime($patientId, $timeSlot, $date)
     {
         return Appointment::where('patient_id', $patientId)
-            ->where('appointment_time', $appointmentTime)
+            ->where('time_slot', $timeSlot)
+            ->where('date', $date)
             ->first();
     }
 }

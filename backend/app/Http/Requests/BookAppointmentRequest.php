@@ -22,15 +22,58 @@ class BookAppointmentRequest extends FormRequest
 
     // Get the validation rules that apply to the request.
     public function rules()
-    {
-        // Define validation rules for booking an appointment
-        return [
-            'patient_id' => 'required|integer',
-            'doctor_id' => 'required|integer',
-            'appointment_time' => 'required|date|after:now',
-            'amount' => 'required|numeric|min:0',
-        ];
-    }
+{
+    return [
+        'is_new_patient' => 'required|boolean',
+        'patient_id' => [
+            'required_if:is_new_patient,false', // Require 'patient_id' if it's an existing patient
+            'integer'
+        ],
+        'doctor_id' => 'required|integer',
+        'time_slot' => 'required|date|after:now',
+        'date' => 'required|date',
+        'amount' => 'required|numeric|min:0',
+        
+        // New patient fields
+        'patient_name' => [
+            'required_if:is_new_patient,true', // Require if new patient
+            'string'
+        ],
+        'father_name' => [
+            'required_if:is_new_patient,true', // Require if new patient
+            'string'
+        ],
+        'address' => [
+            'required_if:is_new_patient,true', // Require if new patient
+            'string'
+        ],
+        'city' => [
+            'required_if:is_new_patient,true', // Require if new patient
+            'string'
+        ],
+        'state' => [
+            'required_if:is_new_patient,true', // Require if new patient
+            'string'
+        ],
+        'pincode' => [
+            'required_if:is_new_patient,true', // Require if new patient
+            'string|size:6' // Adjust validation as needed
+        ],
+        'mobile' => [
+            'required_if:is_new_patient,true', // Require if new patient
+            'string|size:10' // Adjust validation as needed
+        ],
+        'gender' => [
+            'required_if:is_new_patient,true', // Require if new patient
+            'in:male,female,other' // Adjust options as needed
+        ],
+        'ref_by' => [
+            'nullable', // Optional field for new patient
+            'string'
+        ],
+    ];
+}
+
 
     // Handle a failed validation attempt.
     protected function failedValidation(Validator $validator)

@@ -15,11 +15,17 @@ class Appointment extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'appointment_id'; // Set the primary key to 'appointment_id'
+    public $incrementing = false; // Disable auto-incrementing for appointment_id
+    protected $keyType = 'string'; // Set the key type to string
+
     protected $fillable = [
+        'appointment_id',
         'patient_id',
         'doctor_id',
         'appointment_time',
-        'status'
+        'status',
+        'method'
     ];
 
     public function patient()

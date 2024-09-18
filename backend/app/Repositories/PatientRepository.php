@@ -14,6 +14,12 @@ use App\Repositories\Interfaces\PatientRepositoryInterface;
 
 class PatientRepository implements PatientRepositoryInterface
 {
+    // Create a new appointment with the given data
+    public function create(array $data)
+    {
+        return OutPatient::create($data);
+    }
+
     // Find an patient by its ID, including related patient, doctor, and payment details
     public function find($id)
     {
