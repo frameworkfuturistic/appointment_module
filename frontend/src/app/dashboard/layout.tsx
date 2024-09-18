@@ -162,6 +162,7 @@ export default function RootLayout({
                    <BookUser className="h-4 w-4" />
                   Accounts
                 </Link>
+                
               </nav>
              
             </SheetContent>

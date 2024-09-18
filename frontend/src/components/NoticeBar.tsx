@@ -7,12 +7,14 @@ import Link from "next/link";
 export function NoticeBoard({ notices }) {
   return (
     <section className="section">
+
+
       <div className="grid justify-center">
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 space-x-6 space-y-4 max-w-7xl h-full">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 space-x-6 space-y-4 max-w-7xl h-full mx-10">
           
           {/* About Area */}
-          <div className="px-8 py-4 shadow-md flex flex-col justify-center">
-            {/* <h3 className="text-slate-800 text-2xl sm:text-3xl font-medium mb-4">
+           {/* <div className="px-8 py-4 shadow-md flex flex-col justify-center"> 
+             <h3 className="text-slate-800 text-2xl sm:text-3xl font-medium mb-4">
               We're Setting Standards in Research & Clinical Care.
             </h3>
             <img src="/activity.png" alt="icon" className="size-20 mb-4" />
@@ -26,16 +28,12 @@ export function NoticeBoard({ notices }) {
               restorative dentistry. With over 30 years of experience, we are
               among the most qualified implant providers in Australia.
             </p>
-            <div className="flex justify-center mb-8">
-              <Button variant="hms">
-                <Link href="/about/aboutUs">More About</Link>
-              </Button>
-            </div> */}
+             </div> */}
 
             {/* Static Notice Board */}
-            <div className="bg-white shadow-lg p-4 rounded-lg border border-slate-300">
-              <h4 className="text-rose-600 text-xl font-semibold mb-4">
-                Notice Board
+            <div className="bg-white shadow-lg p-2 rounded-lg border  w-96 text-center border-slate-300">
+              <h4 className="text-black text-xl font-semibold mb-2">
+                Notice 
               </h4>
               {notices.length > 0 ? (
                 <ul className="list-disc pl-5">
@@ -46,10 +44,10 @@ export function NoticeBoard({ notices }) {
                   ))}
                 </ul>
               ) : (
-                <p className="text-slate-500">No notices available.</p>
+                <p className="text-slate-500 font-mono text-xl h-32 ">No notices available.</p>
               )}
             </div>
-          </div>
+         
         </div>
       </div>
     </section>

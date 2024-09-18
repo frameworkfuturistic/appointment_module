@@ -3,18 +3,15 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-const ManageSliderImages = ({ userImages = [], onUpdateImages }) => {
+const EventManage = ({ userImages = [], onUpdateImages }) => {
   const [images, setImages] = useState(
     userImages.length > 0
       ? userImages
       : [
-          { url: "/sliderPic/Dialysis.png" },
-          { url: "/sliderPic/eyeopd.png" },
-          { url: "/sliderPic/frontpage4.png" },
-          { url: "/sliderPic/frontpage7.png" },
-          { url: "/sliderPic/newicu.png" },
-          { url: "/sliderPic/newreception.png" },
-          { url: "/sliderPic/sjhrchos1.png" },
+        { url: "/noticeBoard/AdmissionNotice.png" },
+        { url: "/noticeBoard/Ayushman.png" },
+        { url: "/noticeBoard/CourseDetail.png" },
+        { url: "/noticeBoard/notice.png" },
         ]
   );
 
@@ -93,4 +90,4 @@ const ManageSliderImages = ({ userImages = [], onUpdateImages }) => {
   );
 };
 
-export default ManageSliderImages;
+export default EventManage;

@@ -25,8 +25,9 @@ import { Home, Menu, Package2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import Appointmentform from "./Appointmentform";
-import Appointment from "@/app/(root)/Appointment/page";
+// import Appointmentform from "./Appointmentform";
+// import Appointment from "@/app/(root)/Appointment/page";
+import Link from "next/link";
 
 function CustomNavigationMenu() {
   return (
@@ -176,40 +177,14 @@ function CustomNavigationMenu() {
           </Dialog>
         </div>
         <div className="animate-bounce">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="hms"
-                className="transition ease-in-out delay-100 hover:translate-4 hover:scale-110 duration-400 group block"
-              >
-                Appointment
-              </Button>
-            </DialogTrigger>
-            <DialogContent className=" bg-slate-100  ">
-              <DialogHeader>
-                <DialogTitle>
-                  <div className="grid grid-flow-col md:grid-flow-col justify-center gap-x-10  items-center shadow-md shadow-slate-400 p-2 md:p-4">
-                    <img
-                      src="hospital/hospitallogo.png"
-                      alt="Hospital Logo"
-                      className="w-32 h-32 md:mb-0"
-                    />
-                    <div className="grid text-center space-y-2 sm:text-left md:text-left">
-                      <h1 className="font-bold text-xl md:text-2xl">
-                        Shree Jagannath Hospital & Research Center
-                      </h1>
-                      <p>sjhrc.ranchi@gmail.com</p>
-                      <a href="https://sjhrc.in">https://sjhrc.in</a>
-                      <p>+91 8987999200</p>
-                    </div>
-                  </div>
-                </DialogTitle>
-                <DialogDescription></DialogDescription>
-              </DialogHeader>
-              <Appointment />
-              {/* <Appointmentform /> */}
-            </DialogContent>
-          </Dialog>
+          <Link href="/appointment">
+          <Button
+            variant="hms"
+            className="transition ease-in-out delay-100 hover:translate-4 hover:scale-110 duration-400 group block"
+          >
+            Appointment
+          </Button>
+          </Link>
         </div>
       </div>
     </div>
