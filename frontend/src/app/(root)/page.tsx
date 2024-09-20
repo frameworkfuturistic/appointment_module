@@ -17,7 +17,7 @@ import { GraduationCap } from "lucide-react";
 import {EventDisplay} from "@/app/(root)/EventSlider/EventDisplay/page";
 import WhatsAppWidget from "@/components/widget/WhatsApp";
 import FetchData from "@/components/FetchData";
-import AppointForm from "@/components/AppointFrom";
+import AppointForm from "@/components/AppointForm";
 
 const Dashboard = () => {
   return (
@@ -47,7 +47,7 @@ const Dashboard = () => {
         {/* Price Board Section */}
         <BlogCards />
 
-       <AppointForm/>
+       {/* <AppointForm/> */}
 
         
      <WhatsAppWidget/>

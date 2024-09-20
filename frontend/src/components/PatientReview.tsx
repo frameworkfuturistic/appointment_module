@@ -18,23 +18,23 @@ export function PatientReview() {
     {
       id: 1,
       review:
-        "Medical Centre is a great place to get all of your medical needs. I came in for a check-up and did not wait more than 5 minutes before I was seen. I can only imagine the type of service you get for more serious issues. Thanks!",
+        " Doctors took the time to thoroughly explain my treatment plan and answered all of my questions. I left the clinic feeling confident and well-cared for. I highly recommend this practice for anyone seeking top-notch medical care!",
       image: "/PROFPIC.png",
-      name: "Bantu",
+      name: "Asish Aggarwal",
     },
     {
       id: 2,
       review:
-        "Medical Centre is a great place to get all of your medical needs. I came in for a check-up and did not wait more than 5 minutes before I was seen. I can only imagine the type of service you get for more serious issues. Thanks!",
+        "The staff was always punctual, and the facilities were clean and comfortable. Within a few weeks, I noticed significant improvements in my mobility. The entire process was seamless, and I’m so grateful for the care I received!",
       image: "/PROFPIC.png",
-      name: "Chantu",
+      name: "Raghu Singhania",
     },
     {
       id: 3,
       review:
-        "Medical Centre is a great place to get all of your medical needs. I came in for a check-up and did not wait more than 5 minutes before I was seen. I can only imagine the type of service you get for more serious issues. Thanks!",
+        "My overall experience at the clinic was positive, though there were a few things that could be improved. While the staff was friendly and professional, I did experience a longer-than-expected wait time before my appointment. ",
       image: "/PROFPIC.png",
-      name: "Ghantu",
+      name: "Ganga Mohini",
     },
   ];
 
@@ -61,23 +61,7 @@ export function PatientReview() {
   return (
     <div className="section">
       <div className="sm:min-h-[500px] grid justify-center space-y-2">
-        {/* <div className="bg-rose-300 grid grid-cols-1 md:grid-cols-2 pt-10 h-[450px] w-full items-center">
-        <div className="text-white grid grid-flow-row pb-20 md:pl-56 px-6">
-          <h1 className="text-xl md:text-2xl">Need a Doctor for Check-up?</h1>
-          <h2 className="text-2xl md:text-4xl font-semibold">
-            Just Make an Appointment and You’re Done!
-          </h2>
-          <p className="text-lg md:text-xl">Get Your Quote or Call:</p>
-          <p className="text-lg md:text-xl font-semibold">+91 8987999200</p>
-        </div>
-        <div className="grid justify-center md:justify-end">
-          <img
-            src="/doctors/image-4.png"
-            alt="img"
-            className="h-[300px] md:h-[400px] md:mr-60 lg:-mt-40  md:-mt-20"
-          />
-        </div>
-      </div> */}
+       
 
         <div className="bg-slate-50 bg-pattern4-bg rounded-md   h-[160px] w-[80%] sm:w-[1000px] text-center  place-self-center grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center ">
           <div className="grid grid-flow-row place-items-center py-4 bottom-2">
@@ -87,7 +71,7 @@ export function PatientReview() {
               className="bg-white shadow-lg rounded-full h-16 w-16 p-2"
             />
             <p className="text-slate-700 font-medium">Years of Experience</p>
-            <p className="text-2xl md:text-3xl">25</p>
+            <p className="text-2xl md:text-3xl">09</p>
           </div>
           <div className="grid grid-flow-row place-items-center py-4">
             <Stethoscope
@@ -105,7 +89,7 @@ export function PatientReview() {
               className="bg-white shadow-lg rounded-full h-16 w-16 p-2"
             />
             <p className="text-slate-700 font-medium">Advance Treatment</p>
-            <p className="text-2xl md:text-3xl">25</p>
+            <p className="text-2xl md:text-3xl">30</p>
           </div>
           <div className="grid grid-flow-row place-items-center py-4">
             <User
@@ -114,7 +98,7 @@ export function PatientReview() {
               className="bg-white shadow-lg rounded-full h-16 w-16 p-2"
             />
             <p className="text-slate-700 font-medium">Happy Patients</p>
-            <p className="text-2xl md:text-3xl">25</p>
+            <p className="text-2xl md:text-3xl">150+</p>
           </div>
         </div>
 

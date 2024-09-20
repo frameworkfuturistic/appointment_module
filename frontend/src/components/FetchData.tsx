@@ -1,42 +1,4 @@
-// // src/components/FetchData.jsx
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
 
-// const FetchData = () => {
-//   const [data, setData] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     // Define your API call
-//     const fetchData = async () => {
-//       try {
-//         const response = await axios.get('https://api.example.com/data',{
-//           key:'value',
-//         });
-//         setData(response.data);  // Store the fetched data
-//         setLoading(false);       // Stop loading when data is fetched
-//       } catch (error) {
-//         setError(error);         // Handle any errors
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchData();
-//   }, []); // Empty dependency array ensures the API call is made once on component mount
-
-//   if (loading) return <p>Loading...</p>;
-//   if (error) return <p>Error: {error.message}</p>;
-
-//   return (
-//     <div>
-//       <h1>Data from API</h1>
-//       <pre>{JSON.stringify(data, null, 2)}</pre>
-//     </div>
-//   );
-// };
-
-// export default FetchData;
 
 // src/components/DoctorAppointmentForm.jsx
 "use client"  

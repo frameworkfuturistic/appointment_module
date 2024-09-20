@@ -103,6 +103,10 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Button } from "./ui/button";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+
 
 export function CarouselDemo({ userImages = [], textInfo = [] }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -197,6 +201,7 @@ export function CarouselDemo({ userImages = [], textInfo = [] }) {
               </h2>
               <p className="text-lg md:text-xl">Get Your Quote or Call:</p>
               <p className="text-lg md:text-xl font-semibold">+91 8987999200</p>
+              <Button  variant={"hms2"} ><Link href={"/contact"} className="flex" > Contact Us <ArrowRight/></Link></Button>
             </div>
           
         {/* </div> */}

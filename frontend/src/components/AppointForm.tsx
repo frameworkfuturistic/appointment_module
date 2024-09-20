@@ -1,44 +1,21 @@
 // src/components/DoctorAppointmentForm.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
-const AppointForm = () => {
+const DoctorAppointmentForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     date: '',
-    notes: '',
     department: '',
     doctor: '',
+    notes: '',
   });
-  const [departments, setDepartments] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [filteredDoctors, setFilteredDoctors] = useState([]);
+
   const [submitted, setSubmitted] = useState(false);
-
-  // Fetch departments and doctors from API
-  useEffect(() => {
-    const fetchDepartmentsAndDoctors = async () => {
-      try {
-        const departmentResponse = await axios.get('https://api.example.com/go');
-        const doctorResponse = await axios.get('https://api.example.com/doctors');
-        setDepartments(departmentResponse.data);
-        setDoctors(doctorResponse.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    fetchDepartmentsAndDoctors();
-  }, []);
-
-  // Filter doctors based on selected department
- useEffect(() => {
-  if (formData.department) {
-    const filtered = doctors.filter((doctor) => doctor.departmentId === formData.department);
-    setFilteredDoctors(filtered);
-  }
-}, [formData.department, doctors]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // Handle form field changes
   const handleChange = (e) => {
@@ -49,10 +26,25 @@ const AppointForm = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    setSubmitted(true);
-    console.log('Appointment Submitted:', formData);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      // API request to book appointment
+      const response = await axios.post('https://a00e-115-245-226-37.ngrok-free.app/api/v1/book/prefill', formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      setSubmitted(true);
+      console.log('Appointment response:', response.data); // You can handle the response data as needed
+    } catch (err) {
+      console.error('Error submitting appointment:', err);
+      setError('Failed to submit appointment. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,6 +57,8 @@ const AppointForm = () => {
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
+          {error && <div className="bg-red-100 text-red-800 p-2 rounded mb-4">{error}</div>}
+
           {/* Name */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Name</label>
@@ -117,42 +111,30 @@ const AppointForm = () => {
             />
           </div>
 
-          {/* Department Selection */}
+          {/* Department */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Department</label>
-            <select
+            <input
+              type="text"
               name="department"
               value={formData.department}
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
               required
-            >
-              <option value="">Select a department</option>
-              {departments.map((department) => (
-                <option key={department.id} value={department.id}>
-                  {department.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
-          {/* Doctor Selection */}
+          {/* Doctor */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Doctor</label>
-            <select
+            <input
+              type="text"
               name="doctor"
               value={formData.doctor}
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
               required
-            >
-              <option value="">Select a doctor</option>
-              {filteredDoctors.map((doctor) => (
-                <option key={doctor.id} value={doctor.id}>
-                  {doctor.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           {/* Notes */}
@@ -171,8 +153,9 @@ const AppointForm = () => {
           <button
             type="submit"
             className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+            disabled={loading}
           >
-            Submit Appointment
+            {loading ? 'Submitting...' : 'Submit Appointment'}
           </button>
         </form>
       )}
@@ -180,4 +163,4 @@ const AppointForm = () => {
   );
 };
 
-export default AppointForm;
+export default DoctorAppointmentForm;
