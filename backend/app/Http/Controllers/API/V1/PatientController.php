@@ -41,21 +41,21 @@ class PatientController extends Controller
     {
         $patients = $this->patientService->getAllPatients();
         if (count($patients) === 0) {
-            return responseMsg('not_found', $this->httpMessages['not_found']['no_patients_found'], null, $this->apiCodes['API_1.1.2'], $this->apiVersion);
+            return responseMsg('false', $this->httpMessages['not_found']['records_not_found'], null, $this->apiCodes['API_1.1.9'], $this->apiVersion['v1'], null, 'GET', null);
         }
-        return responseMsg('success', $this->httpMessages['success']['patients_retrieved'], new OutPatientCollection($patients), $this->apiCodes['API_1.1.2'], $this->apiVersion);
+        return responseMsg('true', $this->httpMessages['success']['records_retrieved'], new OutPatientCollection($patients), $this->apiCodes['API_1.1.9'], $this->apiVersion['v1'], null, 'GET', null);
     }
 
     // Method to show a specific patient by ID
     public function show(PatientShowRequest $request)
     {
-        $patientId = $request->route('patient_id');
-        $patient = $this->patientService->getPatientById($patientId);
+        $id = $request->route('patient_id');
+        $patient = $this->patientService->getPatientById($id);
 
         if ($patient === null) {
-            return responseMsg('not_found', $this->httpMessages['not_found']['patient_not_found'], null, $this->apiCodes['API_3'], $this->apiVersion);
+            return responseMsg('false', $this->httpMessages['not_found']['records_not_found'], null, $this->apiCodes['API_1.1.10'], $this->apiVersion['v1'], null, 'GET', null);
         }
 
-        return responseMsg('success', $this->httpMessages['success']['patient_retrieved'], new OutPatientResource($patient), $this->apiCodes['API_3'], $this->apiVersion);
+        return responseMsg('true', $this->httpMessages['success']['records_retrieved'], new OutPatientResource($patient), $this->apiCodes['API_1.1.10'], $this->apiVersion['v1'], null, 'GET', null);
     }
 }

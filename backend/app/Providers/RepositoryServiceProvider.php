@@ -18,6 +18,16 @@ use App\Repositories\PaymentRepository;
 use App\Repositories\RefundRepository;
 use App\Repositories\PatientRepository;
 use App\Repositories\Interfaces\PatientRepositoryInterface;
+use App\Repositories\Interfaces\DepartmentRepositoryInterface;
+use App\Repositories\DepartmentRepository;
+use App\Repositories\Interfaces\DoctorRepositoryInterface;
+use App\Repositories\DoctorRepository;
+use App\Repositories\Interfaces\UnavailabilityRepositoryInterface;
+use App\Repositories\UnavailabilityRepository;
+use App\Repositories\Interfaces\ShiftRepositoryInterface;
+use App\Repositories\ShiftRepository;
+use App\Repositories\Interfaces\SlotRepositoryInterface;
+use App\Repositories\SlotRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -27,6 +37,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(PaymentRepositoryInterface::class, PaymentRepository::class);
         //$this->app->bind(RefundRepositoryInterface::class, RefundRepository::class);
         $this->app->bind(PatientRepositoryInterface::class, PatientRepository::class);
+        $this->app->bind(DepartmentRepositoryInterface::class, DepartmentRepository::class);
+        $this->app->bind(DoctorRepositoryInterface::class, DoctorRepository::class);
+        $this->app->bind(UnavailabilityRepositoryInterface::class, UnavailabilityRepository::class);
+        $this->app->bind(ShiftRepositoryInterface::class, ShiftRepository::class);
+        $this->app->bind(SlotRepositoryInterface::class, SlotRepository::class);
 
     }
 

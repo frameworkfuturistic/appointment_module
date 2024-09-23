@@ -10,67 +10,102 @@
 namespace App\Services;
 
 use App\Repositories\Interfaces\AppointmentRepositoryInterface;
+use App\Repositories\Interfaces\DepartmentRepositoryInterface;
+use App\Repositories\Interfaces\DoctorRepositoryInterface;
+use App\Repositories\Interfaces\UnavailabilityRepositoryInterface;
+use App\Repositories\Interfaces\ShiftRepositoryInterface;
+use App\Repositories\Interfaces\SlotRepositoryInterface;
 use App\Services\RazorpayService;
-
 class AppointmentService
 {
+    // Constructor with multiple repositories and payment service
     protected $appointmentRepository;
     protected $razorpayService;
+    protected $departmentRepository;
+    protected $doctorRepository;
+    protected $unavailabilityRepository;
+    protected $shiftRepository;
+    protected $slotRepository;
 
     // Initialize with repository and payment service
-    public function __construct(AppointmentRepositoryInterface $appointmentRepository, RazorpayService $razorpayService)
-    {
+    public function __construct(
+        AppointmentRepositoryInterface $appointmentRepository,
+        RazorpayService $razorpayService,
+        DepartmentRepositoryInterface $departmentRepository,
+        DoctorRepositoryInterface $doctorRepository,
+        UnavailabilityRepositoryInterface $unavailabilityRepository,
+        ShiftRepositoryInterface $shiftRepository,
+        SlotRepositoryInterface $slotRepository
+    ) {
         $this->appointmentRepository = $appointmentRepository;
         $this->razorpayService = $razorpayService;
+        $this->departmentRepository = $departmentRepository;
+        $this->doctorRepository = $doctorRepository;
+        $this->unavailabilityRepository = $unavailabilityRepository;
+        $this->shiftRepository = $shiftRepository;
+        $this->slotRepository = $slotRepository;
+    }
+
+    // Method to get all data from all related models
+    // Fetch all data from Department, Doctor, Unavailability, Shift, and Slot
+    public function getAllData()
+    {
+        return [
+            'departments' => $this->departmentRepository->getAll(),
+            'doctors' => $this->doctorRepository->getAll(),
+            'unavailabilities' => $this->unavailabilityRepository->getAll(),
+            'shifts' => $this->shiftRepository->getAll(),
+            'slots' => $this->slotRepository->getAll(),
+        ];
     }
 
     // Book a new appointment and initiate payment
     public function bookAppointment($patientId, $doctorId, $timeSlot, $date, $amount)
-{
-    // Check if an appointment already exists for the same patient, doctor, and datetime
-    $existingAppointment = $this->appointmentRepository->findByPatientDoctorAndTime($patientId, $doctorId, $timeSlot, $date);
+    {
+        // Check if an appointment already exists for the same patient, doctor, and datetime
+        $existingAppointment = $this->appointmentRepository->findByPatientDoctorAndTime($patientId, $doctorId, $timeSlot, $date);
 
-    if ($existingAppointment) {
-        return [
-            'status' => 'error',
-            'message' => 'An appointment already exists for this patient and doctor at the same time.'
-        ];
+        if ($existingAppointment) {
+            return [
+                'status' => 'error',
+                'message' => 'An appointment already exists for this patient and doctor at the same time.'
+            ];
+        }
+
+        // Check if another appointment exists at the same time for the doctor
+        $docAppointmentAtSameTime = $this->appointmentRepository->findByDocTime($doctorId, $timeSlot, $date);
+
+        if ($docAppointmentAtSameTime) {
+            return [
+                'status' => 'error',
+                'message' => 'Doctor appointment already booked at this time. Please choose a different time.'
+            ];
+        }
+
+        // Check if another appointment exists at the same time for the patient
+        $patientAppointmentAtSameTime = $this->appointmentRepository->findByPatientTime($patientId, $timeSlot, $date);
+
+        if ($patientAppointmentAtSameTime) {
+            return [
+                'status' => 'error',
+                'message' => 'Patient appointment with another doctor at this time. Please choose a different time.'
+            ];
+        }
+
+        // Create a new appointment with generated appointment_id
+        $appointment = $this->appointmentRepository->create([
+            'patient_id' => $patientId,
+            'doctor_id' => $doctorId,
+            'time_slot' => $timeSlot,
+            'date' => $date,
+            'status' => 'pending',
+        ]);
+
+        // Initiate payment for the created appointment
+        $paymentDetails = $this->initiatePayment($appointment->appointment_id, $amount);
+
+        return ['status' => 'success', 'data' => $paymentDetails];
     }
-
-    // Check if another appointment exists at the same time for the doctor
-    $docAppointmentAtSameTime = $this->appointmentRepository->findByDocTime($doctorId, $timeSlot, $date);
-
-    if ($docAppointmentAtSameTime) {
-        return [
-            'status' => 'error',
-            'message' => 'Doctor appointment already booked at this time. Please choose a different time.'
-        ];
-    }
-
-    // Check if another appointment exists at the same time for the patient
-    $patientAppointmentAtSameTime = $this->appointmentRepository->findByPatientTime($patientId, $timeSlot, $date);
-
-    if ($patientAppointmentAtSameTime) {
-        return [
-            'status' => 'error',
-            'message' => 'Patient appointment with another doctor at this time. Please choose a different time.'
-        ];
-    }
-
-    // Create a new appointment with generated appointment_id
-    $appointment = $this->appointmentRepository->create([
-        'patient_id' => $patientId,
-        'doctor_id' => $doctorId,
-        'time_slot' => $timeSlot,
-        'date' => $date,
-        'status' => 'pending',
-    ]);
-
-    // Initiate payment for the created appointment
-    $paymentDetails = $this->initiatePayment($appointment->id, $amount);
-
-    return ['status' => 'success', 'data' => $paymentDetails];
-}
 
 
     // Handle payment initiation through Razorpay

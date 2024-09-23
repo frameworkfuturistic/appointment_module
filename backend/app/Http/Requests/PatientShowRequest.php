@@ -24,7 +24,7 @@ class PatientShowRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'patient_id' => 'required|integer|exists:patients,id',
+            'patient_id' => 'required|integer|exists:out_patients,patient_id',
         ];
     }
 

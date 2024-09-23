@@ -23,6 +23,12 @@ use App\Repositories\AppointmentRepository;
 use App\Services\RazorpayService;
 use App\Services\PatientService;
 use App\Repositories\PatientRepository;
+use App\Repositories\DepartmentRepository;
+use App\Repositories\DoctorRepository;
+use App\Repositories\ShiftRepository;
+use App\Repositories\SlotRepository;
+use App\Repositories\UnavailabilityRepository;
+use Request;
 
 class AppointmentController extends Controller
 {
@@ -37,14 +43,61 @@ class AppointmentController extends Controller
         // Instantiate the Services directly
         $appointmentRepository = new AppointmentRepository();
         $patientRepository = new PatientRepository();
+        $departmentRepository = new DepartmentRepository();
+        $doctorRepository = new DoctorRepository();
+        $unavailabilityRepository = new UnavailabilityRepository();
+        $shiftRepository = new ShiftRepository();
+        $slotRepository = new SlotRepository();
         $razorpayService = new RazorpayService();
+
         $this->patientService = new PatientService($patientRepository);
-        $this->appointmentService = new AppointmentService($appointmentRepository, $razorpayService, );
+        $this->appointmentService = new AppointmentService(
+            $appointmentRepository, 
+                  $razorpayService, 
+             $departmentRepository,
+                 $doctorRepository,
+         $unavailabilityRepository,
+                  $shiftRepository,
+                   $slotRepository
+        );
 
         // Load configurations
         $this->apiVersion = config('api_codes.version');
         $this->apiCodes = config('api_codes.v1');
         $this->httpMessages = config('api_responses');
+    }
+
+    // Fetch combined data from services for appointment pre-fill
+    public function fetchPrefillData()
+    {
+        try {
+            // Fetch data using the service method
+            $combinedData = $this->appointmentService->getAllData();
+
+            return responseMsg(
+                'true',
+                $this->httpMessages['success']['records_retrieved'],
+                $combinedData,
+                $this->apiCodes['API_1.1.8'],
+                $this->apiVersion['v1'],
+                null,
+                'GET',
+                null
+            );
+
+        } catch (\Exception $e) {
+            // Handle exceptions and return an error response
+            return responseMsg(
+                'false',
+                $this->httpMessages['error']['default'],
+                null,
+                $this->apiCodes['API_1.1.8'],
+                $this->apiVersion['v1'],
+                null,
+                'GET',
+                null
+            );
+        }
     }
 
     // Method to book a new appointment
@@ -194,7 +247,7 @@ class AppointmentController extends Controller
     {
         $appointments = $this->appointmentService->getAllAppointments();
         if (count($appointments) === 0) {
-            return responseMsg('false', $this->httpMessages['not_found']['no_appointments_found'], null, $this->apiCodes['API_1.1.2'], $this->apiVersion['v1'], null, 'GET', null);
+            return responseMsg('false', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_1.1.2'], $this->apiVersion['v1'], null, 'GET', null);
         }
         return responseMsg('true', $this->httpMessages['success']['appointments_retrieved'], new AppointmentCollection($appointments), $this->apiCodes['API_1.1.2'], $this->apiVersion['v1'], null, 'GET', null);
     }

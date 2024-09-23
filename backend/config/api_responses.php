@@ -8,6 +8,7 @@ return [
         'appointment_retrieved' => 'Appointment retrieved successfully',
         'appointment_updated' => 'Appointment updated successfully',
         'appointment_deleted' => 'Appointment deleted successfully',
+        'records_retrieved' => 'Records retrieved successfully',
     ],
 
     'error' => [
@@ -22,6 +23,7 @@ return [
     'not_found' => [
         'default' => 'Resource not found',
         'appointment_not_found' => 'Appointment not found',
+        'records_not_found' => 'Records not found',
     ],
 
     'validation_error' => [

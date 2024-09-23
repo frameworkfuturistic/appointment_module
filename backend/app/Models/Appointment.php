@@ -25,7 +25,8 @@ class Appointment extends Model
         'doctor_id',
         'appointment_time',
         'status',
-        'method'
+        'method',
+        'shift_id'
     ];
 
     public function patient()
@@ -41,5 +42,10 @@ class Appointment extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class);
     }
 }

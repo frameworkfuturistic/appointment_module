@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\V1\AppointmentController;
 use App\Http\Controllers\API\V1\PaymentController;
+use App\Http\Controllers\API\V1\PatientController;
 
 
 
@@ -21,8 +22,11 @@ use App\Http\Controllers\API\V1\PaymentController;
 //     return $request->user();
 // });
 
+
+Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'],function () {
+
 // Version 1 APIs for appointments
-Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\API\V1'],function () {
+
     // 1.1.1 Book a new appointment and initiate payment
     Route::post('appointments/book', [AppointmentController::class, 'book'])
         ->name('appointments.book'); 
@@ -49,9 +53,22 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\API\V1'],function () {
     
     // 1.1.7 WEBHOOK : Callback for Razorpay payment   
     Route::post('payment/callback', [PaymentController::class, 'handlePaymentCallback']);
-});
+
+    // 1.1.8 Get all data to pre-fill before appointment   
+    Route::get('book/prefill', [AppointmentController::class, 'fetchPrefillData'])
+        ->name('book.prefill');
 
 // Version 1 APIs for doctors
+
+    // 1.1.9 Show details of a specific patient
+    Route::get('patients/{patient_id}', [PatientController::class, 'show'])
+        ->name('patients.show');
+    // 1.1.10 List all patients
+    Route::get('patients', [PatientController::class, 'list'])
+        ->name('patients.list');
+});
+
+    
 
 
 

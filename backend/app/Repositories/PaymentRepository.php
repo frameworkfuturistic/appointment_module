@@ -42,8 +42,8 @@ class PaymentRepository implements PaymentRepositoryInterface
     }
 
     // Get a payment by its ID 
-    public function getById($id)
+    public function getById($paymentId)
     {
-        $this->model->findOrFail($id); 
+        $this->model->findOrFail($paymentId); 
     }
 }

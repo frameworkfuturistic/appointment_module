@@ -13,5 +13,8 @@ return [
         'API_1.1.5' => '5', // Retrieve appointments by doctor ID
         'API_1.1.6' => '6', // Retrieve patient appointment by patient ID and appointment ID
         'API_1.1.7' => '7', // Payment callback handling
+        'API_1.1.8' => '8', // Fetch all pre-fill data for appointment booking
+        'API_1.1.9' => '9', // Retrieve all patients
+        'API_1.1.10' => '10', // Retrieve patient by ID
     ],
 ];

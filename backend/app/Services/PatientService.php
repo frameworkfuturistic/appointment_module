@@ -35,8 +35,8 @@ class PatientService
     }
 
     // Retrieve patient details by ID
-    public function getPatientById($patientId)
+    public function getPatientById($id)
     {
-        return $this->patientRepository->find($patientId);
+        return $this->patientRepository->find($id);
     }
 }
