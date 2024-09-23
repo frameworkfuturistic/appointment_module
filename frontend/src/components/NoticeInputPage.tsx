@@ -9,13 +9,16 @@ export function NoticeInputPage({ setNotices }: NoticeInputPageProps) {
 
   const handleAddNotice = () => {
     if (inputNotice.trim()) {
-      setNotices((prevNotices: string[]) => [...prevNotices, inputNotice.trim()]); // Ensure prevNotices is typed
+      setNotices((prevNotices: string[]) => [
+        ...prevNotices,
+        inputNotice.trim(),
+      ]); // Ensure prevNotices is typed
       setInputNotice(""); // Clear the input field after submitting
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex flex-col items-center justify-center  bg-gray-100 p-4 m-4">
       <h1 className="text-2xl font-semibold text-slate-700 mb-4">
         Add New Notice
       </h1>
@@ -26,6 +29,8 @@ export function NoticeInputPage({ setNotices }: NoticeInputPageProps) {
         placeholder="Enter notice here"
         className="w-full max-w-md px-4 py-2 mb-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-rose-500"
       />
+
+     
       <button
         onClick={handleAddNotice}
         className="px-6 py-2 bg-rose-500 text-white rounded-md hover:bg-rose-400 transition"

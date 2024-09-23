@@ -103,12 +103,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Button } from "./ui/button";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 
-
-export function CarouselDemo({ userImages = [], textInfo = [] }) {
+export function EventDisplay({ userImages = [], textInfo = [] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const autoPlayInterval = 3000; // Interval for autoplay in milliseconds
   const [isHovered, setIsHovered] = useState(false);
@@ -116,12 +112,10 @@ export function CarouselDemo({ userImages = [], textInfo = [] }) {
     userImages.length > 0
       ? userImages
       : [
-          { url: "/sliderPic/Dialysis.png" },
-          { url: "/sliderPic/frontpage4.png" },
-          { url: "/sliderPic/frontpage7.png" },
-          { url: "/sliderPic/newicu.png" },
-          { url: "/sliderPic/newreception.png" },
-          { url: "/sliderPic/sjhrchos1.png" },
+        { url: "/noticeBoard/AdmissionNotice.png" },
+        { url: "/noticeBoard/Ayushman.png" },
+        { url: "/noticeBoard/CourseDetail.png" },
+        { url: "/noticeBoard/notice.png" },
         ]
   );
 
@@ -188,23 +182,6 @@ export function CarouselDemo({ userImages = [], textInfo = [] }) {
           <CarouselPrevious onClick={handlePrevious} />
           <CarouselNext onClick={handleNext} />
         </Carousel>
-      </div>  
-
-      {/* Text Section */}
-      <div className="w-1/3  flex-col justify-center p-4 bg-rose-200 shadow-lg rounded-lg h-[350px] hidden md:block">
-        
-        {/* <div className="bg-rose-300 grid grid-cols-1 md:grid-cols-2  w-full items-center"> */}
-            <div className="text-white grid grid-flow-row px-6  ">
-              <h1 className="text-xl md:text-2xl">Need a Doctor for Check-up?</h1>
-              <h2 className="text-2xl md:text-4xl font-semibold">
-                Just Make an Appointment and You’re Done!
-              </h2>
-              <p className="text-lg md:text-xl">Get Your Quote or Call:</p>
-              <p className="text-lg md:text-xl font-semibold">+91 8987999200</p>
-              <Button  variant={"hms2"} ><Link href={"/contact"} className="flex" > Contact Us <ArrowRight/></Link></Button>
-            </div>
-          
-        {/* </div> */}
       </div>
     </div>
   );

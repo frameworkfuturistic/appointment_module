@@ -21,7 +21,7 @@ const BlogPage = () => {
        
         <Dialog>
           <DialogTrigger asChild>
-          <Link href={""} className="p-2 text-lg hover:underline "> User</Link>
+            <Link href={"/dashboard"} className="text-lg my-2 hover:underline"> User</Link>
           </DialogTrigger>
           <DialogContent className="  justify-center items-center sm:max-w-[425px] ">
             <div>

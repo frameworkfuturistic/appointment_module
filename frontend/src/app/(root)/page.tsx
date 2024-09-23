@@ -12,8 +12,12 @@ import { CarouselDemo } from "@/components/sliderImg";
 import OurHeads from "@/components/OurHeads";
 import { NoticeSlider } from "@/components/NoticeSlider";
 import BlogCards from "@/components/BlogCards";
-import Marquee from "react-fast-marquee";
+
 import { GraduationCap } from "lucide-react";
+import {EventDisplay} from "@/app/(root)/EventSlider/EventDisplay/page";
+import WhatsAppWidget from "@/components/widget/WhatsApp";
+import FetchData from "@/components/FetchData";
+import AppointForm from "@/components/AppointForm";
 
 const Dashboard = () => {
   return (
@@ -27,19 +31,10 @@ const Dashboard = () => {
         <div className="py-2  sm:px-4 lg:px-4 ">
           <Ourmedical />
         </div>
-        {/* Notice Line  */}
-        <Marquee className="bg-rose-300  text-slate-800 font-mono font-semibold text-xl w-56 h-10 ">
-          <GraduationCap />
-          NEWS Ayushman Bharat is available in Ophthalmology Department (All
-          types of Retinal surgeries done by Retina specialist- under ayushman
-          bharat and insurance)/ROP Screening & Treatment, Orthopedics
-          Department , General Surgeon , General Physician .DNB Orthopaedics
-          Course is offered at Shree Jagannath Hospital & Research Center.
-          Admission is going on for the session 2023-25(Diploma Course) &
-          2023-25(Certificate Course).
-        </Marquee>
+      
         {/* Notice Slider */}
         <NoticeSlider />
+        {/* <EventDisplay/> */}
         {/* Services Section */}
         <Ourservice />
 
@@ -52,8 +47,10 @@ const Dashboard = () => {
         {/* Price Board Section */}
         <BlogCards />
 
+       {/* <AppointForm/> */}
+
         
-     
+     <WhatsAppWidget/>
       </main>
     </section>
   );

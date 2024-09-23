@@ -1,23 +1,37 @@
 "use client";
 
+import { Eye, NotepadText, User } from "lucide-react";
+import { Bar } from "react-chartjs-2";
 import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-  Eye,
- 
-  NotepadText,
-  User,
-} from "lucide-react";
-import { Bar} from "react-chartjs-2"
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { BarChart, LabelList, XAxis, YAxis } from "recharts";
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import {  BarChart, LabelList, XAxis, YAxis } from "recharts"
+import { ChartContainer } from "@/components/ui/chart";
+import { Separator } from "@/components/ui/separator";
 
-
-import { ChartContainer } from "@/components/ui/chart"
-import { Separator } from "@/components/ui/separator"
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 const data = {
   labels: ["Posts", "Visits", "Users"],
   datasets: [
@@ -30,8 +44,8 @@ const data = {
     },
   ],
 };
- // Options for the bar chart
- const options = {
+// Options for the bar chart
+const options = {
   responsive: true,
   plugins: {
     legend: {
@@ -46,39 +60,37 @@ const data = {
 
 export default function Component() {
   return (
-    
     <>
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 justify-items-center">
-      <Card className="flex flex-col max-w-48 justify-center text-center">
-        <CardHeader className="flex flex-col items-center space-y-0 pb-2">
-          <NotepadText size={48} className="stroke-sky-700" />
-          <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl font-bold">79</CardContent>
-      </Card>
-      <Card className="flex flex-col max-w-48 justify-center text-center">
-        <CardHeader className="flex flex-col items-center space-y-0 pb-2">
-          <Eye size={48} className="stroke-sky-700" />
-          <CardTitle className="text-sm font-medium">Total Visits</CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl font-bold">11</CardContent>
-      </Card>
-      <Card className="flex flex-col max-w-48 justify-center text-center">
-        <CardHeader className="flex flex-col items-center space-y-0 pb-2">
-          <User size={48} className="stroke-sky-700" />
-          <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-        </CardHeader>
-        <CardContent className="text-2xl font-bold">5</CardContent>
-      </Card>
-    </div>
-       
-   
-    {/* Graph Section */}
-    
-    <div className="mt-8 p-4 bg-white rounded-lg shadow-lg">
-      <h1 className="text-lg font-semibold">Analytics Dashboard</h1>
-      <Bar data={data} options={options} />
-    </div>
-  </>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 justify-items-center">
+        <Card className="flex flex-col max-w-48 justify-center text-center">
+          <CardHeader className="flex flex-col items-center space-y-0 pb-2">
+            <NotepadText size={48} className="stroke-sky-700" />
+            <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-bold">79</CardContent>
+        </Card>
+        <Card className="flex flex-col max-w-48 justify-center text-center">
+          <CardHeader className="flex flex-col items-center space-y-0 pb-2">
+            <Eye size={48} className="stroke-sky-700" />
+            <CardTitle className="text-sm font-medium">Total Visits</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-bold">11</CardContent>
+        </Card>
+        <Card className="flex flex-col max-w-48 justify-center text-center">
+          <CardHeader className="flex flex-col items-center space-y-0 pb-2">
+            <User size={48} className="stroke-sky-700" />
+            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+          </CardHeader>
+          <CardContent className="text-2xl font-bold">5</CardContent>
+        </Card>
+      </div>
+
+      {/* Graph Section */}
+
+      <div className="mt-8 p-4 bg-white rounded-lg shadow-lg">
+        <h1 className="text-lg font-semibold">Analytics Dashboard</h1>
+        <Bar data={data} options={options} />
+      </div>
+    </>
   );
 }

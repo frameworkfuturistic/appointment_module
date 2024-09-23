@@ -85,7 +85,7 @@ const Ourservice = () => {
                   className=" transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-white duration-300 ...  shadow-none border-none md:max-w-72 md:max-h-48 text-wrap  flex flex-col items-center hover:shadow-md  hover:shadow-rose-200  "
                 >
                   <Icon
-                    color="#0284c7"
+                    color="#847575"
                     strokeWidth={1.25}
                     className="size-16 rounded-full bg-white"
                   />

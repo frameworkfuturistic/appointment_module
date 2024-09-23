@@ -1,12 +1,35 @@
-import { Button } from "@/components/ui/button";
+"use client";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Globe, Mail, Smartphone } from "lucide-react";
 import React from "react";
 
+import { useState } from "react";
 
 const ContactPage = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    date: "",
+    notes: "",
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  // Handle form field changes
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+    setSubmitted(true);
+    console.log("Appointment Submitted:", formData);
+  };
+
   return (
     <section className="section ">
       {/* Hero Section with Image and Overlay */}
@@ -109,8 +132,8 @@ const ContactPage = () => {
         </div>
 
         {/* Contact Form */}
-        <form className="bg-pattern5-bg  justify-center max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 p-4 my-4 shadow-xl hover:shadow-slate-200 ">
-          <div className="grid grid-flow-row gap-4">
+        <div className="bg-pattern5-bg  justify-center max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 p-4 my-4 shadow-xl hover:shadow-slate-200 ">
+          {/* <div className="grid grid-flow-row gap-4">
             <Input
               type="name"
               placeholder="Your Name"
@@ -133,6 +156,84 @@ const ContactPage = () => {
             <Button variant="hms" type="submit" className="place-self-center">
               Submit Query
             </Button>
+          </div> */}
+          <div className=" grid grid-flow-row max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-6"></h2>
+
+            {submitted ? (
+              <div className="bg-green-100 text-green-800 p-4 rounded">
+                <p>Thank you! Your appointment has been submitted.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                {/* Name */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                    required
+                  />
+                </div>
+
+                {/* Email */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                    required
+                  />
+                </div>
+
+                {/* Phone */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Phone
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                    required
+                  />
+                </div>
+
+                {/* Notes */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Additional Query
+                  </label>
+                  <textarea
+                    name="notes"
+                    value={formData.notes}
+                    onChange={handleChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                    rows="4"
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                >
+                  Send
+                </button>
+              </form>
+            )}
           </div>
           <div className="grid grid-flow-row text-wrap p-4 space-y-2">
             <ul>
@@ -146,14 +247,12 @@ const ContactPage = () => {
               <p className="text-xl font-light">+91 8987999200</p>
             </ul>
             <ul>
-              <h2 className="text-3xl font-medium text-black">
-                Opening Hours
-              </h2>
+              <h2 className="text-3xl font-medium text-black">Opening Hours</h2>
               <p className="font-light">Monday - Saturday 08:00 - 20:00</p>
               <p className="font-light">Sunday 12:00 - 16:00</p>
             </ul>
           </div>
-        </form>
+        </div>
       </div>
     </section>
   );

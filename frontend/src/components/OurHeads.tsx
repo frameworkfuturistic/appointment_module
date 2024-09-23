@@ -83,7 +83,7 @@ const OurHeads = () => {
                 </h1>
                 <p className="text-sm text-gray-600 mb-4">{doctor.title}</p>
                 <Dialog>
-                  <DialogTrigger className="bg-rose-300 shadow-xl text-slate-800 py-2 px-4 hover:bg-rose-200 rounded-md font-medium">
+                  <DialogTrigger className="bg-rose-300 shadow-xl text-slate-50 py-2 px-4 hover:bg-rose-200 rounded-md font-medium">
                     Details
                   </DialogTrigger>
                   <DialogContent className="w-full max-w-xs sm:max-w-md lg:max-w-lg rounded-lg mx-4 md:mx-auto">

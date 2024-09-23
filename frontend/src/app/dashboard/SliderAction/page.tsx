@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import ManageSliderImages from "@/app/dashboard/SliderAction/ManageSliderImages/ManageSliderImages";
 import { CarouselDemo } from "@/app/dashboard/SliderAction/CarouselDemo/CarouselDemo";
 import { NoticeInputPage } from "@/components/NoticeInputPage";
+import ManageEvents from "@/app/dashboard/ManageEvents/page";
 
 const App = () => {
   const [sliderImages, setSliderImages] = useState([
@@ -24,6 +25,7 @@ const App = () => {
       <ManageSliderImages userImages={sliderImages} onUpdateImages={handleUpdateImages} />
       {/* <CarouselDemo userImages={sliderImages} onUpdateImages={setSliderImages} /> */}
        <NoticeInputPage setNotices={setNotices} />
+       <ManageEvents/>
     </div>
   );
 };
