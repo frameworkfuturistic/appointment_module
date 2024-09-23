@@ -1,0 +1,72 @@
+{
+  "departments": [
+    { "id": 1, "name": "Cardiology" },
+    { "id": 2, "name": "Neurology" },
+    { "id": 3, "name": "Orthopedics" },
+    { "id": 4, "name": "Pediatrics" }
+  ],
+  "doctors": {
+    "Cardiology": [
+      { "id": 1, "name": "Dr. John" },
+      { "id": 2, "name": "Dr. Smith" }
+    ],
+    "Neurology": [
+      { "id": 3, "name": "Dr. Alice" },
+      { "id": 4, "name": "Dr. Bob" }
+    ],
+    "Orthopedics": [
+      { "id": 5, "name": "Dr. Sarah" },
+      { "id": 6, "name": "Dr. David" }
+    ],
+    "Pediatrics": [
+      { "id": 7, "name": "Dr. Emma" },
+      { "id": 8, "name": "Dr. Tom" }
+    ]
+  },
+  "shifts": [
+    { "id": 1, "name": "Morning" },
+    { "id": 2, "name": "Afternoon" },
+    { "id": 3, "name": "Evening" }
+  ],
+  "slots": {
+    "Morning": ["09:00 AM", "09:30 AM", "10:00 AM"],
+    "Afternoon": ["12:00 PM", "12:30 PM", "01:00 PM"],
+    "Evening": ["04:00 PM", "04:30 PM", "05:00 PM"]
+  },
+  "appointments": [
+    {
+      "id": 1,
+      "department": "Cardiology",
+      "doctor": "Dr. John",
+      "shift": "Morning",
+      "slot": "09:00 AM",
+      "patientDetails": {
+        "name": "John Doe",
+        "guardianName": "Jane Doe",
+        "age": 32,
+        "dob": "1992-05-10",
+        "address": "123 Main St, City, Country",
+        "gender": "Male",
+        "mobileNo": "+1234567890",
+        "notes": "Patient has a history of high blood pressure."
+      }
+    },
+    {
+      "id": 2,
+      "department": "Neurology",
+      "doctor": "Dr. Alice",
+      "shift": "Afternoon",
+      "slot": "12:30 PM",
+      "patientDetails": {
+        "name": "Emma Watson",
+        "guardianName": "Mark Watson",
+        "age": 28,
+        "dob": "1995-04-12",
+        "address": "456 Park Ave, City, Country",
+        "gender": "Female",
+        "mobileNo": "+9876543210",
+        "notes": "Patient complains of frequent migraines."
+      }
+    }
+  ]
+}
