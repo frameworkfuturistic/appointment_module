@@ -1,12 +1,12 @@
 "use client";
 
-// Import necessary hooks, types, and fetch
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
-// Define your types based on the data structure
+// Define types based on the data structure
 interface Department {
   id: number;
   department_name: string;
+  is_active: boolean;
 }
 
 interface Doctor {
@@ -19,6 +19,8 @@ interface Doctor {
 interface Shift {
   id: number;
   shift_name: string;
+  start_time: string;
+  end_time: string;
 }
 
 interface Slot {
@@ -26,12 +28,24 @@ interface Slot {
   slot_name: string;
 }
 
+interface ApiResponse {
+  status: string;
+  data: {
+    departments: Department[];
+    doctors: Doctor[];
+    shifts: Shift[];
+    slots: Slot[];
+  };
+}
+
 interface AppointmentContextType {
   departments: Department[];
   doctors: Doctor[];
   shifts: Shift[];
   slots: Slot[];
-  fetchData: () => void; // For fetching the data
+  loading: boolean; // Add loading state
+  error: string | null; // Add error state
+  fetchData: () => void; // Function to fetch the data
 }
 
 // Create the context
@@ -41,7 +55,7 @@ const AppointmentContext = createContext<AppointmentContextType | undefined>(und
 export const useAppointment = () => {
   const context = useContext(AppointmentContext);
   if (!context) {
-    throw new Error('useAppointment must be used within an AppointmentProvider');
+    throw new Error("useAppointment must be used within an AppointmentProvider");
   }
   return context;
 };
@@ -52,40 +66,51 @@ export const AppointmentProvider: React.FC<{ children: ReactNode }> = ({ childre
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [shifts, setShifts] = useState<Shift[]>([]);
   const [slots, setSlots] = useState<Slot[]>([]);
+  const [loading, setLoading] = useState<boolean>(false); // Loading state
+  const [error, setError] = useState<string | null>(null); // Error state
 
   // Fetch the data
   const fetchData = async () => {
+    setLoading(true);
+    setError(null); // Reset error state
+
     try {
-      const res = await fetch('https://8fc9-115-245-226-37.ngrok-free.app/api/v1/book/prefill');
-  
+      const res = await fetch("http://localhost:8000/api/v1/book/prefill");
+
       if (!res.ok) {
-        const errorText = await res.text(); // Get the error response as text
+        const errorText = await res.text();
         console.error(`HTTP error! status: ${res.status}, response: ${errorText}`);
-        return; // Exit if there was an error
+        setError("Failed to fetch data.");
+        return;
       }
-  
-      const data = await res.json(); // This line may fail if the response is HTML
-      console.log("dataaaa", data);
-      
-      if (data.status === "true") {
-        setDepartments(data.data.departments);
-        setDoctors(data.data.doctors.filter((doctor: Doctor) => doctor.is_active));
+
+      const data: ApiResponse = await res.json();
+      console.log("Fetched Data:", data);
+
+      if (data.status === "true" && data.data) {
+        setDepartments(data.data.departments.filter((dept: Department) => dept.is_active));
+        setDoctors(data.data.doctors.filter((doc: Doctor) => doc.is_active));
         setShifts(data.data.shifts);
         setSlots(data.data.slots);
+      } else {
+        console.warn("Unexpected data format or missing fields:", data);
+        setError("Unexpected data format.");
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+      setError("Error fetching data.");
+    } finally {
+      setLoading(false);
     }
   };
-  
 
-  // Fetch data on mount
+  // Fetch data on component mount
   useEffect(() => {
     fetchData();
   }, []);
 
   return (
-    <AppointmentContext.Provider value={{ departments, doctors, shifts, slots, fetchData }}>
+    <AppointmentContext.Provider value={{ departments, doctors, shifts, slots, loading, error, fetchData }}>
       {children}
     </AppointmentContext.Provider>
   );
