@@ -1,387 +1,529 @@
-"use client";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ArrowLeft } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Link from "next/link";
-import axios from "axios";
-import ExistAppointment from "./ExistAppointment";
-import { useAppointment } from "../(root)/context/AppointmentContext";
+'use client'
 
-const AppointmentForm = () => {
-  const [formData, setFormData] = useState({
-    department: "",
-    doctor: "",
-    shift: "",
-    slot: "",
-    fullName: "",
-    guardianName: "",
-    gender: "",
-    dob: "",
-    phone: "",
-    email: "",
-    address: "",
-    city: "",
-    district: "",
-    state: "",
-  });
+import { useState, useEffect, useCallback } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { motion, AnimatePresence } from 'framer-motion'
+import { format } from 'date-fns'
+import axios from 'axios'
+import { ChevronRight, ChevronLeft, User, Calendar, CreditCard, Printer, AlertCircle } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar as CalendarComponent } from "@/components/ui/calendar"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+const steps = [
+  { id: 'patient-details', title: 'Patient Details', icon: <User className="h-6 w-6" /> },
+  { id: 'book-slot', title: 'Book a Slot', icon: <Calendar className="h-6 w-6" /> },
+  { id: 'payment', title: 'Payment', icon: <CreditCard className="h-6 w-6" /> },
+  { id: 'print', title: 'Print', icon: <Printer className="h-6 w-6" /> },
+]
 
-  // Fetch data and state from the useAppointment hook
-  const { departments, doctors, shifts, slots, loading, error } = useAppointment();
+export default function AdvancedAppointmentForm() {
+  const [currentStep, setCurrentStep] = useState(0)
+  const [departments, setDepartments] = useState([])
+  const [doctors, setDoctors] = useState([])
+  const [slots, setSlots] = useState([])
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [patientData, setPatientData] = useState(null)
+  const [appointmentDetails, setAppointmentDetails] = useState(null)
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState(null)
 
-  // Handle form input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm()
 
-  // Handle select change for dropdowns
-  const handleSelectChange = (name, value) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSuccessMessage("");
-    setErrorMessage("");
-    console.log("POST DATA" ,formData);
-    // Perform form submission logic here, e.g., API call to save the appointment
+  const fetchDepartments = useCallback(async () => {
     try {
-      // Replace with the actual API endpoint
-      await axios.post("/api/appointments", formData);
-      console.log("POST DATA" ,formData);
-      
-      setSuccessMessage("Appointment booked successfully!");
-      setFormData({
-        department: "",
-        doctor: "",
-        shift: "",
-        slot: "",
-        fullName: "",
-        guardianName: "",
-        gender: "",
-        dob: "",
-        phone: "",
-        email: "",
-        address: "",
-        city: "",
-        district: "",
-        state: "",
-      });
-    } catch (error) {
-      setErrorMessage("Failed to book appointment. Please try again.");
+      const response = await axios.get('http://localhost:8585/api/V1/departments?include=doctors')
+      setDepartments(response.data.data)
+    } catch (err) {
+      setError('Error fetching departments')
     }
-  };
+  }, [])
 
-  return (
-    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-      <div className="grid grid-flow-col md:grid-flow-col justify-center gap-x-8 border items-center p-2 md:p-4">
-        <img
-          src="hospital/hospitallogo.png"
-          alt="Hospital Logo"
-          className="w-32 h-32 md:mb-0"
-        />
-        <div className="grid text-center space-y-2 sm:text-left md:text-left">
-          <h1 className="font-bold text-xl md:text-2xl">
-            Shree Jagannath Hospital & Research Center
-          </h1>
-          <p>sjhrc.ranchi@gmail.com</p>
-          <a href="https://sjhrc.in">https://sjhrc.in</a>
-          <p>+91 8987999200</p>
-        </div>
-      </div>
-      <div className="flex mx-auto justify-center items-center content-center">
-        <Card>
-          <CardHeader></CardHeader>
-          <CardContent>
-            <Tabs defaultValue="newAppointment" className="w-full">
-              <div className="flex justify-between mr-4">
-                <TabsList>
-                  <TabsTrigger value="newAppointment">New Appointment</TabsTrigger>
-                  <TabsTrigger value="oldAppointment">Existing Appointment</TabsTrigger>
-                </TabsList>
-                <Link href="/">
-                  <Button variant="outline">
-                    <ArrowLeft /> Back
-                  </Button>
-                </Link>
+  const fetchDoctors = useCallback(async (departmentId) => {
+    try {
+      const response = await axios.get(`http://localhost:8585/api/V1/departments/${departmentId}/doctors`)
+      setDoctors(response.data.data)
+    } catch (err) {
+      setError('Error fetching doctors')
+    }
+  }, [])
+
+  const fetchSlots = useCallback(async (doctorId, date) => {
+    try {
+      const formattedDate = format(date, 'yyyy-MM-dd')
+      const response = await axios.get(`http://localhost:8585/api/V1/slots/${doctorId}/${formattedDate}`)
+      setSlots(response.data)
+    } catch (err) {
+      setError('Error fetching slots')
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchDepartments()
+  }, [fetchDepartments])
+
+  const onSubmit = async (data) => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      if (currentStep === 0) {
+        await submitPatientDetails(data)
+      } else if (currentStep === 1) {
+        await bookAppointment(data)
+      } else if (currentStep === 2) {
+        await processPayment(data)
+      }
+
+      if (currentStep < steps.length - 1) {
+        setCurrentStep(currentStep + 1)
+      } else {
+        setAppointmentDetails(data)
+      }
+    } catch (err) {
+      setError(err.message || 'An error occurred. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const submitPatientDetails = async (data) => {
+    const response = await axios.post('http://localhost:8585/api/V1/patients', data)
+    setPatientData(response.data)
+  }
+
+  const bookAppointment = async (data) => {
+    const appointmentData = {
+      patientId: patientData.id,
+      doctorId: data.doctorId,
+      departmentId: selectedDepartmentId,
+      slotId: data.slotId,
+      appointmentDate: format(data.appointmentDate, 'yyyy-MM-dd'),
+      reason: data.reason,
+    }
+    const response = await axios.post('http://localhost:8585/api/V1/appointments', appointmentData)
+    setAppointmentDetails(response.data)
+  }
+
+  const processPayment = async (data) => {
+    // Simulating payment processing
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    console.log('Payment processed', data)
+  }
+
+   useEffect(() => {
+    if (selectedDepartmentId) {
+      const selectedDepartment = departments.find(dept => dept.id === selectedDepartmentId);
+      if (selectedDepartment) {
+        setDoctors(selectedDepartment.doctors); // Set doctors based on department
+      } else {
+        setDoctors([]);
+      }
+    }
+  }, [selectedDepartmentId, departments]);
+
+  const renderStep = () => {
+    switch (currentStep) {
+      case 0:
+        return (
+          <Card>
+            <CardHeader>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input id="name" {...register('name', { required: 'Name is required' })} />
+                  {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                  <Controller
+                    name="dateOfBirth"
+                    control={control}
+                    rules={{ required: 'Date of Birth is required' }}
+                    render={({ field }) => (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className={`w-full justify-start text-left font-normal ${!field.value && 'text-muted-foreground'}`}>
+                            {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
+                            <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <CalendarComponent
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    )}
+                  />
+                  {errors.dateOfBirth && <p className="text-red-500 text-sm">{errors.dateOfBirth.message}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gender">Gender</Label>
+                  <Controller
+                    name="gender"
+                    control={control}
+                    rules={{ required: 'Gender is required' }}
+                    render={({ field }) => (
+                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="male" id="male" />
+                          <Label htmlFor="male">Male</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="female" id="female" />
+                          <Label htmlFor="female">Female</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="other" id="other" />
+                          <Label htmlFor="other">Other</Label>
+                        </div>
+                      </RadioGroup>
+                    )}
+                  />
+                  {errors.gender && <p className="text-red-500 text-sm">{errors.gender.message}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" {...register('email', { required: 'Email is required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' } })} />
+                  {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <Input id="phone" {...register('phone', { required: 'Phone number is required', pattern: { value: /^[0-9]{10}$/, message: 'Invalid phone number' } })} />
+                  {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="address">Address</Label>
+                  <Textarea id="address" {...register('address', { required: 'Address is required' })} />
+                  {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
+                </div>
               </div>
-              <div className="mt-4">
-                <TabsContent value="newAppointment">
-                  <form
-                    className="grid w-full items-start gap-6 overflow-auto p-4 pt-0"
-                    onSubmit={handleSubmit}
-                  >
-                    <fieldset className="grid gap-6 rounded-lg border p-4">
-                      <legend className="-ml-1 px-1 text-sm font-medium">New Appointment</legend>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {/* Department */}
-                        <div className="flex flex-col">
-                          <Label htmlFor="department">Department</Label>
-                          <Select
-                      onValueChange={(value) => handleSelectChange("department", value)}
-                      disabled={loading || !departments.length}
-                    >
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select Department" />
+            </CardContent>
+          </Card>
+        )
+      case 1:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Book Appointment</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="department">Department</Label>
+                <Controller
+                  name="departmentId"
+                  control={control}
+                  rules={{ required: 'Department is required' }}
+                  render={({ field }) => (
+                    <Select onValueChange={(value) => {
+                      setSelectedDepartmentId(Number(value))
+                      fetchDoctors(value)
+                      field.onChange(value)
+                    }}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select department" />
                       </SelectTrigger>
                       <SelectContent>
-                        {departments.map((department) => (
-                          <SelectItem
-                            key={department.id}
-                            value={department.id.toString()}
-                          >
-                            {department.department_name}
-                          </SelectItem>
+                        {departments.map((dept) => (
+                          <SelectItem key={dept.id} value={dept.id.toString()}>{dept.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                        </div>
-                        {/* Doctor */}
-                        <div className="flex flex-col">
-                          <Label htmlFor="doctor">Doctor</Label>
-                          <Select
-                      onValueChange={(value) => handleSelectChange("doctor", value)}
-                      disabled={loading || !doctors.length}
-                    >
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select Doctor" />
+                  )}
+                />
+                {errors.departmentId && <p className="text-red-500 text-sm">{errors.departmentId.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="doctor">Doctor</Label>
+                <Controller
+                  name="doctorId"
+                  control={control}
+                  rules={{ required: 'Doctor is required' }}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} disabled={!selectedDepartmentId}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select doctor" />
                       </SelectTrigger>
                       <SelectContent>
-                        {doctors
-                          .filter(
-                            (doctor) =>
-                              doctor.department_id ===
-                              parseInt(formData.department)
-                          )
-                          .map((doctor) => (
-                            <SelectItem
-                              key={doctor.id}
-                              value={doctor.id.toString()}
-                            >
-                              {doctor.doctor_name}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                        </div>
-                        {/* Shift */}
-                        <div className="flex flex-col">
-                          <Label htmlFor="shift">Shift</Label>
-                          <Select
-                      onValueChange={(value) => handleSelectChange("shift", value)}
-                      disabled={loading || !shifts.length}
-                    >
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select Shift" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {shifts.map((shift) => (
-                          <SelectItem key={shift.id} value={shift.id.toString()}>
-                            {shift.shift_name}
-                          </SelectItem>
+                        {doctors.map((doctor) => (
+                          <SelectItem key={doctor.id} value={doctor.id.toString()}>{doctor.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                        </div>
-                        {/* Slot */}
-                        <div className="flex flex-col">
-                          <Label htmlFor="slot">Available Slot</Label>
-                          <Select
-                      onValueChange={(value) => handleSelectChange("slot", value)}
-                      disabled={loading || !slots.length}
-                    >
-                      <SelectTrigger className="mt-1">
-                        <SelectValue placeholder="Select Slot" />
+                  )}
+                />
+                {errors.doctorId && <p className="text-red-500 text-sm">{errors.doctorId.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="appointmentDate">Appointment Date</Label>
+                <Controller
+                  name="appointmentDate"
+                  control={control}
+                  rules={{ required: 'Appointment date is required' }}
+                  render={({ field }) => (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="outline" className={`w-full justify-start text-left font-normal ${!field.value && 'text-muted-foreground'}`}>
+                          {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
+                          <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={field.value}
+                          onSelect={(date) => {
+                            field.onChange(date)
+                            fetchSlots(watch('doctorId'), date)
+                          }}
+                          disabled={(date) => date < new Date() || date > new Date(new Date().setMonth(new Date().getMonth() + 3))}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  )}
+                />
+                {errors.appointmentDate && <p className="text-red-500 text-sm">{errors.appointmentDate.message}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="slotId">Time Slot</Label>
+                <Controller
+                  name="slotId"
+                  control={control}
+                  rules={{ required: 'Time slot is required' }}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} disabled={!watch('appointmentDate')}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select time slot" />
                       </SelectTrigger>
                       <SelectContent>
                         {slots.map((slot) => (
-                          <SelectItem key={slot.slot_id} value={slot.slot_id.toString()}>
-                            {slot.slot_name}
+                          <SelectItem key={slot.id} value={slot.id.toString()}>
+                            {format(new Date(`2000-01-01T${slot.startTime}`), 'h:mm a')} - {format(new Date(`2000-01-01T${slot.endTime}`), 'h:mm a')}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                        </div>
-                      </div>
-                    </fieldset>
-
-                    {/* Patient Details */}
-                    <fieldset className="grid gap-6 rounded-lg border p-4">
-                      <legend className="-ml-1 px-1 text-sm font-medium">Patient Details</legend>
-                      <div className="grid grid-cols-1 gap-4">
-                        <div className="flex flex-col">
-                          <Label htmlFor="fullName">Full Name</Label>
-                          <Input
-                            name="fullName"
-                            value={formData.fullName}
-                            onChange={handleChange}
-                            placeholder="Enter Full Name"
-                            className="h-9 border rounded-lg p-2 text-sm font-medium mt-1"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 gap-4">
-                        <div className="flex flex-col">
-                          <Label htmlFor="guardianName">Guardian Name</Label>
-                          <Input
-                            name="guardianName"
-                            value={formData.guardianName}
-                            onChange={handleChange}
-                            className="h-9 border rounded-lg p-2 text-sm font-medium mt-1"
-                            placeholder="Enter Guardian Name"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col">
-                          <Label htmlFor="gender">Gender</Label>
-                          <Select
-                            onValueChange={(value) => handleSelectChange("gender", value)}
-                          >
-                            <SelectTrigger className="mt-1">
-                              <SelectValue placeholder="Select Gender" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="male">Male</SelectItem>
-                              <SelectItem value="female">Female</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="flex flex-col">
-                          <Label htmlFor="dob">Date of Birth</Label>
-                          <Input
-                            type="date"
-                            name="dob"
-                            value={formData.dob}
-                            onChange={handleChange}
-                            className="h-9 border rounded-lg p-2 text-sm font-medium mt-1"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col">
-                          <Label htmlFor="phone">Phone</Label>
-                          <Input
-                            type="tel"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            className="h-9 border rounded-lg p-2 text-sm font-medium mt-1"
-                          />
-                        </div>
-                        <div className="flex flex-col">
-                          <Label htmlFor="email">Email</Label>
-                          <Input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className="h-9 border rounded-lg p-2 text-sm font-medium mt-1"
-                            placeholder="Enter Email"
-                          />
-                        </div>
-                      </div>
-                    </fieldset>
-
-                    {/* Address Details */}
-                    <fieldset className="grid gap-6 rounded-lg border p-4">
-                      <legend className="-ml-1 px-1 text-sm font-medium">Address</legend>
-                      <div className="grid grid-cols-1 gap-4">
-                        <div className="flex flex-col">
-                          <Label htmlFor="address">Address</Label>
-                          <Input
-                            name="address"
-                            value={formData.address}
-                            onChange={handleChange}
-                            className="h-9 border rounded-lg p-2 text-sm font-medium mt-1"
-                            placeholder="Enter Address"
-                          />
-                        </div>
-                        <div className="flex flex-col">
-                          <Label htmlFor="city">City</Label>
-                          <Input
-                            name="city"
-                            value={formData.city}
-                            onChange={handleChange}
-                            className="h-9 border rounded-lg p-2 text-sm font-medium mt-1"
-                            placeholder="Enter City"
-                          />
-                        </div>
-                        <div className="flex flex-col">
-                          <Label htmlFor="district">District</Label>
-                          <Input
-                            name="district"
-                            value={formData.district}
-                            onChange={handleChange}
-                            className="h-9 border rounded-lg p-2 text-sm font-medium mt-1"
-                            placeholder="Enter District"
-                          />
-                        </div>
-                        <div className="flex flex-col">
-                          <Label htmlFor="state">State</Label>
-                          <Input
-                            name="state"
-                            value={formData.state}
-                            onChange={handleChange}
-                            className="h-9 border rounded-lg p-2 text-sm font-medium mt-1"
-                            placeholder="Enter State"
-                          />
-                        </div>
-                      </div>
-                    </fieldset>
-
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant="outline"
-                        className="w-full mt-2"
-                        type="submit"
-                        disabled={loading}
-                      >
-                        Book Appointment
-                      </Button>
-                    </div>
-
-                    {successMessage && (
-                      <p className="text-green-500 mt-4">{successMessage}</p>
-                    )}
-                    {errorMessage && (
-                      <p className="text-red-500 mt-4">{errorMessage}</p>
-                    )}
-                  </form>
-                </TabsContent>
-
-                <TabsContent value="oldAppointment">
-                  <ExistAppointment />
-                </TabsContent>
+                  )}
+                />
+                {errors.slotId && <p className="text-red-500 text-sm">{errors.slotId.message}</p>}
               </div>
-            </Tabs>
-          </CardContent>
-        </Card>
-      </div>
-    </main>
-  );
-};
+              <div className="space-y-2">
+                <Label htmlFor="reason">Reason for Visit</Label>
+                <Textarea id="reason" {...register('reason', { required: 'Reason for visit is required' })} />
+                {errors.reason && <p className="text-red-500 text-sm">{errors.reason.message}</p>}
+              </div>
+            </CardContent>
+          </Card>
+        )
+      case 2:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Payment</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="paymentMethod">Payment Method</Label>
+                <Controller
+                  name="paymentMethod"
+                  control={control}
+                  rules={{ required: 'Payment method is required' }}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select payment method" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cash">Cash</SelectItem>
+                        <SelectItem value="card">Credit/Debit Card</SelectItem>
+                        <SelectItem value="online">Online Payment</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {errors.paymentMethod && <p className="text-red-500 text-sm">{errors.paymentMethod.message}</p>}
+              </div>
+              {watch('paymentMethod') === 'card' && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="cardNumber">Card Number</Label>
+                    <Input id="cardNumber" {...register('cardNumber', { required: 'Card number is required' })} />
+                    {errors.cardNumber && <p className="text-red-500 text-sm">{errors.cardNumber.message}</p>}
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="expiryDate">Expiry Date</Label>
+                      <Input id="expiryDate" {...register('expiryDate', { required: 'Expiry date is required' })} placeholder="MM/YY" />
+                      {errors.expiryDate && <p className="text-red-500 text-sm">{errors.expiryDate.message}</p>}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cvv">CVV</Label>
+                      <Input id="cvv" {...register('cvv', { required: 'CVV is required' })} />
+                      {errors.cvv && <p className="text-red-500 text-sm">{errors.cvv.message}</p>}
+                    </div>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        )
+      case 3:
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Appointment Confirmation</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Success</AlertTitle>
+                <AlertDescription>Your appointment has been successfully booked and payment processed.</AlertDescription>
+              </Alert>
+              <div className="space-y-2">
+                <h3 className="font-semibold">Patient Details</h3>
+                <p>Name: {patientData?.name}</p>
+                <p>Email: {patientData?.email}</p>
+                <p>Phone: {patientData?.phone}</p>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-semibold">Appointment Details</h3>
+                <p>Department: {departments.find(d => d.id === selectedDepartmentId)?.name}</p>
+                <p>Doctor: {doctors.find(d => d.id === appointmentDetails?.doctorId)?.name}</p>
+                <p>Date: {appointmentDetails?.appointmentDate && format(new Date(appointmentDetails.appointmentDate), 'PPP')}</p>
+                <p>Time: {slots.find(s => s.id === appointmentDetails?.slotId)?.startTime} - {slots.find(s => s.id === appointmentDetails?.slotId)?.endTime}</p>
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-semibold">Payment Details</h3>
+                <p>Amount Paid: ${appointmentDetails?.amount || '100.00'}</p>
+                <p>Payment Method: {watch('paymentMethod')}</p>
+              </div>
+              <Button onClick={() => window.print()} className="w-full">
+                Print Confirmation
+              </Button>
+            </CardContent>
+          </Card>
+        )
+      default:
+        return null
+    }
+  }
 
-export default AppointmentForm;
+  return (
+    <div className="min-h-screen bg-gradient-to-r from-slate-50 to-gray-50">
+     <div className="bg-[url('/hospital/hospitallogo.png?height=300&width=1920')] bg-cover bg-center">
+        <div className="bg-blue-900 bg-opacity-75 py-8 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+            <img
+              src="/hospital/hospitallogo.png?height=80&width=80"
+              alt="Hospital logo"
+              className="w-16 h-16 sm:w-20 sm:h-20"
+            />
+            <div className="text-center md:text-left text-white">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
+                Shree Jagannath Hospital & Research Center
+              </h1>
+              <div className="flex flex-col md:flex-row justify-center md:justify-evenly text-sm sm:text-md lg:text-lg text-gray-300 space-y-2 md:space-y-0 md:space-x-4">
+                <p>sjhrc.ranchi@gmail.com</p>
+                <a href="https://sjhrc.in" className="underline">
+                  https://sjhrc.in
+                </a>
+                <p>+91 8987999200</p>
+              </div>
+              <div className="text-center mt-4">
+          <h1 className="text-2xl font-bold ">Patient Appointment System</h1>
+          <p className="mt-2 text-sm text-gray-300">Book your appointment in a few easy steps</p>
+        </div>
+            </div>
+            <div className="w-16 h-16 sm:w-20 sm:h-20"></div>{" "}
+            {/* Placeholder for symmetry */}
+          </div>
+        </div>
+      </div><div className="max-w-4xl mx-auto">
+       
+        <nav className="mb-8">
+          <ol className="flex items-center w-full p-3 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 sm:p-4 sm:space-x-4">
+            {steps.map((step, index) => (
+              <li key={step.id} className={`flex items-center ${index < steps.length - 1 ? 'w-full' : ''}`}>
+                <span className={`flex items-center justify-center w-8 h-8 mr-2 text-xs border ${index <= currentStep ? 'border-blue-600 text-blue-600' : 'border-gray-500 text-gray-500'} rounded-full shrink-0`}>
+                  {step.icon}
+                </span>
+                {step.title}
+                {index < steps.length - 1 && (
+                  <svg className="w-3 h-3 ml-2 sm:ml-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 10">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 5 5 5 5-5"/>
+                  </svg>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.3 }}
+            >
+              {renderStep()}
+            </motion.div>
+          </AnimatePresence>
+          {error && (
+            <Alert variant="destructive" className="mt-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          <div className="mt-8 flex justify-between">
+            {currentStep > 0 && (
+              <Button type="button" onClick={() => setCurrentStep(currentStep - 1)} variant="outline">
+                <ChevronLeft className="mr-2 h-4 w-4" /> Previous
+              </Button>
+            )}
+            <Button type="submit" disabled={loading}>
+              {loading ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Processing...
+                </>
+              ) : currentStep < steps.length - 1 ? (
+                <>
+                  Next <ChevronRight className="ml-2 h-4 w-4" />
+                </>
+              ) : (
+                'Complete Appointment'
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}

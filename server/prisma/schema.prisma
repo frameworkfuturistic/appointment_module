@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Patient {
+  id                Int            @id @default(autoincrement())
+  name              String
+  email             String         @unique
+  phone             String
+  whatsappNumber    String?        // Optional WhatsApp number
+  address           String
+  occupation        String?        // Optional occupation
+  gender            String?        // Optional gender
+  maritalStatus     String?        // Optional marital status
+  religion          String?        // Optional religion
+  country           String?        // Optional country
+  state             String?        // Optional state
+  district          String?        // Optional district
+  pinCode           String?        // Optional pin code
+  dateOfBirth       DateTime?
+  medicalHistory    String?        // Optional medical history
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt // Automatically update on modification
+  appointments      Appointment[]   @relation("PatientAppointments") // Relation to appointments
+  notifications     Notification[]  @relation("PatientNotifications") // Relation to notifications
+}
+
+model Department {
+  id          Int           @id @default(autoincrement())
+  name        String        @unique
+  code        String        @unique // Alphanumeric department code
+  description String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt // Automatically update on modification
+  doctors     Doctor[]      @relation("DepartmentDoctors") // Relation to doctors
+  appointments Appointment[] // Fixed typo here
+}
+
+model Doctor {
+  id             Int           @id @default(autoincrement())
+  name           String
+  email          String        @unique
+  phone          String
+  bio            String
+  profileImg     String
+  specialization String
+  department     Department    @relation("DepartmentDoctors", fields: [departmentId], references: [id])
+  departmentId   Int
+  slots          Slot[]        @relation("DoctorSlots") // Relation to available slots
+  appointments   Appointment[]  @relation("DoctorAppointments") // Relation to appointments
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt // Automatically update on modification
+}
+
+model Slot {
+  id              Int       @id @default(autoincrement())
+  doctor          Doctor    @relation("DoctorSlots", fields: [doctorId], references: [id])
+  doctorId        Int
+  date            DateTime
+  appointmentToken Int      // Sequential token for each slot
+  isBooked        Boolean   @default(false)
+  appointments Appointment[] @relation("SlotAppointments") // One-to-many relation to appointments
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+
+model Appointment {
+  id                Int          @id @default(autoincrement())
+  registrationId    String       @unique  // Unique registration ID
+  patient           Patient      @relation("PatientAppointments", fields: [patientId], references: [id])
+  patientId         Int
+  doctor            Doctor       @relation("DoctorAppointments", fields: [doctorId], references: [id])
+  doctorId          Int
+  department        Department   @relation(fields: [departmentId], references: [id])
+  departmentId      Int
+  slot              Slot         @relation("SlotAppointments", fields: [slotId], references: [id])
+  slotId            Int
+  date              DateTime
+  status            String       // confirmed, canceled, etc.
+  rescheduledFrom   Appointment? @relation("RescheduledAppointments", fields: [rescheduledFromId], references: [id])
+  rescheduledFromId Int?         // Optional for rescheduling
+  remindersSent     Boolean      @default(false) // Track if reminder has been sent
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt // Automatically update on modification
+
+  payment                 Payment?      @relation("AppointmentPayment") // Payment relation
+  rescheduledAppointments  Appointment[] @relation("RescheduledAppointments") // Added the reverse relation for rescheduling
+}
+
+model Payment {
+  id            Int         @id @default(autoincrement())
+  appointment   Appointment @relation("AppointmentPayment", fields: [appointmentId], references: [id])
+  appointmentId Int         @unique // Ensure each appointment has a unique payment
+  amount        Float       // Payment amount
+  status        String      // e.g., 'pending', 'completed', 'failed'
+  method        String      // e.g., 'credit_card', 'paypal'
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt // Automatically update on modification
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  patient   Patient  @relation("PatientNotifications", fields: [patientId], references: [id])
+  patientId Int
+  message   String
+  type      String   // reminder, reschedule, cancellation
+  sentAt    DateTime @default(now())
+  status    String   // pending, sent, read
+}

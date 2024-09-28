@@ -1,30 +1,44 @@
-import Link from "next/link"
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import {
+  Activity,
   Bell,
-  BookUser,
+  Calendar as CalendarIcon,
+  ChevronDown,
+  ChevronRight,
   CircleUser,
+  Clock,
+  FileText,
   Home,
   LineChart,
+  LogOut,
   Menu,
-  MessageSquareMore,
-  MessageSquarePlus,
-  NotebookPen,
-  Package,
+  MessageSquare,
+  Moon,
   Package2,
   Search,
-  ShoppingCart,
+  Settings,
+  Sun,
   Users,
-} from "lucide-react"
+  X,
+} from "lucide-react";
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+import { Button } from "@/components/ui/button";
+
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,175 +46,255 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <>
-      <div className=" grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      <div className="hidden border-r bg-muted/40 md:block">
-        <div className="flex h-full max-h-screen flex-col gap-2">
-          <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
-              <Package2 className="h-6 w-6" />
-              <span className="">Blog App</span>
-            </Link>
-            <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-              <Bell className="h-4 w-4" />
-              <span className="sr-only">Toggle notifications</span>
-            </Button>
-          </div>
-          <div className="flex-1">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4 ">
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Home className="h-4 w-4" />
-                Dashboard
-              </Link>
-              <Link
-                href="/dashboard/allPosts"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <MessageSquareMore className="h-4 w-4" />
-                All Post
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  6
-                </Badge>
-              </Link>
-              <Link
-                href="/dashboard/create-post"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <NotebookPen className="h-4 w-4" />
-                Add Post
-                
-              </Link>
-             
-              
-              <Link
-                href="/dashboard/accounts"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <BookUser className="h-4 w-4" />
-                Accounts
-              </Link>
+}: Readonly<{ children: React.ReactNode }>) {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMasterSubmenuOpen, setIsMasterSubmenuOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false)
 
-              <Link
-                href="/dashboard/SliderAction"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <BookUser className="h-4 w-4" />
-                Manage Slide Images
-              </Link>
-            </nav>
-          </div>
-          <div className="mt-auto p-4">
-          
-          </div>
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+    document.documentElement.classList.toggle("dark");
+  };
+
+  const menuItems = [
+    { icon: Home, label: "Dashboard", href: "/dashboard" },
+    { icon: CalendarIcon, label: "Appointments", href: "/dashboard/appointments" },
+    { icon: Users, label: "Departments", href: "/dashboard/department" },
+    { icon: Users, label: "Doctor", href: "/dashboard/doctors" },
+    { icon: Users, label: "Patients", href: "/dashboard/patients" },
+    { icon: FileText, label: "Medical Records", href: "/dashboard/records" },
+    { icon: LineChart, label: "Analytics", href: "/dashboard/analytics" },
+    { icon: MessageSquare, label: "Blogs", href: "/dashboard/blogs" },
+    { icon: Settings, label: "Master", href: "#" },
+  ];
+  const masterSubmenuItems = [
+    { label: "Departments", href: "/dashboard/masters/departments" },
+    { label: "Doctors", href: "/dashboard/masters/doctors" },
+    { label: "Notice", href: "/dashboard/masters/noticeBoard" },
+    { label: "Gallery", href: "/dashboard/masters/Gallery" },
+  ];
+
+  return (
+    <div
+      className={`flex h-screen bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-gray-900 dark:to-indigo-900 ${
+        isDarkMode ? "dark" : ""
+      }`}
+    >
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex w-64 flex-col space-y-5 p-5 bg-white dark:bg-gray-800 shadow-lg rounded-r-3xl">
+        <div className="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400">
+          <Package2 className="h-8 w-8" />
+          <span className="text-2xl font-bold">Dashboard</span>
         </div>
-      </div>
-      
-      <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shrink-0 md:hidden"
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="flex flex-col w-1/2 ">
-              <nav className="grid gap-2 text-lg font-medium">
-                <Link
-                  href="#"
-                  className="flex items-center gap-2 text-lg font-semibold"
-                >
-                  <Package2 className="h-6 w-6" />
-                  <span className="sr-only">Blog App</span>
-                </Link>
-                <Link
-                  href="/dashboard"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Home className="h-5 w-5" />
-                  Dashboard
-                </Link>
-                <Link
-                  href="/dashboard/allPosts"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
-                >
-                  <MessageSquareMore className="h-4 w-4" />
-                  All Post
-                  <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                    6
-                  </Badge>
-                </Link>
-                <Link
-                  href="/dashboard/create-post"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                 <NotebookPen className="h-4 w-4" />
-                  Add Post
-                </Link>
+        <nav className="space-y-2">
+          {menuItems.map((item) => (
+           <div key={item.href}>
+           {item.label === "Master" ? (
+             <>
+               <button
+                 onClick={() => setIsMasterSubmenuOpen(!isMasterSubmenuOpen)}
+                 className="flex items-center space-x-2 px-4 py-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-indigo-100 dark:hover:bg-indigo-700 transition-colors w-full"
+               >
+                 <item.icon className="h-5 w-5" />
+                 <span>{item.label}</span>
+                 {isMasterSubmenuOpen ? <ChevronDown className="ml-auto" /> : <ChevronRight className="ml-auto" />}
+               </button>
+               {isMasterSubmenuOpen && (
+                 <div className="ml-8 space-y-2">
+                   {masterSubmenuItems.map((submenuItem) => (
+                     <Link key={submenuItem.href} href={submenuItem.href}  className="flex items-center space-x-2 px-4 py-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-indigo-100 dark:hover:bg-indigo-700 transition-colors"
+                     >
+                       {submenuItem.label}
+                     </Link>
+                   ))}
+                 </div>
+               )}
+             </>
+           ) : (
+             <Link href={item.href} className="flex items-center space-x-2 px-4 py-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-indigo-100 dark:hover:bg-indigo-700 transition-colors">
+               <item.icon className="h-5 w-5" />
+               <span>{item.label}</span>
+             </Link>
+           )}
+         </div>
+          ))}
+        </nav>
+      </aside>
+
+      {/* Mobile Menu */}
+      <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+        <SheetContent side="left" className="w-64 bg-white dark:bg-gray-800">
+          <SheetHeader>
+            <SheetTitle className="text-indigo-600 dark:text-indigo-400">
+              MediDash
+            </SheetTitle>
+            <SheetDescription>Quick access to all features</SheetDescription>
+          </SheetHeader>
+          <nav className="mt-6 space-y-2">
+            {menuItems.map((item) => (
+               <div key={item.href}>
+               {item.label === "Master" ? (
+                 <>
+                   <button
+                     onClick={() => setIsMasterSubmenuOpen(!isMasterSubmenuOpen)}
+                     className="flex items-center space-x-2 px-4 py-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-indigo-100 dark:hover:bg-indigo-700 transition-colors w-full"
+                   >
+                     <item.icon className="h-5 w-5" />
+                     <span>{item.label}</span>
+                     {isMasterSubmenuOpen ? <ChevronDown className="ml-auto" /> : <ChevronRight className="ml-auto" />}
+                   </button>
+                   {isMasterSubmenuOpen && (
+                     <div className="ml-8 space-y-2">
+                       {masterSubmenuItems.map((submenuItem) => (
+                         <Link
+                           key={submenuItem.href}
+                           href={submenuItem.href}
+                           className="flex items-center space-x-2 px-4 py-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-indigo-100 dark:hover:bg-indigo-700 transition-colors"
                
-                <Link
-                  href="/dasboard/accounts"
-                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-                >
-                   <BookUser className="h-4 w-4" />
-                  Accounts
-                </Link>
-                
-              </nav>
-             
-            </SheetContent>
-          </Sheet>
-          <div className="w-full flex-1">
-            <form>
-              {/* <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="search"
-                  placeholder="Search products..."
-                  className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-                />
-              </div> */}
-            </form>
+                           onClick={() => setIsMobileMenuOpen(false)}
+                         >
+                           {submenuItem.label}
+                         </Link>
+                       ))}
+                     </div>
+                   )}
+                 </>
+               ) : (
+                 <Link
+                   href={item.href}
+                   className="flex items-center space-x-2 px-4 py-2 rounded-xl text-gray-700 dark:text-gray-200 hover:bg-indigo-100 dark:hover:bg-indigo-700 transition-colors"
+                   onClick={() => setIsMobileMenuOpen(false)}
+                 >
+                   <item.icon className="h-5 w-5" />
+                   <span>{item.label}</span>
+                 </Link>
+               )}
+             </div>
+            ))}
+          </nav>
+        </SheetContent>
+      </Sheet>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <header className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 shadow-md rounded-b-3xl">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu className="h-6 w-6" />
+            </Button>
+            <div className="relative">
+              {/* Original search button - hidden on mobile */}
+            </div>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <CircleUser className="h-5 w-5" />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center space-x-4">
+           
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleDarkMode}
+              className="bg-gray-100 dark:bg-gray-700 rounded-full"
+            >
+              {isDarkMode ? (
+                <Sun className="h-5 w-5 text-yellow-500" />
+              ) : (
+                <Moon className="h-5 w-5 text-indigo-600" />
+              )}
+            </Button>
+           
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative bg-gray-100 dark:bg-gray-700 rounded-full">
+                  <Bell className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                    {showNotifications && (
+                      <span className="absolute top-0 right-0 block h-2 w-2 rounded-full  bg-red-500 transform translate-x-1 -translate-y-1"></span>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-72">
+                  <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                  <DropdownMenuItem>
+                    <div className="flex items-center space-x-2">
+                      <span className="flex h-2 w-2 rounded-full bg-blue-400"></span>
+                      <span>New appointment request</span>
+                    </div>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <div className="flex items-center space-x-2">
+                      <span className="flex h-2 w-2 rounded-full bg-yellow-400"></span>
+                      <span>Appointment rescheduled</span>
+                    </div>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="relative h-10 w-10 rounded-full"
+                >
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage
+                      src="/placeholder.svg?height=40&width=40"
+                      alt="@doctor"
+                    />
+                    <AvatarFallback>DS</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      Dr. Smith
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      doctor@example.com
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <CircleUser className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Log out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-          {children}
-        </main>
-      </div>
+
+        {/* Dashboard Content */}
+        {children}
+      </main>
     </div>
-    </>
   );
 }
