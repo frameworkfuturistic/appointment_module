@@ -9,40 +9,19 @@ class Department extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'departments';
+    protected $table = 'gen_departments'; // Matches your table name
+    protected $primaryKey = 'DepartmentID'; // Your primary key
+    public $incrementing = true; // Primary key is auto-incrementing
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    // Generally, you won't include the primary key in fillable unless you're manually assigning it.
     protected $fillable = [
-        'department_name',
-        'department_code',
-        'is_active',
+        'DepartmentID',
+        'Department', // Match the column name in your database
     ];
 
-    /**
-     * Relationship: A department has many doctors.
-     */
+    // A department has many doctors
     public function doctors()
     {
-        return $this->hasMany(Doctor::class);
-    }
-
-    /**
-     * Define a default scope for active departments.
-     *
-     * @param $query
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
+        return $this->hasMany(Consultant::class, 'DepartmentID', 'DepartmentID');
     }
 }

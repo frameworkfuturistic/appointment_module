@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { log } from 'console'
 
 const steps = [
   { id: 'patient-details', title: 'Patient Details', icon: <User className="h-6 w-6" /> },
@@ -46,17 +47,19 @@ export default function AdvancedAppointmentForm() {
 
   const fetchDepartments = useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:8585/api/V1/departments?include=doctors')
-      setDepartments(response.data.data)
+      const response = await axios.get('http://127.0.0.1:8000/api/v1/departments')
+      console.log("department", response.data);
+      
+      setDepartments(response.data)
     } catch (err) {
       setError('Error fetching departments')
     }
   }, [])
 
-  const fetchDoctors = useCallback(async (departmentId) => {
+  const fetchDoctors = useCallback(async (DepartmentID) => {
     try {
-      const response = await axios.get(`http://localhost:8585/api/V1/departments/${departmentId}/doctors`)
-      setDoctors(response.data.data)
+      const response = await axios.get(`http://127.0.0.1:8000/api/v1/doctors/${DepartmentID}`)
+      setDoctors(response.data)
     } catch (err) {
       setError('Error fetching doctors')
     }
@@ -82,7 +85,7 @@ export default function AdvancedAppointmentForm() {
 
     try {
       if (currentStep === 0) {
-        await submitPatientDetails(data)
+        
       } else if (currentStep === 1) {
         await bookAppointment(data)
       } else if (currentStep === 2) {
@@ -101,10 +104,7 @@ export default function AdvancedAppointmentForm() {
     }
   }
 
-  const submitPatientDetails = async (data) => {
-    const response = await axios.post('http://localhost:8585/api/V1/patients', data)
-    setPatientData(response.data)
-  }
+
 
   const bookAppointment = async (data) => {
     const appointmentData = {
@@ -225,117 +225,124 @@ export default function AdvancedAppointmentForm() {
       case 1:
         return (
           <Card>
-            <CardHeader>
-              <CardTitle>Book Appointment</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="department">Department</Label>
-                <Controller
-                  name="departmentId"
-                  control={control}
-                  rules={{ required: 'Department is required' }}
-                  render={({ field }) => (
-                    <Select onValueChange={(value) => {
-                      setSelectedDepartmentId(Number(value))
-                      fetchDoctors(value)
-                      field.onChange(value)
-                    }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select department" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {departments.map((dept) => (
-                          <SelectItem key={dept.id} value={dept.id.toString()}>{dept.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                {errors.departmentId && <p className="text-red-500 text-sm">{errors.departmentId.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="doctor">Doctor</Label>
-                <Controller
-                  name="doctorId"
-                  control={control}
-                  rules={{ required: 'Doctor is required' }}
-                  render={({ field }) => (
-                    <Select onValueChange={field.onChange} disabled={!selectedDepartmentId}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select doctor" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {doctors.map((doctor) => (
-                          <SelectItem key={doctor.id} value={doctor.id.toString()}>{doctor.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                {errors.doctorId && <p className="text-red-500 text-sm">{errors.doctorId.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="appointmentDate">Appointment Date</Label>
-                <Controller
-                  name="appointmentDate"
-                  control={control}
-                  rules={{ required: 'Appointment date is required' }}
-                  render={({ field }) => (
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" className={`w-full justify-start text-left font-normal ${!field.value && 'text-muted-foreground'}`}>
-                          {field.value ? format(field.value, 'PPP') : <span>Pick a date</span>}
-                          <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <CalendarComponent
-                          mode="single"
-                          selected={field.value}
-                          onSelect={(date) => {
-                            field.onChange(date)
-                            fetchSlots(watch('doctorId'), date)
-                          }}
-                          disabled={(date) => date < new Date() || date > new Date(new Date().setMonth(new Date().getMonth() + 3))}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  )}
-                />
-                {errors.appointmentDate && <p className="text-red-500 text-sm">{errors.appointmentDate.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="slotId">Time Slot</Label>
-                <Controller
-                  name="slotId"
-                  control={control}
-                  rules={{ required: 'Time slot is required' }}
-                  render={({ field }) => (
-                    <Select onValueChange={field.onChange} disabled={!watch('appointmentDate')}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select time slot" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {slots.map((slot) => (
-                          <SelectItem key={slot.id} value={slot.id.toString()}>
-                            {format(new Date(`2000-01-01T${slot.startTime}`), 'h:mm a')} - {format(new Date(`2000-01-01T${slot.endTime}`), 'h:mm a')}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
-                {errors.slotId && <p className="text-red-500 text-sm">{errors.slotId.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="reason">Reason for Visit</Label>
-                <Textarea id="reason" {...register('reason', { required: 'Reason for visit is required' })} />
-                {errors.reason && <p className="text-red-500 text-sm">{errors.reason.message}</p>}
-              </div>
-            </CardContent>
-          </Card>
+          <CardHeader>
+            <CardTitle>Book Appointment</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            <div className="space-y-2">
+              <Label htmlFor="department">Department</Label>
+              <Controller
+                name="departmentId"
+                control={control}
+                rules={{ required: 'Department is required' }}
+                render={({ field }) => (
+                  <Select onValueChange={(value) => {
+                    setSelectedDepartmentId(Number(value));
+                    fetchDoctors(value);
+                    field.onChange(value);
+                  }}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departments.length > 0 ? (
+                        departments.map((dept) => (
+                          <SelectItem key={dept.DepartmentID} value={dept.DepartmentID.toString()}>{dept.Department}</SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem disabled>No departments available</SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.departmentId && <p className="text-red-500 text-sm">{errors.departmentId.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="doctor">Doctor</Label>
+              <Controller
+                name="doctorId"
+                control={control}
+                rules={{ required: 'Doctor is required' }}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} disabled={!selectedDepartmentId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select doctor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {doctors.map((doctor) => (
+                       <SelectItem key={doctor.ConsultantID} value={doctor.ConsultantID.toString()}>{doctor.ConsultantName}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.doctorId && <p className="text-red-500 text-sm">{errors.doctorId.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="appointmentDate">Appointment Date</Label>
+              <Controller
+                name="appointmentDate"
+                control={control}
+                rules={{ required: 'Appointment date is required' }}
+                render={({ field }) => (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className={`w-full justify-start text-left font-normal ${!field.value && 'text-muted-foreground'}`}>
+                        {field.value ? format(new Date(field.value), 'PPP') : <span>Pick a date</span>}
+                        {/* Replace with your calendar icon */}
+                        <span className="ml-auto h-4 w-4 opacity-50">📅</span>
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <CalendarComponent
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          fetchSlots(watch('doctorId'), date);
+                        }}
+                        disabled={(date) => date < new Date() || date > new Date(new Date().setMonth(new Date().getMonth() + 3))}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                )}
+              />
+              {errors.appointmentDate && <p className="text-red-500 text-sm">{errors.appointmentDate.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="slotId">Time Slot</Label>
+              <Controller
+                name="slotId"
+                control={control}
+                rules={{ required: 'Time slot is required' }}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} disabled={!watch('appointmentDate')}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select time slot" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {slots.map((slot) => (
+                        <SelectItem key={slot.id} value={slot.id.toString()}>
+                          {format(new Date(`2000-01-01T${slot.startTime}`), 'h:mm a')} - {format(new Date(`2000-01-01T${slot.endTime}`), 'h:mm a')}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.slotId && <p className="text-red-500 text-sm">{errors.slotId.message}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reason">Reason for Visit</Label>
+              <Textarea id="reason" {...register('reason', { required: 'Reason for visit is required' })} />
+              {errors.reason && <p className="text-red-500 text-sm">{errors.reason.message}</p>}
+            </div>
+            <Button type="submit">Submit Appointment</Button>
+          </CardContent>
+        </Card>
         )
       case 2:
         return (

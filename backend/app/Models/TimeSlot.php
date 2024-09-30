@@ -9,23 +9,19 @@ class TimeSlot extends Model
 {
     use HasFactory;
 
-    // Define the table associated with the model
-    protected $table = 'time_slots';
+    protected $table = 'opd_doctorslots'; // Ensure this matches your actual table name
 
-    // Specify the primary key for the model
-    protected $primaryKey = 'slot_id';
-
-    // Indicate if the IDs are auto-incrementing
-    public $incrementing = true;
-
-    // Indicate that the primary key is of type integer
-    protected $keyType = 'int';
-
-    // Disable timestamps if not using them
-    public $timestamps = true;
-
-    // Define fillable attributes for mass assignment
     protected $fillable = [
-        'slot_name',
+        'ConsultantID',
+        'ConsultationDate',
+        'SlotTime',
+        'SlotToken',
+        'MaxSlots',
+        'AvailableSlots',
     ];
+
+    // Disable Eloquent's timestamps as your columns are not the default 'created_at' and 'updated_at'
+    public $timestamps = false;
+
+    // If you want to manage timestamps manually, you can create custom functions to do so.
 }

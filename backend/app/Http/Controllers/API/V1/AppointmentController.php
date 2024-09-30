@@ -9,299 +9,179 @@
 
 namespace App\Http\Controllers\API\V1;
 
-use App\Http\Requests\BookAppointmentRequest;
-use App\Http\Requests\AppointmentListRequest;
-use App\Http\Requests\AppointmentShowRequest;
-use App\Http\Requests\AppointmentHistoryByPatientIdRequest;
-use App\Http\Requests\AppointmentsByDoctorIdRequest;
-use App\Http\Requests\PatientAppointmentByIdRequest;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\AppointmentResource;
-use App\Http\Resources\AppointmentCollection;
-use App\Services\AppointmentService;
-use App\Repositories\AppointmentRepository;
-use App\Services\RazorpayService;
-use App\Services\PatientService;
-use App\Repositories\PatientRepository;
-use App\Repositories\DepartmentRepository;
-use App\Repositories\DoctorRepository;
-use App\Repositories\ShiftRepository;
-use App\Repositories\SlotRepository;
-use App\Repositories\UnavailabilityRepository;
-use Request;
+use App\Models\Appointment;
+use App\Models\Consultant; 
+use App\Models\Shift; 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AppointmentController extends Controller
 {
-    protected $appointmentService;
-    protected $patientService;
-    protected $apiVersion;
-    protected $apiCodes;
-    protected $httpMessages;
+   // Create a new appointment
+   public function store(Request $request)
+{
+    // Validate incoming request
+    $validator = Validator::make($request->all(), [
+        'ConsultantID' => 'required|integer',
+        'RegistrationID' => 'required|integer',
+        'ConsultationDate' => 'required|date',
+        'PatientName' => 'required|string|max:50',
+        'MobileNo' => 'required|string|max:10',
+        'Address' => 'nullable|string|max:255',
+        'ShiftID' => 'nullable|integer',
+        'TokenNo' => 'nullable|string|max:50',
+        'Remarks' => 'nullable|string|max:50',
+        'Pending' => 'nullable|boolean',
+    ]);
 
-    public function __construct()
-    {
-        // Instantiate the Services directly
-        $appointmentRepository = new AppointmentRepository();
-        $patientRepository = new PatientRepository();
-        $departmentRepository = new DepartmentRepository();
-        $doctorRepository = new DoctorRepository();
-        $unavailabilityRepository = new UnavailabilityRepository();
-        $shiftRepository = new ShiftRepository();
-        $slotRepository = new SlotRepository();
-        $razorpayService = new RazorpayService();
-
-        $this->patientService = new PatientService($patientRepository);
-        $this->appointmentService = new AppointmentService(
-            $appointmentRepository, 
-                  $razorpayService, 
-             $departmentRepository,
-                 $doctorRepository,
-         $unavailabilityRepository,
-                  $shiftRepository,
-                   $slotRepository
-        );
-
-        // Load configurations
-        $this->apiVersion = config('api_codes.version');
-        $this->apiCodes = config('api_codes.v1');
-        $this->httpMessages = config('api_responses');
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
     }
 
-    // Fetch combined data from services for appointment pre-fill
-    public function fetchPrefillData()
-    {
-        try {
-            // Fetch data using the service method
-            $combinedData = $this->appointmentService->getAllData();
+    // Fetch Consultant data from gen_consultants table
+    $consultant = Consultant::find($request->ConsultantID);  // Find consultant by ConsultantID
 
-            return responseMsg(
-                'true',
-                $this->httpMessages['success']['records_retrieved'],
-                $combinedData,
-                $this->apiCodes['API_1.1.8'],
-                $this->apiVersion['v1'],
-                null,
-                'GET',
-                null
-            );
-
-        } catch (\Exception $e) {
-            // Handle exceptions and return an error response
-            return responseMsg(
-                'false',
-                $this->httpMessages['error']['default'],
-                null,
-                $this->apiCodes['API_1.1.8'],
-                $this->apiVersion['v1'],
-                null,
-                'GET',
-                null
-            );
-        }
+    if (!$consultant) {
+        return response()->json(['error' => 'Consultant not found'], 404);
     }
 
-    // Method to book a new appointment
-    public function book(BookAppointmentRequest $request)
-    {
-        // Retrieve validation errors, if any
-        $validationErrors = $request->getValidationErrors();
+    // Fetch Shift data from gen_shifts table
+    $shift = Shift::find($request->ShiftID);  // Find shift by ShiftID
 
-        // If there are validation errors, return them in the response
-        if (!empty($validationErrors)) {
-            //dd('requesterrorresponse', $validationErrors);
-            return responseMsg(
-                'false',
-                $validationErrors,
-                null,
-                $this->apiCodes['API_1.1.1'],
-                $this->apiVersion['v1'],
-                null,
-                'POST',
-                null
-            );
-        }
-
-        try {
-
-            // Initialize patient ID variable
-            $patientId = null;
-
-            // Check if the patient is new or existing
-            if ($request->is_new_patient) {
-                // Prepare patient data
-                $patientData = [
-                    'name' => $request->patient_name,
-                    'father_name' => $request->father_name,
-                    'address' => $request->address,
-                    'city' => $request->city,
-                    'state' => $request->state,
-                    'pincode' => $request->pincode,
-                    'mobile' => $request->mobile,
-                    'gender' => $request->gender,
-                    'ref_by' => $request->ref_by,
-                ];
-
-                // Save new patient details via appointment service
-                $result = $this->patientService->saveNewPatient($patientData);
-
-                // Check for errors in saving patient
-                if ($result['status'] === 'error') {
-                    return responseMsg(
-                        'false',
-                        $result['message'],
-                        null,
-                        $this->apiCodes['API_1.1.1'],
-                        $this->apiVersion['v1'],
-                        null,
-                        'POST',
-                        null
-                    );
-                }
-
-                // Retrieve and set new patient ID
-                $patientId = $result['patient_id'];
-            } else {
-                // Handle existing patient scenario
-                $patientId = $request->patient_id;
-
-                // Validate that the patient exists
-                $patient = $this->patientService->getPatientById($patientId);
-                if (!$patient) {
-                    return responseMsg(
-                        'false',
-                        'Patient not found.',
-                        null,
-                        $this->apiCodes['API_1.1.1'],
-                        $this->apiVersion['v1'],
-                        null,
-                        'POST',
-                        null
-                    );
-                }
-            }
-
-            // Prepare appointment data
-            // $appointmentData = [
-            //     'patient_id' => $patientId,
-            //     'doctor_id' => $request->doctorId,
-            //     'time_slot' => $request->timeSlot,
-            //     'date' => $request->date,
-            //     'amount' => $request->amount
-            // ];
-
-            // Save appointment details via appointment service
-            $result = $this->appointmentService->bookAppointment(
-                $request->$patientId,
-                $request->doctorId,
-                $request->timeSlot,
-                $request->date,
-                $request->amount
-            );
-
-            // Handle repository errors
-            if ($result['status'] === 'error') {
-                return responseMsg(
-                    'false',
-                    $result['message'],
-                    null,
-                    $this->apiCodes['API_1.1.1'],
-                    $this->apiVersion['v1'],
-                    null,
-                    'POST',
-                    null
-                );
-            }
-
-            // Convert the main data to an object, including nested arrays/objects
-            $objects = array_to_object($result);
-
-            return responseMsg(
-                'true',
-                $this->httpMessages['success']['default'],
-                $objects,
-                $this->apiCodes['API_1.1.1'],
-                $this->apiVersion['v1'],
-                null,
-                'POST',
-                null
-            );
-
-        } catch (\Exception $e) {
-            // Handle other exceptions
-            return responseMsg(
-                'false',
-                $this->httpMessages['error']['default'],
-                null,
-                $this->apiCodes['API_1.1.1'],
-                $this->apiVersion['v1'],
-                null,
-                'POST',
-                null
-            );
-        }
+    if (!$shift) {
+        return response()->json(['error' => 'Shift not found'], 404);
     }
 
+    // Prepare appointment data
+    $appointmentData = $request->only([
+        'ConsultantID',
+        'RegistrationID',
+        'ConsultationDate',
+        'ShiftID',
+        'TokenNo',
+        'Remarks',
+        'Pending',
+        'PatientName',
+        'MobileNo',
+        'Address',
+    ]);
 
-    // Method to list all appointments
-    public function list(AppointmentListRequest $request)
+    // Create the appointment
+    $appointment = Appointment::create($appointmentData);
+
+    // Add Consultant and Shift data in the response
+    $response = [
+        'OPDConsultationID' => $appointment->OPDConsultationID,
+        'ConsultantID' => $appointment->ConsultantID,
+        'RegistrationID' => $appointment->RegistrationID,
+        'ConsultationDate' => $appointment->ConsultationDate,
+        'ShiftID' => $appointment->ShiftID,
+        'TokenNo' => $appointment->TokenNo,
+        'Remarks' => $appointment->Remarks,
+        'Pending' => $appointment->Pending,
+        'PatientName' => $appointment->PatientName,
+        'MobileNo' => $appointment->MobileNo,
+        'Address' => $appointment->Address,
+        'consultant' => [
+            'ConsultantID' => $consultant->ConsultantID,
+            'ConsultantName' => $consultant->ConsultantName,
+            'ConsultantType' => $consultant->ConsultantType,
+            'Specialization' => $consultant->Specialization,
+            // Add other consultant fields you want
+        ],
+        'shift' => [
+            'ShiftID' => $shift->ShiftID,
+            'ShiftName' => $shift->ShiftName,
+            'StartTime' => $shift->StartTime,
+            'EndTime' => $shift->EndTime,
+            // Add other shift fields you want
+        ]
+    ];
+
+    return response()->json($response, 201);
+}
+
+   
+
+
+   // Get all appointments with optional filtering and pagination
+   public function index(Request $request)
+   {
+       $query = Appointment::with('consultant', 'shift');
+
+       if ($request->filled('status')) {
+           $query->where('status', $request->status);
+       }
+
+       if ($request->filled('search')) {
+           $query->where('PatientName', 'like', '%' . $request->search . '%');
+       }
+
+       $appointments = $query->paginate($request->input('per_page', 10));
+       return response()->json($appointments);
+   }
+
+    // Get appointment by ID
+    public function show($id)
     {
-        $appointments = $this->appointmentService->getAllAppointments();
-        if (count($appointments) === 0) {
-            return responseMsg('false', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_1.1.2'], $this->apiVersion['v1'], null, 'GET', null);
-        }
-        return responseMsg('true', $this->httpMessages['success']['appointments_retrieved'], new AppointmentCollection($appointments), $this->apiCodes['API_1.1.2'], $this->apiVersion['v1'], null, 'GET', null);
-    }
-
-    // Method to show a specific appointment by ID
-    public function show(AppointmentShowRequest $request)
-    {
-        $appointmentId = $request->route('appointment_id');
-        $appointment = $this->appointmentService->getAppointmentById($appointmentId);
-
-        if ($appointment === null) {
-            return responseMsg('false', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_1.1.3'], $this->apiVersion['v1'], null, 'GET', null);
-        }
-
-        return responseMsg('true', $this->httpMessages['success']['appointment_retrieved'], new AppointmentResource($appointment), $this->apiCodes['API_1.1.3'], $this->apiVersion['v1'], null, 'GET', null);
-    }
-
-    // Method to get appointment history by patient ID
-    public function historyByPatientId(AppointmentHistoryByPatientIdRequest $request)
-    {
-        $patientId = $request->route('patient_id');
-        $appointments = $this->appointmentService->getHistoryByPatientId($patientId);
-
-        if (count($appointments) === 0) {
-            return responseMsg('false', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_1.1.4'], $this->apiVersion['v1'], null, 'GET', null);
-        }
-
-        return responseMsg('true', $this->httpMessages['success']['appointments_retrieved'], new AppointmentCollection($appointments), $this->apiCodes['API_1.1.4'], $this->apiVersion['v1'], null, 'GET', null);
-    }
-
-    // Method to get appointments by doctor ID
-    public function appointmentsByDoctorId(AppointmentsByDoctorIdRequest $request)
-    {
-        $doctorId = $request->input('doctor_id');
-        $appointments = $this->appointmentService->getAppointmentsByDoctorId($doctorId);
-
-        if (count($appointments) === 0) {
-            return responseMsg('false', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_1.1.5'], $this->apiVersion['v1'], null, 'GET', null);
-        }
-
-        return responseMsg('true', $this->httpMessages['success']['appointments_retrieved'], new AppointmentCollection($appointments), $this->apiCodes['API_1.1.5'], $this->apiVersion['v1'], null, 'GET', null);
-    }
-
-    // Method to get a specific patient's appointment by patient ID and appointment ID
-    public function patientAppointmentById(PatientAppointmentByIdRequest $request)
-    {
-        $patientId = $request->input('patient_id');
-        $appointmentId = $request->input('appointment_id');
-        $appointment = $this->appointmentService->getPatientAppointmentById($patientId, $appointmentId);
-
+        $appointment = Appointment::with('consultant', 'shift')->find($id);
         if (!$appointment) {
-            return responseMsg('false', $this->httpMessages['not_found']['appointment_not_found'], null, $this->apiCodes['API_1.1.6'], $this->apiVersion['v1'], null, 'GET', null);
+            return response()->json(['message' => 'Appointment not found'], 404);
+        }
+        return response()->json($appointment);
+    }
+
+    // Update appointment by ID
+    public function update(Request $request, $id)
+    {
+        $appointment = Appointment::find($id);
+        if (!$appointment) {
+            return response()->json(['message' => 'Appointment not found'], 404);
         }
 
-        return responseMsg('true', $this->httpMessages['success']['appointment_retrieved'], new AppointmentResource($appointment), $this->apiCodes['API_1.1.6'], $this->apiVersion['v1'], null, 'GET', null);
+        // Validate incoming request
+        $validator = Validator::make($request->all(), [
+            'ConsultantID' => 'sometimes|required|integer',
+            'RegistrationID' => 'sometimes|required|integer',
+            'ConsultationDate' => 'sometimes|required|date',
+            'PatientName' => 'sometimes|required|string|max:50',
+            'MobileNo' => 'sometimes|required|string|max:10',
+            'ShiftID' => 'sometimes|nullable|integer',
+            'Remarks' => 'sometimes|nullable|string|max:50',
+            'status' => 'sometimes|in:pending,confirmed,canceled', // Validation for status
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        // Update the appointment with the validated data
+        $appointment->update($request->all());
+        return response()->json($appointment);
+    }
+
+    // Soft delete appointment by ID
+    public function destroy($id)
+    {
+        $appointment = Appointment::find($id);
+        if (!$appointment) {
+            return response()->json(['message' => 'Appointment not found'], 404);
+        }
+
+        $appointment->delete(); // Soft delete
+        return response()->json(['message' => 'Appointment deleted successfully'], 200);
+    }
+
+    // Restore a soft-deleted appointment
+    public function restore($id)
+    {
+        $appointment = Appointment::withTrashed()->find($id);
+        if (!$appointment) {
+            return response()->json(['message' => 'Appointment not found'], 404);
+        }
+
+        $appointment->restore();
+        return response()->json(['message' => 'Appointment restored successfully'], 200);
     }
 }

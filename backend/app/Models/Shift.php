@@ -9,15 +9,9 @@ class Shift extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'shift_name', 
-        'start_time', 
-        'end_time',
-    ];
+    protected $table = 'gen_shifts'; 
+    protected $primaryKey = 'ShiftID'; 
+    public $incrementing = true; 
 
-    // Define the relationship to Appointment
-    public function appointments()
-    {
-        return $this->hasMany(Appointment::class);
-    }
+    protected $fillable = ['ShiftName', 'StartTime', 'StartTimeAMPM', 'EndTime', 'EndTimeAMPM'];
 }

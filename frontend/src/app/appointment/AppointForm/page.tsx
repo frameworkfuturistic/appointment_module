@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import axios from "axios";
 import ExistAppointment from "./ExistAppointment";
-import { useAppointment } from "../(root)/context/AppointmentContext";
+import { useAppointment } from "@/app/(root)/context/AppointmentContext";
 
 const AppointmentForm = () => {
   const [formData, setFormData] = useState({
