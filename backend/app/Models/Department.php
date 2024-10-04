@@ -24,4 +24,6 @@ class Department extends Model
     {
         return $this->hasMany(Consultant::class, 'DepartmentID', 'DepartmentID');
     }
+
+    
 }

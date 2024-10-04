@@ -44,4 +44,15 @@ class Consultant extends Model
     {
         return $this->belongsTo(Department::class, 'DepartmentID', 'DepartmentID');
     }
+
+     // Relationship with appointments
+     public function appointments()
+     {
+         return $this->hasMany(Appointment::class, 'ConsultantID', 'ConsultantID');
+     }
+
+     public function consultantShift()
+    {
+        return $this->hasOne(ConsultantShift::class, 'ConsultantID', 'ConsultantID');
+    }
 }

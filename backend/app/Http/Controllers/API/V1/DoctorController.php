@@ -15,8 +15,20 @@ class DoctorController extends Controller
     // Fetch doctors based on department
     public function index($departmentId)
     {
-        $doctors = Consultant::where('DepartmentID', $departmentId)->get();
-        return response()->json($doctors, 200);
+        $doctors = Consultant::where('DepartmentID', $departmentId)
+            ->with('consultantShift') // Eager load the consultant shift to get the fee
+            ->get();
+    
+        // Transform the data to include fee information
+        $doctorData = $doctors->map(function ($doctor) {
+            return [
+                'ConsultantID' => $doctor->ConsultantID,
+                'ConsultantName' => $doctor->ConsultantName,
+                'Fee' => optional($doctor->consultantShift)->Fee, // Safely access Fee
+            ];
+        });
+    
+        return response()->json($doctorData, 200);
     }
 
 }

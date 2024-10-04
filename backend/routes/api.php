@@ -8,11 +8,10 @@ use App\Http\Controllers\API\V1\DoctorController;
 use App\Http\Controllers\API\V1\DepartmentController;
 use App\Http\Controllers\API\V1\SlotController;
 
-
 /*
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 | API Routes
-|--------------------------------------------------------------------------
+|----------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
 | routes are loaded by the RouteServiceProvider and all of them will
@@ -24,38 +23,41 @@ use App\Http\Controllers\API\V1\SlotController;
 //     return $request->user();
 // });
 
+Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], function () {
 
-Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'],function () {
+    // Add Patient
+    Route::post('/patients', [PatientController::class, 'createPatient']);
 
-// Version 1 APIs for appointments
-Route::get('/departments', [DepartmentController::class, 'index']);
-Route::get('/doctors/{departmentId}', [DoctorController::class, 'index']);
-Route::post('/add', [SlotController::class, 'addSlots']);
-Route::get('/slots/{doctorId}/{date}', [SlotController::class, 'availableSlots']); // Fetch available slots for doctor by date
+    // Retrieve Patient by MRNo
+    Route::get('/patients/{mrNo}', [PatientController::class, 'getPatient']);
 
- // Create a new appointment
- Route::post('/appointments', [AppointmentController::class, 'store'])->name('store');
- 
-   // Get all appointments with optional filtering and pagination
-   Route::get('appointments', [AppointmentController::class, 'index'])
-   ->name('appointments.index');
-   // Get appointment by ID
+    // Version 1 APIs for departments and doctors
+    Route::get('/departments', [DepartmentController::class, 'index']);
+    Route::get('/doctors/{departmentId}', [DoctorController::class, 'index']);
 
- 
+    // Slot management
+    // Fetch available slots for a specific doctor on a given date
+    Route::get('slots/{doctorId}/{date}', [SlotController::class, 'availableSlots']);
+    Route::post('slots/book', [SlotController::class, 'bookSlot']);   
+    // Add slots for a doctor
+    Route::post('slots', [SlotController::class, 'addSlots']);
+
+    // Get all OPD doctor slots
+    Route::get('slots/all', [SlotController::class, 'getAllSlots']);
+
+    // Fetch all available slots for a specific doctor across multiple dates
+    Route::get('slots/{doctorId}', [SlotController::class, 'getAllDoctorSlots']);
+
   
 
-    // Version 1 APIs for doctors
+    // Version 1 APIs for online appointments
+        Route::post('appointments', [AppointmentController::class, 'createAppointment']);
+        Route::put('appointments/{id}', [AppointmentController::class, 'updateAppointment']);
+        Route::get('search', [AppointmentController::class, 'searchAppointments']);
+        Route::get('appointments', [AppointmentController::class, 'getAllAppointments']); // Optional
+   
 
-
-    // 1.1.9 Show details of a specific patient
-    Route::get('patients/{patient_id}', [PatientController::class, 'show'])
-        ->name('patients.show');
-    // 1.1.10 List all patients
-    Route::get('patients', [PatientController::class, 'list'])
-        ->name('patients.list');
+   
+    // Version 1 APIs for payments (add as necessary)
+    // Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');
 });
-
-    
-
-
-

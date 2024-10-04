@@ -14,4 +14,10 @@ class Shift extends Model
     public $incrementing = true; 
 
     protected $fillable = ['ShiftName', 'StartTime', 'StartTimeAMPM', 'EndTime', 'EndTimeAMPM'];
+
+     // Relationship with appointments
+     public function appointments()
+     {
+         return $this->hasMany(Appointment::class, 'ShiftID', 'ShiftID');
+     }
 }

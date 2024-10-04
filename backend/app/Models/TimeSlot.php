@@ -9,7 +9,8 @@ class TimeSlot extends Model
 {
     use HasFactory;
 
-    protected $table = 'opd_doctorslots'; // Ensure this matches your actual table name
+    protected $table = 'opd_doctorslots';
+    protected $primaryKey = 'SlotID';
 
     protected $fillable = [
         'ConsultantID',
@@ -18,10 +19,22 @@ class TimeSlot extends Model
         'SlotToken',
         'MaxSlots',
         'AvailableSlots',
+        'isBooked', // Add isBooked field
+        'AppointmentID', // New field for linking appointments
     ];
 
-    // Disable Eloquent's timestamps as your columns are not the default 'created_at' and 'updated_at'
+    // Disable Eloquent's timestamps
     public $timestamps = false;
 
-    // If you want to manage timestamps manually, you can create custom functions to do so.
+    // Method to check if a slot is available
+    public function isAvailable()
+    {
+        return $this->AvailableSlots > 0 && !$this->isBooked; // Check for availability and if it's booked
+    }
+
+    // Relationship with appointments
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'SlotID', 'SlotID');
+    }
 }

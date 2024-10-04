@@ -1,73 +1,66 @@
 <?php
 
-/**
- * Model for OPD Registrations table.
- * File opened by Juniad on 26-07-2024.
- * Status: Closed
- */
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Appointment  extends Model
+class Appointment extends Model
 {
     use HasFactory;
 
     // Specify the table associated with the model
-    protected $table = 'opd_consultations';
+    protected $table = 'opd_onlineappointments';
 
-    // Specify the primary key for the model
-    protected $primaryKey = 'OPDConsultationID';
+    // Specify the primary key
+    protected $primaryKey = 'OPDOnlineAppointmentID';
 
-    // Disable auto-incrementing if the primary key is not an incrementing integer
-    public $incrementing = true; // Set to false if using a UUID or similar
+    // Specify whether the ID is auto-incrementing
+    public $incrementing = true;
 
-    // Specify the data types of the primary key
-    protected $keyType = 'int'; // Change to 'string' if using a UUID
-
-    // Fillable fields for mass assignment
+    // Specify the fields that can be mass assigned
     protected $fillable = [
         'ConsultantID',
+        'MRNo',
         'RegistrationID',
         'ConsultationDate',
-        'ConsultedAt',
-        'FreeConsultation',
-        'FirstConsultation',
+        'SlotID',
+        'SlotToken',
         'ShiftID',
-        'TokenNo',
-        'Canceled',
         'Remarks',
         'Pending',
         'PatientName',
         'MobileNo',
+        'TransactionID',
         'CreatedBy',
         'CreatedOn',
         'ModifiedBy',
         'ModifiedOn',
     ];
-    public $timestamps = false; // Disable automatic timestamps
 
-    // Cast attributes to specific data types
-    protected $casts = [
-        'ConsultationDate' => 'datetime', // Automatically cast to Carbon instance
-        'FreeConsultation' => 'boolean',   // Cast to boolean
-        'FirstConsultation' => 'boolean',   // Cast to boolean
-        'Canceled' => 'boolean',             // Cast to boolean
-        'Pending' => 'boolean',              // Cast to boolean
-    ];
-
-    // Define relationships if applicable
+    // Define relationships
     public function consultant()
     {
-        return $this->belongsTo(Consultant::class, 'ConsultantID');
+        return $this->belongsTo(Consultant::class, 'ConsultantID', 'ConsultantID');
+    }
+
+    public function registration()
+    {
+        return $this->belongsTo(Patient::class, 'MRNo', 'MRNo');
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class, 'MRNo', 'MRNo');
+    }
+
+    public function slot()
+    {
+        return $this->belongsTo(TimeSlot::class, 'SlotID', 'SlotID');
     }
 
     public function shift()
     {
-        return $this->belongsTo(Shift::class, 'ShiftID');
+        return $this->belongsTo(Shift::class, 'ShiftID', 'ShiftID');
     }
-
-    // Additional methods or scopes can be added here
 }

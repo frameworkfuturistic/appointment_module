@@ -1,187 +1,108 @@
 <?php
 
-/**
- * Controller for APIs related to appointments 
- * Opened by: Junaid
- * Open Date: 26-08-2024
- * Status: Open
- */
-
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
-use App\Models\Consultant; 
-use App\Models\Shift; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class AppointmentController extends Controller
 {
-   // Create a new appointment
-   public function store(Request $request)
-{
-    // Validate incoming request
-    $validator = Validator::make($request->all(), [
-        'ConsultantID' => 'required|integer',
-        'RegistrationID' => 'required|integer',
-        'ConsultationDate' => 'required|date',
-        'PatientName' => 'required|string|max:50',
-        'MobileNo' => 'required|string|max:10',
-        'Address' => 'nullable|string|max:255',
-        'ShiftID' => 'nullable|integer',
-        'TokenNo' => 'nullable|string|max:50',
-        'Remarks' => 'nullable|string|max:50',
-        'Pending' => 'nullable|boolean',
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json($validator->errors(), 422);
-    }
-
-    // Fetch Consultant data from gen_consultants table
-    $consultant = Consultant::find($request->ConsultantID);  // Find consultant by ConsultantID
-
-    if (!$consultant) {
-        return response()->json(['error' => 'Consultant not found'], 404);
-    }
-
-    // Fetch Shift data from gen_shifts table
-    $shift = Shift::find($request->ShiftID);  // Find shift by ShiftID
-
-    if (!$shift) {
-        return response()->json(['error' => 'Shift not found'], 404);
-    }
-
-    // Prepare appointment data
-    $appointmentData = $request->only([
-        'ConsultantID',
-        'RegistrationID',
-        'ConsultationDate',
-        'ShiftID',
-        'TokenNo',
-        'Remarks',
-        'Pending',
-        'PatientName',
-        'MobileNo',
-        'Address',
-    ]);
-
-    // Create the appointment
-    $appointment = Appointment::create($appointmentData);
-
-    // Add Consultant and Shift data in the response
-    $response = [
-        'OPDConsultationID' => $appointment->OPDConsultationID,
-        'ConsultantID' => $appointment->ConsultantID,
-        'RegistrationID' => $appointment->RegistrationID,
-        'ConsultationDate' => $appointment->ConsultationDate,
-        'ShiftID' => $appointment->ShiftID,
-        'TokenNo' => $appointment->TokenNo,
-        'Remarks' => $appointment->Remarks,
-        'Pending' => $appointment->Pending,
-        'PatientName' => $appointment->PatientName,
-        'MobileNo' => $appointment->MobileNo,
-        'Address' => $appointment->Address,
-        'consultant' => [
-            'ConsultantID' => $consultant->ConsultantID,
-            'ConsultantName' => $consultant->ConsultantName,
-            'ConsultantType' => $consultant->ConsultantType,
-            'Specialization' => $consultant->Specialization,
-            // Add other consultant fields you want
-        ],
-        'shift' => [
-            'ShiftID' => $shift->ShiftID,
-            'ShiftName' => $shift->ShiftName,
-            'StartTime' => $shift->StartTime,
-            'EndTime' => $shift->EndTime,
-            // Add other shift fields you want
-        ]
-    ];
-
-    return response()->json($response, 201);
-}
-
-   
-
-
-   // Get all appointments with optional filtering and pagination
-   public function index(Request $request)
-   {
-       $query = Appointment::with('consultant', 'shift');
-
-       if ($request->filled('status')) {
-           $query->where('status', $request->status);
-       }
-
-       if ($request->filled('search')) {
-           $query->where('PatientName', 'like', '%' . $request->search . '%');
-       }
-
-       $appointments = $query->paginate($request->input('per_page', 10));
-       return response()->json($appointments);
-   }
-
-    // Get appointment by ID
-    public function show($id)
+    // Method to create a new online appointment
+    public function createAppointment(Request $request)
     {
-        $appointment = Appointment::with('consultant', 'shift')->find($id);
-        if (!$appointment) {
-            return response()->json(['message' => 'Appointment not found'], 404);
-        }
-        return response()->json($appointment);
+        // Validate incoming request
+        $validated = $request->validate([
+            'ConsultantID' => 'required|integer|exists:gen_consultants,ConsultantID',
+            'MRNo' => 'required|string|exists:mr_master,MRNo',
+            'RegistrationID' => 'required|integer',
+            'ConsultationDate' => 'required|date',
+            'SlotID' => 'required|integer|exists:opd_doctorslots,SlotID',
+            'SlotToken' => 'required|string|max:50',
+            'ShiftID' => 'required|integer|exists:gen_shifts,ShiftID',
+            'Remarks' => 'nullable|string|max:50',
+            'Pending' => 'required|boolean',
+            'PatientName' => 'required|string|max:50',
+            'MobileNo' => 'required|string|max:10',
+            'TransactionID' => 'nullable|string|max:50',
+            'CreatedBy' => 'required|integer',
+        ]);
+
+        // Create a new appointment
+        $appointment = Appointment::create($validated);
+
+        return response()->json(['message' => 'Appointment created successfully.', 'appointment' => $appointment], 201);
     }
 
-    // Update appointment by ID
-    public function update(Request $request, $id)
+    // Method to update an existing appointment
+    public function updateAppointment(Request $request, $id)
     {
+        // Find the appointment by ID
         $appointment = Appointment::find($id);
+
+        // Return error response if appointment not found
         if (!$appointment) {
-            return response()->json(['message' => 'Appointment not found'], 404);
+            return response()->json(['error' => 'Appointment not found.'], 404);
         }
 
         // Validate incoming request
-        $validator = Validator::make($request->all(), [
-            'ConsultantID' => 'sometimes|required|integer',
-            'RegistrationID' => 'sometimes|required|integer',
-            'ConsultationDate' => 'sometimes|required|date',
-            'PatientName' => 'sometimes|required|string|max:50',
-            'MobileNo' => 'sometimes|required|string|max:10',
-            'ShiftID' => 'sometimes|nullable|integer',
-            'Remarks' => 'sometimes|nullable|string|max:50',
-            'status' => 'sometimes|in:pending,confirmed,canceled', // Validation for status
+        $validated = $request->validate([
+            'ConsultantID' => 'required|integer|exists:gen_consultants,ConsultantID',
+            'MRNo' => 'required|string|exists:mr_master,MRNo',
+            'RegistrationID' => 'required|integer',
+            'ConsultationDate' => 'required|date',
+            'SlotID' => 'required|integer|exists:opd_doctorslots,SlotID',
+            'SlotToken' => 'required|string|max:50',
+            'ShiftID' => 'required|integer|exists:gen_shifts,ShiftID',
+            'Remarks' => 'nullable|string|max:50',
+            'Pending' => 'required|boolean',
+            'PatientName' => 'required|string|max:50',
+            'MobileNo' => 'required|string|max:10',
+            'CreatedBy' => 'required|integer',
+        ]);
+        // Update the appointment with validated data
+        $appointment->update($validated);
+
+        return response()->json(['message' => 'Appointment updated successfully.', 'appointment' => $appointment], 200);
+    }
+
+    // Method to search appointments by mobile number or OPDOnlineAppointmentID
+    public function searchAppointments(Request $request)
+    {
+        // Validate input for searching
+        $request->validate([
+            'MobileNo' => 'nullable|string|max:10',
+            'OPDOnlineAppointmentID' => 'nullable|integer',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+        // Create a query for appointments
+        $query = Appointment::query();
+
+        // Apply filters based on user input
+        if ($request->has('MobileNo')) {
+            $query->where('MobileNo', $request->input('MobileNo'));
         }
 
-        // Update the appointment with the validated data
-        $appointment->update($request->all());
-        return response()->json($appointment);
+        if ($request->has('OPDOnlineAppointmentID')) {
+            $query->orWhere('OPDOnlineAppointmentID', $request->input('OPDOnlineAppointmentID'));
+        }
+
+        // Execute the query and get results
+        $appointments = $query->get();
+
+        // Return appointments or a not found message
+        if ($appointments->isEmpty()) {
+            return response()->json(['message' => 'No appointments found.'], 404);
+        }
+
+        return response()->json(['appointments' => $appointments], 200);
     }
 
-    // Soft delete appointment by ID
-    public function destroy($id)
+    // Method to get all appointments (optional)
+    public function getAllAppointments()
     {
-        $appointment = Appointment::find($id);
-        if (!$appointment) {
-            return response()->json(['message' => 'Appointment not found'], 404);
-        }
-
-        $appointment->delete(); // Soft delete
-        return response()->json(['message' => 'Appointment deleted successfully'], 200);
-    }
-
-    // Restore a soft-deleted appointment
-    public function restore($id)
-    {
-        $appointment = Appointment::withTrashed()->find($id);
-        if (!$appointment) {
-            return response()->json(['message' => 'Appointment not found'], 404);
-        }
-
-        $appointment->restore();
-        return response()->json(['message' => 'Appointment restored successfully'], 200);
+        $appointments = Appointment::all();
+        return response()->json(['appointments' => $appointments], 200);
     }
 }
