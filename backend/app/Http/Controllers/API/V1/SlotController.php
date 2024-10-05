@@ -46,51 +46,6 @@ class SlotController extends Controller
         return response()->json($availableSlots);
     }
 
-    // Book a slot
-    public function bookSlot(Request $request)
-    {
-        // Validate the incoming request
-        $validated = $request->validate([
-            'slot_id' => 'required|integer|exists:opd_doctorslots,SlotID',
-            'mr_no' => 'required|string|exists:mr_master,MRNo',
-        ]);
-    
-        // Fetch the slot and ensure it's available
-        $slot = TimeSlot::find($validated['slot_id']);
-        if (!$slot || !$slot->isAvailable()) {
-            return response()->json(['message' => 'Slot is already booked or not available.'], 400);
-        }
-    
-        // Start a DB transaction to ensure no race conditions
-        DB::beginTransaction();
-    
-        try {
-            // Check if the patient already has a booked slot
-            $existingAppointment = Appointment::where('MRNo', $validated['mr_no'])
-                ->where('Pending', 0) // Check for confirmed appointments
-                ->first();
-    
-            if ($existingAppointment) {
-                return response()->json(['message' => 'You already have a booked slot.'], 400);
-            }
-    
-            // Mark the slot as booked by updating the AvailableSlots field
-            $slot->AvailableSlots -= 1;
-            $slot->isBooked = 1; // Mark slot as booked
-            $slot->save();
-    
-    
-            // Commit the transaction
-            DB::commit();
-            return response()->json(['message' => 'Slot booked successfully.', 'appointment' => $appointment], 201);
-        } catch (\Exception $e) {
-            // Rollback in case of any errors
-            DB::rollBack();
-            return response()->json(['message' => 'Error booking the slot: ' . $e->getMessage()], 500);
-        }
-    }
-    
-    
     
 
     // Method to add slots for a doctor

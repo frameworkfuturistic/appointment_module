@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect, useCallback, useReducer } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
-import { format, subYears, parse } from "date-fns";
+import { format, subYears, parse, addDays, isAfter, startOfYear, endOfYear } from "date-fns";
 import axios from "axios";
 import {
   ChevronRight,
@@ -15,6 +15,10 @@ import {
   Clock,
   ChevronLeft,
   CalendarIcon,
+  Check,
+  X,
+  RefreshCw,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +38,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import {
   Popover,
@@ -42,21 +47,28 @@ import {
 } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { log } from "console";
+import { toast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { jsPDF } from "jspdf";
+
+const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
 
 const steps = [
-  {
-    id: "patient-details",
-    title: "Patient Details",
-    icon: <User className="h-6 w-6" />,
-  },
-  {
-    id: "book-slot",
-    title: "Book a Slot",
-    icon: <Calendar className="h-6 w-6" />,
-  },
+  { id: "patient-details", title: "Patient Details", icon: <User className="h-6 w-6" /> },
+  { id: "book-slot", title: "Book a Slot", icon: <Calendar className="h-6 w-6" /> },
   { id: "payment", title: "Payment", icon: <CreditCard className="h-6 w-6" /> },
-  { id: "print", title: "Print", icon: <Printer className="h-6 w-6" /> },
+  { id: "confirmation", title: "Confirmation", icon: <Printer className="h-6 w-6" /> },
 ];
 
 const initialState = {
@@ -64,30 +76,27 @@ const initialState = {
   doctors: [],
   selectedDoctor: null,
   availableSlots: [],
-  bookedSlots: [],
+  selectedSlot: null,
   error: null,
   loading: false,
-  patientData: {},
-  appointmentDetails: {},
+  patientData: null,
+  appointmentDetails: null,
   selectedDepartmentId: null,
+  paymentStatus: null,
 };
 
-const formReducer = (state, action) => {
+function formReducer(state, action) {
   switch (action.type) {
     case "SET_DEPARTMENTS":
       return { ...state, departments: action.payload };
     case "SET_DOCTORS":
       return { ...state, doctors: action.payload };
     case "SET_SELECTED_DOCTOR":
-      const selectedDoctor = state.doctors.find(
-        (doctor) => doctor.ConsultantID === action.payload
-      );
-      return { ...state, selectedDoctor: selectedDoctor };
+      return { ...state, selectedDoctor: state.doctors.find(doctor => doctor.ConsultantID === action.payload) };
     case "SET_AVAILABLE_SLOTS":
       return { ...state, availableSlots: action.payload };
-    case "SET_BOOKED_SLOTS": // New action type
-      return { ...state, bookedSlots: [...state.bookedSlots, action.payload] };
-
+    case "SET_SELECTED_SLOT":
+      return { ...state, selectedSlot: action.payload };
     case "SET_ERROR":
       return { ...state, error: action.payload };
     case "SET_LOADING":
@@ -98,10 +107,12 @@ const formReducer = (state, action) => {
       return { ...state, appointmentDetails: action.payload };
     case "SET_SELECTED_DEPARTMENT_ID":
       return { ...state, selectedDepartmentId: action.payload };
+    case "SET_PAYMENT_STATUS":
+      return { ...state, paymentStatus: action.payload };
     default:
       return state;
   }
-};
+}
 
 const debounce = (func, wait) => {
   let timeout;
@@ -153,38 +164,49 @@ export default function AdvancedAppointmentForm() {
   const createPatient = useCallback(async (data) => {
     if (data) {
       try {
-        const response = await axios.post(
-          `http://127.0.0.1:8000/api/v1/patients`,
-          data
-        );
+        const response = await axios.post(`${API_BASE_URL}/patients`, data);
         dispatch({ type: "SET_PATIENT_DATA", payload: response.data.patient });
-        console.log("Patient created:", response.data.patient);
+        toast({
+          title: "Patient Created",
+          description: "Your patient profile has been created successfully.",
+        });
       } catch (err) {
         dispatch({ type: "SET_ERROR", payload: "Error creating patient" });
+        toast({
+          title: "Error",
+          description: "Failed to create patient profile. Please try again.",
+          variant: "destructive",
+        });
       }
     }
   }, []);
 
   const fetchDepartments = useCallback(async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/v1/departments"
-      );
+      const response = await axios.get(`${API_BASE_URL}/departments`);
       dispatch({ type: "SET_DEPARTMENTS", payload: response.data });
     } catch (err) {
       dispatch({ type: "SET_ERROR", payload: "Error fetching departments" });
+      toast({
+        title: "Error",
+        description: "Failed to fetch departments. Please refresh the page.",
+        variant: "destructive",
+      });
     }
   }, []);
 
   const fetchDoctors = useCallback(async (departmentId) => {
     if (departmentId) {
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/v1/doctors/${departmentId}`
-        );
+        const response = await axios.get(`${API_BASE_URL}/doctors/${departmentId}`);
         dispatch({ type: "SET_DOCTORS", payload: response.data });
       } catch (err) {
         dispatch({ type: "SET_ERROR", payload: "Error fetching doctors" });
+        toast({
+          title: "Error",
+          description: "Failed to fetch doctors. Please try again.",
+          variant: "destructive",
+        });
       }
     }
   }, []);
@@ -194,13 +216,15 @@ export default function AdvancedAppointmentForm() {
 
     try {
       const response = await axios.get(
-        `http://127.0.0.1:8000/api/v1/slots/${selectedDoctor.ConsultantID}/${date}`
+        `${API_BASE_URL}/slots/${selectedDoctor.ConsultantID}/${date}`
       );
       dispatch({ type: "SET_AVAILABLE_SLOTS", payload: response.data || [] });
     } catch (err) {
-      dispatch({
-        type: "SET_ERROR",
-        payload: "Error fetching available slots",
+      dispatch({ type: "SET_ERROR", payload: "Error fetching available slots" });
+      toast({
+        title: "Error",
+        description: "Failed to fetch available slots. Please try again.",
+        variant: "destructive",
       });
     }
   };
@@ -212,6 +236,76 @@ export default function AdvancedAppointmentForm() {
     []
   );
 
+  const bookAppointment = async (data) => {
+    const appointmentData = {
+      ConsultantID: data.doctorId,
+      MRNo: state.patientData.MRNo,
+      ConsultationDate: format(new Date(data.appointmentDate), "yyyy-MM-dd"),
+      SlotID: data.slotId,
+      SlotToken: data.slotToken,
+      Pending: 1,
+      Remarks: data.reason,
+      PatientName: state.patientData.PatientName,
+      MobileNo: state.patientData.MobileNo,
+    };
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/appointments`, appointmentData);
+      dispatch({ type: "SET_APPOINTMENT_DETAILS", payload: response.data.data });
+      toast({
+        title: "Appointment Booked",
+        description: "Your appointment has been booked successfully. Please proceed to payment.",
+      });
+      return response.data;
+    } catch (error) {
+      let errorMessage = 'Error booking appointment';
+      
+      if (error.response) {
+        errorMessage = error.response.data?.message || errorMessage;
+        console.error("Error response data:", error.response.data);
+      } else if (error.request) {
+        errorMessage = 'No response from the server';
+        console.error("Error request data:", error.request);
+      } else {
+        console.error("Error message:", error.message);
+      }
+
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      throw new Error(errorMessage);
+    }
+  };
+
+  const processPayment = async (data) => {
+    // TODO: Implement Razorpay integration here
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    console.log("Payment processed", data);
+
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/appointments/${state.appointmentDetails.AppointmentID}`,
+        { Pending: 0 }
+      );
+      
+      dispatch({ type: "SET_PAYMENT_STATUS", payload: "success" });
+      toast({
+        title: "Payment Successful",
+        description: "Your payment has been processed successfully and your appointment is confirmed.",
+      });
+    } catch (error) {
+      console.error("Error updating appointment status:", error);
+      dispatch({ type: "SET_PAYMENT_STATUS", payload: "failed" });
+      toast({
+        title: "Payment Error",
+        description: "Payment was processed, but there was an error confirming your appointment. Please contact support.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const onSubmit = useCallback(
     async (data) => {
       dispatch({ type: "SET_LOADING", payload: true });
@@ -220,95 +314,55 @@ export default function AdvancedAppointmentForm() {
       try {
         switch (currentStep) {
           case 0:
-            await createPatient(data);
+            if (!state.patientData) {
+              await createPatient(data);
+            }
+            setCurrentStep(currentStep + 1);
             break;
           case 1:
-            await bookAppointment({ ...data, slotId: watch("slotId") });
+            if (!state.selectedSlot) {
+              throw new Error("Please select a slot before proceeding.");
+            }
+            const appointmentDetails = await bookAppointment({
+              ...data,
+              slotId: state.selectedSlot,
+              slotToken: state.availableSlots.find(
+                (slot) => slot.SlotID === state.selectedSlot
+              )?.SlotToken,
+              shiftId: state.availableSlots.find(
+                (slot) => slot.SlotID === state.selectedSlot
+              )?.ShiftID,
+            });
+            dispatch({
+              type: "SET_APPOINTMENT_DETAILS",
+              payload: appointmentDetails,
+            });
+            setCurrentStep(currentStep + 1);
             break;
           case 2:
             await processPayment(data);
+            setCurrentStep(currentStep + 1);
             break;
           default:
             break;
-        }
-
-        if (currentStep < steps.length - 1) {
-          setCurrentStep(currentStep + 1);
-        } else {
-          dispatch({ type: "SET_APPOINTMENT_DETAILS", payload: data });
         }
       } catch (err) {
         dispatch({
           type: "SET_ERROR",
           payload: err.message || "An error occurred. Please try again.",
         });
+        toast({
+          title: "Error",
+          description: err.message || "An error occurred. Please try again.",
+          variant: "destructive",
+        });
       } finally {
         dispatch({ type: "SET_LOADING", payload: false });
       }
     },
-    [currentStep, watch, createPatient]
+    [currentStep, state.selectedSlot, state.patientData, createPatient]
   );
 
-
-  const bookSlot = async (data) => {
-    const slotData = {
-      slot_id: data.slotId,
-      mr_no: state.patientData.MRNo,
-      remarks: data.reason,
-    };
-
-    try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/v1/slots/book",
-        slotData
-      );
-
-      console.log("Slot Data", response.data);
-
-      // Dispatch the booked slot to the state
-      dispatch({ type: "SET_BOOKED_SLOTS", payload: data.slotId });
-
-      dispatch({ type: "SET_APPOINTMENT_DETAILS", payload: response.data });
-    } catch (error) {
-      dispatch({ type: "SET_ERROR", payload: "Error booking appointment" });
-    }
-  };
-
-  const bookAppointment = async (data) => {
-    const appointmentData = {
-      ConsultantID: data.doctorId,
-      MRNo: state.patientData.MRNo,
-      RegistrationID: state.patientData.RegistrationID,
-      ConsultationDate: format(new Date(data.appointmentDate), "yyyy-MM-dd"),
-      SlotID: data.slotId,
-      SlotToken: data.slotToken,
-      ShiftID: data.shiftId,
-      Remarks: data.reason,
-      PatientName: state.patientData.name,
-      MobileNo: state.patientData.phone,
-      CreatedBy: state.patientData.CreatedBy,
-    };
-
-    try {
-      const response = await axios.post(
-        "http://localhost:8585/api/V1/appointments",
-        appointmentData
-      );
-      // Dispatch the booked slot to the state
-      dispatch({ type: "SET_BOOKED_SLOTS", payload: data.slotId });
-
-      dispatch({ type: "SET_APPOINTMENT_DETAILS", payload: response.data });
-    } catch (error) {
-      dispatch({ type: "SET_ERROR", payload: "Error booking appointment" });
-    }
-  };
-
-  const processPayment = async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("Payment processed", data);
-  };
-
-  
   useEffect(() => {
     fetchDepartments();
   }, [fetchDepartments]);
@@ -324,31 +378,111 @@ export default function AdvancedAppointmentForm() {
         watch("appointmentDate")
       );
     }
-  }, [
-    state.selectedDoctor,
-    watch("appointmentDate"),
-    debouncedFetchAvailableSlots,
-  ]);
+  }, [state.selectedDoctor, watch("appointmentDate"), debouncedFetchAvailableSlots]);
 
-  console.log("availableSlots", state.availableSlots);
+  const handleSlotSelection = (slotId) => {
+    dispatch({ type: "SET_SELECTED_SLOT", payload: slotId });
+  };
+
+  
+  const calculateAge = (dob) => {
+    const dobDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - dobDate.getFullYear();
+    const monthDifference = today.getMonth() - dobDate.getMonth();
+  
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < dobDate.getDate())) {
+      age--;
+    }
+  
+    return age < 0 ? "N/A" : age; // Return "N/A" for future dates
+  };
+
+const generatePDF = () => {
+  const doc = new jsPDF();
+  
+  // Set up some basic values for positioning
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  
+  // Define slip dimensions
+  const slipWidth = pageWidth - 20; // Width of the slip
+  const slipHeight = pageHeight - 210; // Full height of the page
+
+  // Main Border for the slip
+  doc.setDrawColor(0); // Black border color
+  doc.setLineWidth(0.5); // Border thickness
+  doc.rect(10, 10, slipWidth, slipHeight); // Main border around the slip
+  
+  // Hospital Name and Address (at the top within the slip)
+  doc.setFontSize(16);
+  doc.text("Shree Jagannath Hospital & Research Center", pageWidth / 2, 20, null, null, "center"); // Hospital name centered
+  doc.setFontSize(12);
+  doc.text("Mayor Road, Behind Machhli Ghar, Ranchi, Jharkhand - 834001, INDIA", pageWidth / 2, 30, null, null, "center");
+  doc.text("Phone: +91 8987999200, Email: sjhrc.ranchi@gmail.com", pageWidth / 2, 36, null, null, "center");
+  
+  // Divider line under hospital info
+  doc.setDrawColor(200); // Light grey
+  doc.line(10, 40, pageWidth - 10, 40);
+  
+  // Title for Appointment Confirmation
+  doc.setFontSize(12);
+  doc.setTextColor(0, 0, 255); // Set text color to blue
+  doc.text("Appointment Slip", pageWidth / 2, 45, null, null, "center");
+  
+  // Appointment Details in 2 Columns
+  doc.setFontSize(10);
+  doc.setTextColor(0, 0, 0); // Reset text color to black
+  
+  // Left column details
+  const leftColumnStart = 20;
+  const rightColumnStart = pageWidth / 2 + 10;
+  let currentY = 52; // Starting position for details
+  
+  doc.text(`Patient Name: ${state.patientData?.PatientName}`, leftColumnStart, currentY);
+  doc.text(`Gender: ${state.patientData?.Sex || "N/A"}`, rightColumnStart, currentY);
+  
+  currentY += 10;
+  doc.text(`Phone: ${state.patientData?.MobileNo}`, leftColumnStart, currentY);
+   const age = calculateAge(state.patientData?.DOB);
+  doc.text(`Age: ${age}`, rightColumnStart, currentY); 
+  
+  currentY += 10;
+  doc.text(`Department: ${state.departments.find(d => d.DepartmentID === state.selectedDepartmentId)?.Department}`, leftColumnStart, currentY);
+  doc.text(`Doctor: ${state.doctors.find(d => d.ConsultantID === state.selectedDoctor?.ConsultantID)?.ConsultantName}`, rightColumnStart, currentY);
+  
+  currentY += 10;
+  doc.text(`Date: ${watch("appointmentDate") && format(new Date(watch("appointmentDate")), "PPP")}`, leftColumnStart, currentY);
+  doc.text(`Time: ${state.selectedSlot && format(parse(state.availableSlots.find(s => s.SlotID === state.selectedSlot)?.SlotTime, "HH:mm:ss", new Date()), "h:mm a")}`, rightColumnStart, currentY);
+  
+  currentY += 10;
+  doc.text(`Total Amount Paid:  ${state.selectedDoctor?.Fee}`, leftColumnStart, currentY);
+  doc.text(`Payment Status: ${state.paymentStatus === "success" ? "Successful" : "Pending"}`, rightColumnStart, currentY);
+  
+  // Save the PDF
+  doc.save("appointment_confirmation.pdf");
+};
+
+  
+  
+  
 
   const renderPatientDetails = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle>Personal Information</CardTitle>
+    <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+        <CardTitle className="text-2xl font-bold">Personal Information</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <CardContent className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="PatientName">Full Name</Label>
+            <Label htmlFor="PatientName" className="text-lg font-semibold">Full Name</Label>
             <Input
               id="PatientName"
               {...register("PatientName", { required: "Name is required" })}
+              className="w-full px-3 py-2 border rounded-md text-lg"
             />
             {errors.PatientName && (
-              <p className="text-red-500 text-sm">
-                {errors.PatientName.message}
-              </p>
+              <p className="text-red-500 text-sm">{errors.PatientName.message}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -438,7 +572,7 @@ export default function AdvancedAppointmentForm() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="Sex">Gender</Label>
+            <Label htmlFor="Sex" className="text-lg font-semibold">Gender</Label>
             <Controller
               name="Sex"
               control={control}
@@ -451,15 +585,15 @@ export default function AdvancedAppointmentForm() {
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="MALE" id="MALE" />
-                    <Label htmlFor="MALE">Male</Label>
+                    <Label htmlFor="MALE" className="text-lg">Male</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="FEMALE" id="FEMALE" />
-                    <Label htmlFor="FEMALE">Female</Label>
+                    <Label htmlFor="FEMALE" className="text-lg">Female</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="OTHER" id="OTHER" />
-                    <Label htmlFor="OTHER">Other</Label>
+                    <Label htmlFor="OTHER" className="text-lg">Other</Label>
                   </div>
                 </RadioGroup>
               )}
@@ -469,7 +603,7 @@ export default function AdvancedAppointmentForm() {
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="MobileNo">Phone Number</Label>
+            <Label htmlFor="MobileNo" className="text-lg font-semibold">Phone Number</Label>
             <Input
               id="MobileNo"
               {...register("MobileNo", {
@@ -479,43 +613,47 @@ export default function AdvancedAppointmentForm() {
                   message: "Invalid phone number",
                 },
               })}
+              className="w-full px-3 py-2 border rounded-md text-lg"
             />
             {errors.MobileNo && (
               <p className="text-red-500 text-sm">{errors.MobileNo.message}</p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
+          <div className="space-y-2 md:col-span-2">
+            <Label htmlFor="address" className="text-lg font-semibold">Address</Label>
             <Textarea
               id="address"
               {...register("address", { required: "Address is required" })}
+              className="w-full px-3 py-2 border rounded-md text-lg"
             />
             {errors.address && (
               <p className="text-red-500 text-sm">{errors.address.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="city">City</Label>
+            <Label htmlFor="city" className="text-lg font-semibold">City</Label>
             <Input
               id="city"
               {...register("city", { required: "City is required" })}
+              className="w-full px-3 py-2 border rounded-md text-lg"
             />
             {errors.city && (
               <p className="text-red-500 text-sm">{errors.city.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="state">State</Label>
+            <Label htmlFor="state" className="text-lg font-semibold">State</Label>
             <Input
               id="state"
               {...register("state", { required: "State is required" })}
+              className="w-full px-3 py-2 border rounded-md text-lg"
             />
             {errors.state && (
               <p className="text-red-500 text-sm">{errors.state.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="pin">Pin Code</Label>
+            <Label htmlFor="pin" className="text-lg font-semibold">Pin Code</Label>
             <Input
               id="pin"
               type="text"
@@ -526,6 +664,7 @@ export default function AdvancedAppointmentForm() {
                   message: "Invalid pin code",
                 },
               })}
+              className="w-full px-3 py-2 border rounded-md text-lg"
             />
             {errors.pin && (
               <p className="text-red-500 text-sm">{errors.pin.message}</p>
@@ -537,36 +676,36 @@ export default function AdvancedAppointmentForm() {
   );
 
   const renderBookAppointment = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle>Book Appointment</CardTitle>
-        <CardDescription>
+    <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+        <CardTitle className="text-2xl font-bold">Book Appointment</CardTitle>
+        <CardDescription className="text-indigo-100">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-2">
-            <Label>
+            <Label className="text-indigo-100">
               MRNo:{" "}
-              <span className="ml-auto font-medium text-red-700">
-                {state.patientData.MRNo}
+              <span className="ml-auto font-medium text-white">
+                {state.patientData?.MRNo}
               </span>
             </Label>
-            <Label>
+            <Label className="text-indigo-100">
               Patient Name:{" "}
-              <span className="ml-auto font-medium text-red-700">
-                {state.patientData.PatientName}
+              <span className="ml-auto font-medium text-white">
+                {state.patientData?.PatientName}
               </span>
             </Label>
-            <Label>
+            <Label className="text-indigo-100">
               Mobile No.:{" "}
-              <span className="ml-auto font-medium text-red-700">
-                {state.patientData.MobileNo}
+              <span className="ml-auto font-medium text-white">
+                {state.patientData?.MobileNo}
               </span>
             </Label>
           </div>
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="p-6 space-y-6">
         {state.error && <p className="text-red-500 text-sm">{state.error}</p>}
         <div className="space-y-2">
-          <Label htmlFor="department">Department</Label>
+          <Label htmlFor="department" className="text-lg font-semibold">Department</Label>
           <Controller
             name="departmentId"
             control={control}
@@ -581,7 +720,7 @@ export default function AdvancedAppointmentForm() {
                   field.onChange(value);
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full text-lg">
                   <SelectValue placeholder="Select department" />
                 </SelectTrigger>
                 <SelectContent>
@@ -595,8 +734,8 @@ export default function AdvancedAppointmentForm() {
                       </SelectItem>
                     ))
                   ) : (
-                    <SelectItem value="cs" disabled>
-                      No departments available
+                    <SelectItem value="loading" disabled>
+                      Loading departments...
                     </SelectItem>
                   )}
                 </SelectContent>
@@ -604,13 +743,11 @@ export default function AdvancedAppointmentForm() {
             )}
           />
           {errors.departmentId && (
-            <p className="text-red-500 text-sm">
-              {errors.departmentId.message}
-            </p>
+            <p className="text-red-500 text-sm">{errors.departmentId.message}</p>
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="doctor">Doctor</Label>
+          <Label htmlFor="doctor" className="text-lg font-semibold">Doctor</Label>
           <Controller
             name="doctorId"
             control={control}
@@ -627,7 +764,7 @@ export default function AdvancedAppointmentForm() {
                 }}
                 disabled={!state.selectedDepartmentId}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full text-lg">
                   <SelectValue placeholder="Select doctor" />
                 </SelectTrigger>
                 <SelectContent>
@@ -641,8 +778,8 @@ export default function AdvancedAppointmentForm() {
                       </SelectItem>
                     ))
                   ) : (
-                    <SelectItem value="cs" disabled>
-                      No doctors available
+                    <SelectItem value="loading" disabled>
+                      {state.selectedDepartmentId ? "Loading doctors..." : "Select a department first"}
                     </SelectItem>
                   )}
                 </SelectContent>
@@ -654,19 +791,19 @@ export default function AdvancedAppointmentForm() {
           )}
         </div>
         <div className="space-y-2">
-          <Label>
+          <Label className="text-lg font-semibold">
             Fee:{" "}
-            <span className="ml-auto font-medium text-red-700">
+            <span className="ml-auto font-medium text-indigo-600">
               {state.selectedDoctor
                 ? state.selectedDoctor.Fee
-                  ? state.selectedDoctor.Fee
+                  ? `₹${state.selectedDoctor.Fee}`
                   : "No fee available for this doctor"
                 : "Select a doctor"}
             </span>
           </Label>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="appointmentDate">Appointment Date</Label>
+          <Label htmlFor="appointmentDate" className="text-lg font-semibold">Appointment Date</Label>
           <Controller
             name="appointmentDate"
             control={control}
@@ -676,7 +813,7 @@ export default function AdvancedAppointmentForm() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className={`w-full justify-start text-left font-normal ${
+                    className={`w-full justify-start text-left font-normal text-lg ${
                       !field.value && "text-muted-foreground"
                     }`}
                   >
@@ -704,7 +841,9 @@ export default function AdvancedAppointmentForm() {
                         );
                       }
                     }}
-                    disabled={(date) => date < new Date()}
+                    disabled={(date) =>
+                      date < new Date() || date > addDays(new Date(), 30)
+                    }
                     initialFocus
                   />
                 </PopoverContent>
@@ -712,100 +851,82 @@ export default function AdvancedAppointmentForm() {
             )}
           />
           {errors.appointmentDate && (
-            <p className="text-red-500 text-sm">
-              {errors.appointmentDate.message}
-            </p>
+            <p className="text-red-500 text-sm">{errors.appointmentDate.message}</p>
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="slotId">Available Slots</Label>
-          <Controller
-            name="slotId"
-            control={control}
-            rules={{ required: "Slot selection is required" }}
-            render={({ field }) => (
-              <div>
-                {state.loading ? (
-                  <div className="flex justify-center items-center h-32">
-                    <svg
-                      className="animate-spin h-8 w-8 text-primary"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                  </div>
-                ) : state.availableSlots.length > 0 ? (
-                  <AnimatePresence>
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.2 }}
-                      className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
-                    >
-                      {state.availableSlots.map((slot) => (
-                        <Card
-                          key={slot.SlotID}
-                          className={`cursor-pointer transition-all duration-200 ${
-                            field.value === slot.SlotID
-                              ? "ring-2 ring-primary"
-                              : slot.isBooked // Check if the slot is booked
-                              ? "bg-red-200 opacity-50 cursor-not-allowed" // Red background for booked slots
-                              : "bg-green-200 opacity-50 "
-                          }`}
-                          onClick={() => {
-                            if (!slot.isBooked && slot.AvailableSlots > 0) {
-                              field.onChange(slot.SlotID);
-                              bookSlot({
-                                slotId: slot.SlotID,
-                              });
-                            }
-                          }}
-                        >
-                          <CardContent className="p-4 flex items-center justify-between h-full">
-                            <Clock className="h-6 w-6 mb-2 text-primary" />
-                            <span className="text-sm font-semibold">
-                              {format(
-                                parse(slot.SlotTime, "HH:mm:ss", new Date()),
-                                "h:mm a"
-                              )}
-                            </span>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </motion.div>
-                  </AnimatePresence>
-                ) : (
-                  <Alert>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>No slots available</AlertTitle>
-                    <AlertDescription>
-                      Please try selecting a different date or doctor.
-                    </AlertDescription>
-                  </Alert>
-                )}
-                <input type="hidden" {...field} />
+          <Label htmlFor="slotId" className="text-lg font-semibold">Available Slots</Label>
+          <div>
+            {state.loading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {[...Array(6)].map((_, index) => (
+                  <Skeleton key={index} className="h-20 w-full" />
+                ))}
               </div>
+            ) : state.availableSlots.length > 0 ? (
+              <AnimatePresence>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
+                >
+                  {state.availableSlots.map((slot) => (
+                    <Card
+                      key={slot.SlotID}
+                      className={`cursor-pointer transition-all duration-200 ${
+                        state.selectedSlot === slot.SlotID
+                          ? "ring-2 ring-indigo-500"
+                          : slot.isBooked
+                          ? "bg-red-100 opacity-50 cursor-not-allowed"
+                          : "bg-green-100 hover:bg-green-200"
+                      }`}
+                      onClick={() => {
+                        if (!slot.isBooked && slot.AvailableSlots > 0) {
+                          handleSlotSelection(slot.SlotID);
+                        }
+                      }}
+                    >
+                      <CardContent className="p-4 flex flex-col items-center justify-between h-full">
+                        <Clock className="h-6 w-6 mb-2 text-indigo-500" />
+                        <span className="text-sm font-semibold">
+                          {format(
+                            parse(slot.SlotTime, "HH:mm:ss", new Date()),
+                            "h:mm a"
+                          )}
+                        </span>
+                        <Badge
+                          variant={slot.isBooked ? "destructive" : "secondary"}
+                          className="mt-2"
+                        >
+                          {slot.isBooked ? "Booked" : "Available"}
+                        </Badge>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            ) : (
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>No slots available</AlertTitle>
+                <AlertDescription>
+                  Please try selecting a different date or doctor.
+                </AlertDescription>
+              </Alert>
             )}
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="reason" className="text-lg font-semibold">Reason for Visit</Label>
+          <Textarea
+            id="reason"
+            {...register("reason", { required: "Reason is required" })}
+            className="w-full px-3 py-2 border rounded-md text-lg"
           />
-          {errors.SlotID && (
-            <p className="text-red-500 text-sm" role="alert">
-              {errors.SlotID.message}
-            </p>
+          {errors.reason && (
+            <p className="text-red-500 text-sm">{errors.reason.message}</p>
           )}
         </div>
       </CardContent>
@@ -813,48 +934,48 @@ export default function AdvancedAppointmentForm() {
   );
 
   const renderPayment = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle>Payment</CardTitle>
-        <CardDescription>
+    <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+        <CardTitle className="text-2xl font-bold">Payment</CardTitle>
+        <CardDescription className="text-indigo-100">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 py-2">
-            <Label>
+            <Label className="text-indigo-100">
               MRNo:{" "}
-              <span className="ml-auto font-medium text-red-700">
-                {state.patientData.MRNo}
+              <span className="ml-auto font-medium text-white">
+                {state.patientData?.MRNo}
               </span>
             </Label>
-            <Label>
+            <Label className="text-indigo-100">
               Patient Name:{" "}
-              <span className="ml-auto font-medium text-red-700">
-                {state.patientData.PatientName}
+              <span className="ml-auto font-medium text-white">
+                {state.patientData?.PatientName}
               </span>
             </Label>
-            <Label>
+            <Label className="text-indigo-100">
               Mobile No.:{" "}
-              <span className="ml-auto font-medium text-red-700">
-                {state.patientData.MobileNo}
+              <span className="ml-auto font-medium text-white">
+                {state.patientData?.MobileNo}
               </span>
             </Label>
-            <Label>
+            <Label className="text-indigo-100">
               Fee:{" "}
-              <span className="ml-auto font-medium text-red-700">
-                {state.selectedDoctor?.Fee}
+              <span className="ml-auto font-medium text-white">
+                ${state.selectedDoctor?.Fee}
               </span>
             </Label>
           </div>
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="p-6 space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="paymentMethod">Payment Method</Label>
+          <Label htmlFor="paymentMethod" className="text-lg font-semibold">Payment Method</Label>
           <Controller
             name="paymentMethod"
             control={control}
             rules={{ required: "Payment method is required" }}
             render={({ field }) => (
               <Select onValueChange={field.onChange}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full text-lg">
                   <SelectValue placeholder="Select payment method" />
                 </SelectTrigger>
                 <SelectContent>
@@ -866,48 +987,59 @@ export default function AdvancedAppointmentForm() {
             )}
           />
           {errors.paymentMethod && (
-            <p className="text-red-500 text-sm">
-              {errors.paymentMethod.message}
-            </p>
+            <p className="text-red-500 text-sm">{errors.paymentMethod.message}</p>
           )}
         </div>
         {watch("paymentMethod") === "card" && (
           <>
             <div className="space-y-2">
-              <Label htmlFor="cardNumber">Card Number</Label>
+              <Label htmlFor="cardNumber" className="text-lg font-semibold">Card Number</Label>
               <Input
                 id="cardNumber"
                 {...register("cardNumber", {
                   required: "Card number is required",
+                  pattern: {
+                    value: /^[0-9]{16}$/,
+                    message: "Invalid card number",
+                  },
                 })}
+                className="w-full px-3 py-2 border rounded-md text-lg"
               />
               {errors.cardNumber && (
-                <p className="text-red-500 text-sm">
-                  {errors.cardNumber.message}
-                </p>
+                <p className="text-red-500 text-sm">{errors.cardNumber.message}</p>
               )}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="expiryDate">Expiry Date</Label>
+                <Label htmlFor="expiryDate" className="text-lg font-semibold">Expiry Date</Label>
                 <Input
                   id="expiryDate"
                   {...register("expiryDate", {
                     required: "Expiry date is required",
+                    pattern: {
+                      value: /^(0[1-9]|1[0-2])\/[0-9]{2}$/,
+                      message: "Invalid expiry date (MM/YY)",
+                    },
                   })}
                   placeholder="MM/YY"
+                  className="w-full px-3 py-2 border rounded-md text-lg"
                 />
                 {errors.expiryDate && (
-                  <p className="text-red-500 text-sm">
-                    {errors.expiryDate.message}
-                  </p>
+                  <p className="text-red-500 text-sm">{errors.expiryDate.message}</p>
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="cvv">CVV</Label>
+                <Label htmlFor="cvv" className="text-lg font-semibold">CVV</Label>
                 <Input
                   id="cvv"
-                  {...register("cvv", { required: "CVV is required" })}
+                  {...register("cvv", {
+                    required: "CVV is required",
+                    pattern: {
+                      value: /^[0-9]{3,4}$/,
+                      message: "Invalid CVV",
+                    },
+                  })}
+                  className="w-full px-3 py-2 border rounded-md text-lg"
                 />
                 {errors.cvv && (
                   <p className="text-red-500 text-sm">{errors.cvv.message}</p>
@@ -921,66 +1053,78 @@ export default function AdvancedAppointmentForm() {
   );
 
   const renderAppointmentConfirmation = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle>Appointment Confirmation</CardTitle>
+    <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-green-500 to-teal-600 text-white">
+        <CardTitle className="text-3xl font-bold">Appointment Confirmation</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Success</AlertTitle>
-          <AlertDescription>
+      <CardContent className="p-6 space-y-6">
+        <Alert className="bg-green-100 border-green-400">
+          <Check className="h-6 w-6 text-green-600" />
+          <AlertTitle className="text-green-800 text-xl">Success</AlertTitle>
+          <AlertDescription className="text-green-700 text-lg">
             Your appointment has been successfully booked and payment processed.
           </AlertDescription>
         </Alert>
-        <div className="space-y-2">
-          <h3 className="font-semibold">Patient Details</h3>
-          <p>Name: {state.patientData?.PatientName}</p>
-          <p>Phone: {state.patientData?.MobileNo}</p>
+        <div className="space-y-4">
+          <div className="bg-gray-100 p-6 rounded-md shadow-inner">
+            <h3 className="font-semibold text-2xl mb-4 text-indigo-700">Patient Details</h3>
+            <p className="text-lg"><span className="font-medium">Name:</span> {state.patientData?.PatientName}</p>
+            <p className="text-lg"><span className="font-medium">Phone:</span> {state.patientData?.MobileNo}</p>
+          </div>
+          <div className="bg-gray-100 p-6 rounded-md shadow-inner">
+            <h3 className="font-semibold text-2xl mb-4 text-indigo-700">Appointment Details</h3>
+            <p className="text-lg">
+              <span className="font-medium">Department:</span>{" "}
+              {
+                state.departments.find(
+                  (d) => d.DepartmentID === state.selectedDepartmentId
+                )?.Department
+              }
+            </p>
+            <p className="text-lg">
+              <span className="font-medium">Doctor:</span>{" "}
+              {
+                state.doctors.find(
+                  (d) => d.ConsultantID === state.selectedDoctor?.ConsultantID
+                )?.ConsultantName
+              }
+            </p>
+            <p className="text-lg">
+              <span className="font-medium">Date:</span>{" "}
+              {watch("appointmentDate") &&
+                format(new Date(watch("appointmentDate")), "PPP")}
+            </p>
+            <p className="text-lg"><span className="font-medium">Booked Slot:</span></p>
+            {state.selectedSlot && (
+              <p className="text-lg ml-4">
+                {format(
+                  parse(
+                    state.availableSlots.find(
+                      (s) => s.SlotID === state.selectedSlot
+                    )?.SlotTime,
+                    "HH:mm:ss",
+                    new Date()
+                  ),
+                  "h:mm a"
+                )}
+              </p>
+            )}
+          </div>
+          <div className="bg-gray-100 p-6 rounded-md shadow-inner">
+            <h3 className="font-semibold text-2xl mb-4 text-indigo-700">Payment Details</h3>
+            <p className="text-lg"><span className="font-medium">Total Amount Paid:</span> ₹{state.selectedDoctor?.Fee}</p>
+            <p className="text-lg"><span className="font-medium">Payment Method:</span> {watch("paymentMethod")}</p>
+            <p className="text-lg"><span className="font-medium">Payment Status:</span> {state.paymentStatus === "success" ? "Successful" : "Pending"}</p>
+          </div>
         </div>
-        <div className="space-y-2">
-          <h3 className="font-semibold">Appointment Details</h3>
-          <p>
-            Department:{" "}
-            {
-              state.departments.find(
-                (d) => d.DepartmentID === state.selectedDepartmentId
-              )?.Department
-            }
-          </p>
-          <p>
-            Doctor:{" "}
-            {
-              state.doctors.find(
-                (d) => d.ConsultantID === state.appointmentDetails?.doctorId
-              )?.ConsultantName
-            }
-          </p>
-          <p>
-            Date:{" "}
-            {state.appointmentDetails?.appointmentDate &&
-              format(new Date(state.appointmentDetails.appointmentDate), "PPP")}
-          </p>
-          <p>
-            Time:{" "}
-            {
-              state.availableSlots.find(
-                (s) => s.SlotID === state.appointmentDetails?.slotId
-              )?.SlotTime
-            }
-          </p>
+        <div className="flex space-x-4">
+          <Button onClick={() => window.print()} className="w-full bg-indigo-500 hover:bg-indigo-600 text-white text-lg">
+            <Printer className="mr-2 h-5 w-5" /> Print Confirmation
+          </Button>
+          <Button onClick={generatePDF} className="w-full bg-green-500 hover:bg-green-600 text-white text-lg">
+            <Download className="mr-2 h-5 w-5" /> Download PDF
+          </Button>
         </div>
-        <div className="space-y-2">
-          <h3 className="font-semibold">Payment Details</h3>
-          <p>
-            Amount Paid: $
-            {state.appointmentDetails?.amount || state.selectedDoctor?.Fee}
-          </p>
-          <p>Payment Method: {watch("paymentMethod")}</p>
-        </div>
-        <Button onClick={() => window.print()} className="w-full">
-          Print Confirmation
-        </Button>
       </CardContent>
     </Card>
   );
@@ -1001,9 +1145,9 @@ export default function AdvancedAppointmentForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-slate-50 to-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 pb-10">
       <div className="bg-[url('/hospital/hospitallogo.png?height=300&width=1920')] bg-cover bg-center">
-        <div className="bg-blue-900 bg-opacity-75 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="bg-indigo-900 bg-opacity-75 py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <img
               src="/hospital/hospitallogo.png?height=80&width=80"
@@ -1034,8 +1178,9 @@ export default function AdvancedAppointmentForm() {
           </div>
         </div>
       </div>
-      <div className="max-w-4xl mx-auto">
-        <nav className="mb-8">
+
+      <div className="max-w-5xl mx-auto">
+        <nav className="my-6">
           <ol className="flex items-center w-full p-3 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 sm:p-4 sm:space-x-4">
             {steps.map((step, index) => (
               <li
@@ -1047,7 +1192,7 @@ export default function AdvancedAppointmentForm() {
                 <span
                   className={`flex items-center justify-center w-8 h-8 mr-2 text-xs border ${
                     index <= currentStep
-                      ? "border-blue-600 text-blue-600"
+                      ? "border-indigo-600 text-indigo-600"
                       : "border-gray-500 text-gray-500"
                   } rounded-full shrink-0`}
                 >
@@ -1055,26 +1200,15 @@ export default function AdvancedAppointmentForm() {
                 </span>
                 {step.title}
                 {index < steps.length - 1 && (
-                  <svg
-                    className="w-3 h-3 ml-2 sm:ml-4"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 12 10"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m1 5 5 5 5-5"
-                    />
-                  </svg>
+                  <div className="w-full ml-2">
+                    <Progress value={(currentStep / (steps.length - 1)) * 100} className="h-1" />
+                  </div>
                 )}
               </li>
             ))}
           </ol>
         </nav>
+
         <form onSubmit={handleSubmit(onSubmit)}>
           <AnimatePresence mode="wait">
             <motion.div
@@ -1094,36 +1228,27 @@ export default function AdvancedAppointmentForm() {
               <AlertDescription>{state.error}</AlertDescription>
             </Alert>
           )}
-          <div className="mt-8 flex justify-end">
+          <div className="mt-8 flex justify-between">
+            {currentStep > 0 && currentStep < steps.length - 1 && (
+              <Button
+                type="button"
+                onClick={() => setCurrentStep(currentStep - 1)}
+                disabled={state.loading}
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 text-lg"
+              >
+                <ChevronLeft className="mr-2 h-5 w-5" /> Previous
+              </Button>
+            )}
             {currentStep < steps.length - 1 && (
-              <Button type="submit" disabled={state.loading}>
+              <Button type="submit" disabled={state.loading} className="bg-indigo-500 hover:bg-indigo-600 text-white ml-auto text-lg">
                 {state.loading ? (
                   <>
-                    <svg
-                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
+                    <RefreshCw className="mr-2 h-5 w-5 animate-spin" />
                     Processing...
                   </>
                 ) : (
                   <>
-                    Next <ChevronRight className="ml-2 h-4 w-4" />
+                    Next <ChevronRight className="ml-2 h-5 w-5" />
                   </>
                 )}
               </Button>
@@ -1131,6 +1256,34 @@ export default function AdvancedAppointmentForm() {
           </div>
         </form>
       </div>
+      
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button className="fixed bottom-4 right-4 bg-indigo-500 hover:bg-indigo-600 text-white text-lg">
+            Need Help?
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-indigo-700">Appointment Booking Help</DialogTitle>
+            <DialogDescription className="text-lg text-gray-600">
+              Here are some tips to help you book your appointment:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <p className="text-lg"><span className="font-semibold text-indigo-600">1.</span> Fill in all required personal information accurately.</p>
+            <p className="text-lg"><span className="font-semibold text-indigo-600">2.</span> Choose your preferred department and doctor.</p>
+            <p className="text-lg"><span className="font-semibold text-indigo-600">3.</span> Select an available date and time slot.</p>
+            <p className="text-lg"><span className="font-semibold text-indigo-600">4.</span> Provide a reason for your visit.</p>
+            <p className="text-lg"><span className="font-semibold text-indigo-600">5.</span> Complete the payment process.</p>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="secondary" className="text-lg">
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

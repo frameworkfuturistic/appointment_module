@@ -37,8 +37,8 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     // Slot management
     // Fetch available slots for a specific doctor on a given date
-    Route::get('slots/{doctorId}/{date}', [SlotController::class, 'availableSlots']);
-    Route::post('slots/book', [SlotController::class, 'bookSlot']);   
+    Route::get('slots/{doctorId}/{date}', [SlotController::class, 'availableSlots']); 
+
     // Add slots for a doctor
     Route::post('slots', [SlotController::class, 'addSlots']);
 
@@ -48,14 +48,13 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     // Fetch all available slots for a specific doctor across multiple dates
     Route::get('slots/{doctorId}', [SlotController::class, 'getAllDoctorSlots']);
 
-  
-
     // Version 1 APIs for online appointments
-        Route::post('appointments', [AppointmentController::class, 'createAppointment']);
-        Route::put('appointments/{id}', [AppointmentController::class, 'updateAppointment']);
-        Route::get('search', [AppointmentController::class, 'searchAppointments']);
-        Route::get('appointments', [AppointmentController::class, 'getAllAppointments']); // Optional
-   
+    Route::post('appointments', [AppointmentController::class, 'createAppointment']);
+
+    Route::put('appointments/{id}', [AppointmentController::class, 'updateAppointment']);
+    Route::get('search', [AppointmentController::class, 'searchAppointments']);
+    Route::get('appointments', [AppointmentController::class, 'getAllAppointments']); // Optional
+  
 
    
     // Version 1 APIs for payments (add as necessary)

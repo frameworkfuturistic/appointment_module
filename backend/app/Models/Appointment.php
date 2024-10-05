@@ -18,35 +18,32 @@ class Appointment extends Model
     // Specify whether the ID is auto-incrementing
     public $incrementing = true;
 
-    // Specify the fields that can be mass assigned
-    protected $fillable = [
-        'ConsultantID',
-        'MRNo',
-        'RegistrationID',
-        'ConsultationDate',
-        'SlotID',
-        'SlotToken',
-        'ShiftID',
-        'Remarks',
-        'Pending',
-        'PatientName',
-        'MobileNo',
-        'TransactionID',
-        'CreatedBy',
-        'CreatedOn',
-        'ModifiedBy',
-        'ModifiedOn',
-    ];
+     // Specify if timestamps are maintained
+     public $timestamps = true; // Enable timestamps
+
+     // Specify the fields that can be mass assigned
+     protected $fillable = [
+         'ConsultantID',
+         'MRNo',
+         'ConsultationDate',
+         'SlotID',
+         'SlotToken',
+         'Remarks',
+         'Pending',
+         'PatientName',
+         'MobileNo',
+         'TransactionID',
+         'CreatedOn',
+         'ModifiedBy',
+         'ModifiedOn',
+         'created_at', // Add to fillable if necessary
+         'updated_at'  // Add to fillable if necessary
+     ];
 
     // Define relationships
     public function consultant()
     {
         return $this->belongsTo(Consultant::class, 'ConsultantID', 'ConsultantID');
-    }
-
-    public function registration()
-    {
-        return $this->belongsTo(Patient::class, 'MRNo', 'MRNo');
     }
 
     public function patient()
@@ -57,10 +54,5 @@ class Appointment extends Model
     public function slot()
     {
         return $this->belongsTo(TimeSlot::class, 'SlotID', 'SlotID');
-    }
-
-    public function shift()
-    {
-        return $this->belongsTo(Shift::class, 'ShiftID', 'ShiftID');
     }
 }
