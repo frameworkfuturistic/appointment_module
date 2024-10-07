@@ -95,37 +95,43 @@ class AppointmentController extends Controller
         return response()->json(['message' => 'Appointment updated successfully.', 'appointment' => $appointment], 200);
     }
 
-    // Method to search appointments by mobile number or OPDOnlineAppointmentID
-    public function searchAppointments(Request $request)
-    {
-        // Validate input for searching
-        $request->validate([
-            'MobileNo' => 'nullable|string|max:10',
-            'OPDOnlineAppointmentID' => 'nullable|integer',
-        ]);
+   // Method to search appointments by mobile number, OPDOnlineAppointmentID, or MRNo
+public function searchAppointments(Request $request)
+{
+    // Validate input for searching
+    $request->validate([
+        'MobileNo' => 'nullable|string|max:10',
+        'OPDOnlineAppointmentID' => 'nullable|integer',
+        'MRNo' => 'nullable|string|max:10', // Add MRNo validation
+    ]);
 
-        // Create a query for appointments
-        $query = Appointment::query();
+    // Create a query for appointments
+    $query = Appointment::query();
 
-        // Apply filters based on user input
-        if ($request->has('MobileNo')) {
-            $query->where('MobileNo', $request->input('MobileNo'));
-        }
-
-        if ($request->has('OPDOnlineAppointmentID')) {
-            $query->orWhere('OPDOnlineAppointmentID', $request->input('OPDOnlineAppointmentID'));
-        }
-
-        // Execute the query and get results
-        $appointments = $query->get();
-
-        // Return appointments or a not found message
-        if ($appointments->isEmpty()) {
-            return response()->json(['message' => 'No appointments found.'], 404);
-        }
-
-        return response()->json(['appointments' => $appointments], 200);
+    // Apply filters based on user input
+    if ($request->has('MobileNo')) {
+        $query->where('MobileNo', $request->input('MobileNo'));
     }
+
+    if ($request->has('OPDOnlineAppointmentID')) {
+        $query->orWhere('OPDOnlineAppointmentID', $request->input('OPDOnlineAppointmentID'));
+    }
+
+    if ($request->has('MRNo')) {
+        $query->orWhere('MRNo', $request->input('MRNo')); // Add MRNo filter
+    }
+
+    // Execute the query and get results
+    $appointments = $query->get();
+
+    // Return appointments or a not found message
+    if ($appointments->isEmpty()) {
+        return response()->json(['message' => 'No appointments found.'], 404);
+    }
+
+    return response()->json(['appointments' => $appointments], 200);
+}
+
 
     // Method to get all appointments (optional)
     public function getAllAppointments()

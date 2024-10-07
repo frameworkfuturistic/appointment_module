@@ -20,13 +20,20 @@ class RazorpayService
     // Constructor to initialize the Razorpay API with key and secret from config
     public function __construct()
     {
-        $this->api = new Api(config('razorpay.key'), config('razorpay.secret'));
+        $this->api = new Api(config('razorpay.key_id'), config('razorpay.key_secret'));
     }
 
     // Create a new Razorpay order with the given data
     public function createOrder(array $data)
     {
-        return $this->api->order->create($data);
+        // Ensure the data is formatted correctly for Razorpay
+        $orderData = [
+            'amount' => $data['amount'] * 100, // Convert to smallest currency unit (paise)
+            'currency' => $data['currency'] ?? 'INR', // Default to INR
+            'receipt' => $data['receipt'] ?? null, // Optional receipt ID
+        ];
+
+        return $this->api->order->create($orderData);
     }
 
     // Verify the payment signature from Razorpay

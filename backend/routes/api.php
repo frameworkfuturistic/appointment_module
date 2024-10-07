@@ -19,44 +19,32 @@ use App\Http\Controllers\API\V1\SlotController;
 |
 */
 
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
 Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], function () {
 
-    // Add Patient
+    // Patient Management
     Route::post('/patients', [PatientController::class, 'createPatient']);
-
-    // Retrieve Patient by MRNo
     Route::get('/patients/{mrNo}', [PatientController::class, 'getPatient']);
 
-    // Version 1 APIs for departments and doctors
+    // Department and Doctor Management
     Route::get('/departments', [DepartmentController::class, 'index']);
     Route::get('/doctors/{departmentId}', [DoctorController::class, 'index']);
 
-    // Slot management
-    // Fetch available slots for a specific doctor on a given date
+    // Slot Management
     Route::get('slots/{doctorId}/{date}', [SlotController::class, 'availableSlots']); 
-
-    // Add slots for a doctor
-    Route::post('slots', [SlotController::class, 'addSlots']);
-
-    // Get all OPD doctor slots
+    Route::post('slots', [SlotController::class, 'addSlotsDay']);
+    Route::post('slots-range', [SlotController::class, 'addSlotsRange']);
     Route::get('slots/all', [SlotController::class, 'getAllSlots']);
-
-    // Fetch all available slots for a specific doctor across multiple dates
     Route::get('slots/{doctorId}', [SlotController::class, 'getAllDoctorSlots']);
 
-    // Version 1 APIs for online appointments
+    // Appointment Management
     Route::post('appointments', [AppointmentController::class, 'createAppointment']);
-
     Route::put('appointments/{id}', [AppointmentController::class, 'updateAppointment']);
-    Route::get('search', [AppointmentController::class, 'searchAppointments']);
-    Route::get('appointments', [AppointmentController::class, 'getAllAppointments']); // Optional
-  
+    Route::post('search', [AppointmentController::class, 'searchAppointments']);
+    Route::get('appointments', [AppointmentController::class, 'getAllAppointments']);
 
-   
-    // Version 1 APIs for payments (add as necessary)
-    // Route::post('payments', [PaymentController::class, 'store'])->name('payments.store');
+    // Payment Management
+    Route::post('payments', [PaymentController::class, 'createPayment']); // Create payment
+    Route::post('payments/callback', [PaymentController::class, 'handlePaymentCallback']); // Handle payment callback
+    Route::get('payments/{paymentId}', [PaymentController::class, 'getPaymentById']); // Get payment by ID
+    Route::get('payments/history', [PaymentController::class, 'getPaymentHistory']); // Get payment history
 });

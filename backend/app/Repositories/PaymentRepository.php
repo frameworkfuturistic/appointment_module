@@ -9,7 +9,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Payment;
+use App\Models\Payment; // Updated model
 use App\Repositories\Interfaces\PaymentRepositoryInterface;
 
 class PaymentRepository implements PaymentRepositoryInterface
@@ -17,10 +17,10 @@ class PaymentRepository implements PaymentRepositoryInterface
     // Define the Payment model instance
     protected $model;
 
-    // Constructor to initialize the Payment model through dependency injection
-    public function __construct(Payment $payment)
+    // Constructor to initialize the AppointmentPayment model through dependency injection
+    public function __construct(AppointmentPayment $appointmentPayment)
     {
-        $this->model = $payment;
+        $this->model = $appointmentPayment;
     }
 
     // Create a new payment with the given data
@@ -32,7 +32,7 @@ class PaymentRepository implements PaymentRepositoryInterface
     // Find payments by appointment ID
     public function findByAppointmentId($appointmentId)
     {
-        return $this->model->where('appointment_id', $appointmentId)->get();
+        return $this->model->where('OPDOnlineAppointmentID', $appointmentId)->get(); // Updated column name
     }
 
     // Retrieve all payments
@@ -44,6 +44,6 @@ class PaymentRepository implements PaymentRepositoryInterface
     // Get a payment by its ID 
     public function getById($paymentId)
     {
-        $this->model->findOrFail($paymentId); 
+        return $this->model->findOrFail($paymentId); // Added return statement
     }
 }

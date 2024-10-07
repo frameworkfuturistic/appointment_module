@@ -1,36 +1,38 @@
 <?php
 
-/**
- * Model for Payment table.
- * File opened by Juniad on 26-07-2024.
- * Status: closed
- */
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Payment extends Model
+class AppointmentPayment extends Model
 {
     use HasFactory;
 
+    protected $table = 'opd_appointment_payments';
+
+    protected $primaryKey = 'PaymentID'; // Set primary key
+
+    // Ensure all relevant fields are fillable
     protected $fillable = [
-        'appointment_id',
-        'payment_id',
-        'amount',
-        'order_id',
-        'status'
+        'OPDOnlineAppointmentID',
+        'PaymentDate',
+        'PaymentMode',
+        'PaymentStatus',
+        'AmountPaid',
+        'TransactionID',
+        'CreatedBy',
+        'ModifiedBy', // Include ModifiedBy as fillable if needed
     ];
+
+    // Define timestamps to handle created and updated times automatically
+    public $timestamps = false; // Set to false as you're handling timestamps manually
+
+    const CREATED_AT = 'CreatedOn';
+    const UPDATED_AT = 'ModifiedOn';
 
     public function appointment()
     {
-        return $this->belongsTo(Appointment::class, 'appointment_id', 'appointment_id'); 
-        // Make sure the foreign key 'appointment_id' in payments references 'appointment_id' in appointments
-    }
-
-    public function refund()
-    {
-        return $this->hasOne(Refund::class);
+        return $this->belongsTo(Appointment::class, 'OPDOnlineAppointmentID', 'OPDOnlineAppointmentID'); 
     }
 }
