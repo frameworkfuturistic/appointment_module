@@ -132,8 +132,8 @@ export default function AdvancedAppointmentSearch() {
             MR No
           </DialogDescription>
         </DialogHeader>
-        <Card className="mt-4">
-          <CardContent className="p-6">
+        <Card>
+          <CardContent className="p-4">
             <form
               onSubmit={(e) => {
                 e.preventDefault();

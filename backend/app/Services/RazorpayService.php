@@ -26,15 +26,36 @@ class RazorpayService
     // Create a new Razorpay order with the given data
     public function createOrder(array $data)
     {
+        // Validate the required fields in the input data
+        if (empty($data['amount'])) {
+            throw new \InvalidArgumentException('Amount is required.');
+        }
+    
         // Ensure the data is formatted correctly for Razorpay
         $orderData = [
-            'amount' => $data['amount'] * 100, // Convert to smallest currency unit (paise)
+            'amount' => (int)($data['amount'] * 100), // Amount should be in paise
             'currency' => $data['currency'] ?? 'INR', // Default to INR
-            'receipt' => $data['receipt'] ?? null, // Optional receipt ID
-        ];
+            'receipt' => (string)($data['receipt'] ?? null), // Ensure receipt is a string
 
-        return $this->api->order->create($orderData);
+
+        ];
+    
+        try {
+            // Create the order using Razorpay API
+            $order = $this->api->order->create($orderData);
+    
+            // Log the order response for debugging
+            \Log::info('Razorpay Order Response:', (array) $order);
+    
+            // Return the created order object
+            return $order;
+        } catch (\Exception $e) {
+            \Log::error('Error creating Razorpay order: ' . $e->getMessage());
+            throw $e;
+        }
     }
+    
+    
 
     // Verify the payment signature from Razorpay
     public function verifyWebhookSignature($webhookBody, $webhookSignature, $webhookSecret)
@@ -44,41 +65,51 @@ class RazorpayService
             $this->api->utility->verifyWebhookSignature($webhookBody, $webhookSignature, $webhookSecret);
             return true;
         } catch (\Exception $e) {
-            // Return false if the signature verification fails
+            // Log the exception message if needed
+            // \Log::error('Webhook signature verification failed: ' . $e->getMessage());
             return false;
         }
     }
 
     // Fetch the payment details from Razorpay for reconciliation
     public function fetchPaymentDetails($paymentId)
-    {
-        try {
-            // Use Razorpay's payment API to retrieve the payment details
-            $payment = $this->api->payment->fetch($paymentId);
+{
+    try {
+        // Use Razorpay's payment API to retrieve the payment details
+        $payment = $this->api->payment->fetch($paymentId);
 
-            // Return payment details in an array
-            return [
-                'status' => 'success',
-                'data' => [
-                    'id' => $payment->id,
-                    'status' => $payment->status,
-                    'amount' => $payment->amount,
-                    'method' => $payment->method,
-                    'captured' => $payment->captured,
-                    'created_at' => $payment->created_at,
-                ]
-            ];
-        } catch (BadRequestError $e) {
-            // Handle any errors in the API call
+        // Check if the response is an array or an object
+        if (is_array($payment)) {
+            // Handle case where payment details might be an array
             return [
                 'status' => 'error',
-                'message' => $e->getMessage(),
-            ];
-        } catch (\Exception $e) {
-            return [
-                'status' => 'error',
-                'message' => 'An error occurred while fetching payment details.'
+                'message' => 'Received payment details in an unexpected format.',
             ];
         }
+
+        // Return payment details in an array, formatted according to your schema
+        return [
+            'status' => 'success',
+            'data' => [
+                'id' => $payment->id,
+                'status' => $payment->status,
+                'amount' => $payment->amount, // Amount in paise
+                'method' => $payment->method,
+                'captured' => $payment->captured,
+                'created_at' => date('Y-m-d H:i:s', $payment->created_at), // Format created_at
+            ],
+        ];
+    } catch (BadRequestError $e) {
+        return [
+            'status' => 'error',
+            'message' => 'Failed to fetch payment details: ' . $e->getMessage(),
+        ];
+    } catch (\Exception $e) {
+        return [
+            'status' => 'error',
+            'message' => 'An error occurred while fetching payment details.',
+        ];
     }
+}
+
 }

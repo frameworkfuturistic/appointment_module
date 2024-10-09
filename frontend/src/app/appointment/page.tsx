@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useReducer } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Razorpay from "razorpay";
+
 import { motion, AnimatePresence } from "framer-motion";
 import {
   format,
@@ -29,7 +30,6 @@ import {
   RefreshCw,
   Download,
   MoveLeft,
-  BackpackIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,34 +59,25 @@ import {
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "@/components/ui/use-toast";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import { jsPDF } from "jspdf";
 import Link from "next/link";
 import ExistAppointment from "./ExistAppointment";
+import RazorpayLoader  from '@/lib/RazorpayLoader'
 
 const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
 
 const steps = [
   {
+    id: "choose-slot",
+    title: "Choose Slot",
+    icon: <Calendar className="h-6 w-6" />,
+  },
+  {
     id: "patient-details",
     title: "Patient Details",
     icon: <User className="h-6 w-6" />,
-  },
-  {
-    id: "book-slot",
-    title: "Book a Slot",
-    icon: <Calendar className="h-6 w-6" />,
   },
   { id: "payment", title: "Payment", icon: <CreditCard className="h-6 w-6" /> },
   {
@@ -108,6 +99,7 @@ const initialState = {
   appointmentDetails: null,
   selectedDepartmentId: null,
   paymentStatus: null,
+  temporaryAppointmentId: null,
 };
 
 function formReducer(state, action) {
@@ -139,6 +131,8 @@ function formReducer(state, action) {
       return { ...state, selectedDepartmentId: action.payload };
     case "SET_PAYMENT_STATUS":
       return { ...state, paymentStatus: action.payload };
+    case "SET_TEMPORARY_APPOINTMENT_ID":
+      return { ...state, temporaryAppointmentId: action.payload };
     default:
       return state;
   }
@@ -154,6 +148,19 @@ const debounce = (func, wait) => {
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
   };
+};
+
+const saveToSessionStorage = (key, data) => {
+  sessionStorage.setItem(key, JSON.stringify(data));
+};
+
+const getFromSessionStorage = (key) => {
+  const data = sessionStorage.getItem(key);
+  return data ? JSON.parse(data) : null;
+};
+
+const removeFromSessionStorage = (key) => {
+  sessionStorage.removeItem(key);
 };
 
 export default function AdvancedAppointmentForm() {
@@ -191,22 +198,52 @@ export default function AdvancedAppointmentForm() {
     formState: { errors },
   } = useForm();
 
+  const createTemporaryAppointment = useCallback(async (data) => {
+    const tempAppointmentId = Date.now().toString();
+    saveToSessionStorage(tempAppointmentId, data);
+    dispatch({
+      type: "SET_TEMPORARY_APPOINTMENT_ID",
+      payload: tempAppointmentId,
+    });
+    return tempAppointmentId;
+  }, []);
+
+  const updateTemporaryAppointment = useCallback(async (id, data) => {
+    const existingData = getFromSessionStorage(id);
+    if (existingData) {
+      saveToSessionStorage(id, { ...existingData, ...data });
+    }
+  }, []);
+
+  const deleteTemporaryAppointment = useCallback(async (id) => {
+    removeFromSessionStorage(id);
+  }, []);
+
   const createPatient = useCallback(async (data) => {
     if (data) {
       try {
-        const response = await axios.post(`${API_BASE_URL}/patients`, data);
+        const response = await axios.post(`${API_BASE_URL}/patients`, {
+          PatientName: data.patientName,
+          Sex: data.gender,
+          MobileNo: data.mobileNo,
+          Email: data.email,
+          DOB: data.DOB,
+        });
         dispatch({ type: "SET_PATIENT_DATA", payload: response.data.patient });
         toast({
           title: "Patient Created",
           description: "Your patient profile has been created successfully.",
         });
+        return response.data.patient;
       } catch (err) {
+        console.error("Error creating patient:", err.response?.data);
         dispatch({ type: "SET_ERROR", payload: "Error creating patient" });
         toast({
           title: "Error",
           description: "Failed to create patient profile. Please try again.",
           variant: "destructive",
         });
+        throw err;
       }
     }
   }, []);
@@ -284,11 +321,16 @@ export default function AdvancedAppointmentForm() {
       MobileNo: state.patientData.MobileNo,
     };
 
+    
     try {
       const response = await axios.post(
         `${API_BASE_URL}/appointments`,
         appointmentData
       );
+  // Ensure the appointment details are available here
+  console.log("Appointment Response:", response.data.data);
+    
+
       dispatch({
         type: "SET_APPOINTMENT_DETAILS",
         payload: response.data.data,
@@ -321,50 +363,88 @@ export default function AdvancedAppointmentForm() {
     }
   };
 
+  
   const processPayment = async (data) => {
     try {
-      // Step 1: Request backend to generate an order ID from Razorpay
-      const paymentResponse = await axios.post(`${API_BASE_URL}/payments`, {
-        amount: data.amount, // Pass the payment amount
-        OPDOnlineAppointmentID: state.appointmentDetails.OPDOnlineAppointmentID,
-      });
+      // Log appointment details for debugging
+      console.log("Appointment Details:", state.appointmentDetails);
+      
+      // Extract OPDOnlineAppointmentID
+      const appointmentId = state.appointmentDetails?.appointment?.OPDOnlineAppointmentID;
   
-      const { orderId } = paymentResponse.data;
+      // Log the extracted appointmentId
+      console.log("Extracted OPDOnlineAppointmentID:", appointmentId);
   
-      // Step 2: Open Razorpay Payment Window
+      // Check if appointmentId is valid
+      if (!appointmentId || typeof appointmentId !== 'number') {
+        throw new Error("Invalid OPDOnlineAppointmentID. It must be an integer.");
+      }
+  
+      // Convert amount to an integer (ensure it's a number and greater than 0)
+      const amountPaid = Math.floor(parseFloat(data.amount));
+      if (isNaN(amountPaid) || amountPaid <= 0) {
+        throw new Error("Invalid amount. It must be a positive integer.");
+      }
+  
+      // Step 1: Create payment request
+      const paymentData = {
+        OPDOnlineAppointmentID: appointmentId,
+        AmountPaid: amountPaid,
+        PaymentMode: "Razorpay",
+      };
+  
+      // Log payment request data
+      console.log("Payment Request Data:", paymentData);
+  
+      // Send payment request to the backend
+      const paymentResponse = await axios.post(`${API_BASE_URL}/payments`, paymentData);
+      
+      // Destructure order_id from payment response
+      const { order_id } = paymentResponse.data;
+  
+      if (!order_id) {
+        throw new Error("Order ID not found in the payment response.");
+      }
+  
+      // Step 2: Configure Razorpay options
       const razorpayOptions = {
-        key: process.env.RAZORPAY_KEY_ID, // Razorpay key from environment variables
-        amount: data.amount * 100, // Amount in paisa (multiply by 100)
+        key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_4clm2oRR0AjqFE",
+        amount: amountPaid * 100, // Convert amount to paise
         currency: "INR",
-        name: "Hospital Name", // Replace with your hospital's name
+        name: "Hospital Name",
         description: "Appointment Payment",
-        order_id: orderId, // Razorpay order ID from your backend
+        order_id: order_id, // Use the order_id returned from the backend
         handler: async function (response) {
-          // Step 3: On successful payment, update the payment and appointment status
           try {
-            const paymentData = {
-              OPDOnlineAppointmentID: state.appointmentDetails.OPDOnlineAppointmentID,
+            // Step 3: Prepare payment data for callback
+            const callbackPaymentData = {
+              OPDOnlineAppointmentID: appointmentId,
               PaymentMode: "Razorpay",
               PaymentStatus: "Paid",
-              AmountPaid: data.amount,
-              TransactionID: response.razorpay_payment_id, // Razorpay Payment ID
+              AmountPaid: amountPaid,
+              TransactionID: response.razorpay_payment_id,
             };
   
-            // Save payment details to `opd_appointment_payments` table
-            await axios.post(`${API_BASE_URL}/payments/callback`, paymentData); // Adjusted endpoint to match the callback route
+            // Log payment data for debugging
+            console.log("Payment Data for Callback:", callbackPaymentData);
   
-            // Update the appointment status (Pending -> 0) after successful payment
-            await axios.put(
-              `${API_BASE_URL}/appointments/${state.appointmentDetails.OPDOnlineAppointmentID}`,
-              { Pending: 0 }
-            );
+            // Step 4: Post payment data to callback
+            await axios.post(`${API_BASE_URL}/payments/callback`, callbackPaymentData);
   
-            // Dispatch payment success action
+            // Step 5: Update appointment status
+            await axios.put(`${API_BASE_URL}/appointments/${appointmentId}`, { Pending: 0 });
+  
+            // Step 6: Dispatch success action
             dispatch({ type: "SET_PAYMENT_STATUS", payload: "success" });
             toast({
               title: "Payment Successful",
               description: "Your payment has been processed and appointment confirmed.",
             });
+  
+            // Step 7: Remove temporary appointment if applicable
+            if (state.temporaryAppointmentId) {
+              removeFromSessionStorage(state.temporaryAppointmentId);
+            }
           } catch (error) {
             console.error("Error updating payment or appointment status:", error);
             toast({
@@ -384,10 +464,9 @@ export default function AdvancedAppointmentForm() {
         },
       };
   
-      // Open the Razorpay payment modal
-      const razorpay = new Razorpay(razorpayOptions);
+      // Step 8: Open Razorpay payment modal only if payment request is successful
+      const razorpay = new window.Razorpay(razorpayOptions);
       razorpay.open();
-  
     } catch (error) {
       console.error("Payment processing error:", error);
       toast({
@@ -399,6 +478,8 @@ export default function AdvancedAppointmentForm() {
   };
   
 
+  
+
   const onSubmit = useCallback(
     async (data) => {
       dispatch({ type: "SET_LOADING", payload: true });
@@ -406,15 +487,35 @@ export default function AdvancedAppointmentForm() {
 
       try {
         switch (currentStep) {
-          case 0:
-            if (!state.patientData) {
-              await createPatient(data);
-            }
-            setCurrentStep(currentStep + 1);
-            break;
-          case 1:
+          case 0: // Choose Slot
             if (!state.selectedSlot) {
               throw new Error("Please select a slot before proceeding.");
+            }
+            const tempAppointmentId = await createTemporaryAppointment({
+              doctorId: data.doctorId,
+              appointmentDate: data.appointmentDate,
+              slotId: state.selectedSlot,
+            });
+            setCurrentStep(currentStep + 1);
+            break;
+          case 1: // Patient Details
+            let patient;
+            if (!state.patientData) {
+              patient = await createPatient(data);
+            } else {
+              patient = state.patientData;
+            }
+            await updateTemporaryAppointment(state.temporaryAppointmentId, {
+              patientData: patient,
+            });
+            dispatch({ type: "SET_PATIENT_DATA", payload: patient });
+            setCurrentStep(currentStep + 1);
+            break;
+          case 2: // Payment
+            if (!state.patientData || !state.patientData.MRNo) {
+              throw new Error(
+                "Patient data is missing. Please go back and fill in the patient details."
+              );
             }
             const appointmentDetails = await bookAppointment({
               ...data,
@@ -430,10 +531,7 @@ export default function AdvancedAppointmentForm() {
               type: "SET_APPOINTMENT_DETAILS",
               payload: appointmentDetails,
             });
-            setCurrentStep(currentStep + 1);
-            break;
-          case 2:
-            await processPayment(data);
+            await processPayment({ amount: state.selectedDoctor?.Fee });
             setCurrentStep(currentStep + 1);
             break;
           default:
@@ -453,7 +551,16 @@ export default function AdvancedAppointmentForm() {
         dispatch({ type: "SET_LOADING", payload: false });
       }
     },
-    [currentStep, state.selectedSlot, state.patientData, createPatient]
+    [
+      currentStep,
+      state.selectedSlot,
+      state.patientData,
+      createPatient,
+      createTemporaryAppointment,
+      updateTemporaryAppointment,
+      bookAppointment,
+      processPayment,
+    ]
   );
 
   useEffect(() => {
@@ -477,12 +584,52 @@ export default function AdvancedAppointmentForm() {
     debouncedFetchAvailableSlots,
   ]);
 
+  useEffect(() => {
+    const tempAppointmentId = sessionStorage.getItem("temporaryAppointmentId");
+    if (tempAppointmentId) {
+      const tempAppointmentData = getFromSessionStorage(tempAppointmentId);
+      if (tempAppointmentData) {
+        dispatch({
+          type: "SET_TEMPORARY_APPOINTMENT_ID",
+          payload: tempAppointmentId,
+        });
+        if (tempAppointmentData.doctorId) {
+          dispatch({
+            type: "SET_SELECTED_DOCTOR",
+            payload: parseInt(tempAppointmentData.doctorId),
+          });
+        }
+        if (tempAppointmentData.appointmentDate) {
+          setValue("appointmentDate", tempAppointmentData.appointmentDate);
+        }
+        if (tempAppointmentData.slotId) {
+          dispatch({
+            type: "SET_SELECTED_SLOT",
+            payload: tempAppointmentData.slotId,
+          });
+        }
+        if (tempAppointmentData.patientData) {
+          dispatch({
+            type: "SET_PATIENT_DATA",
+            payload: tempAppointmentData.patientData,
+          });
+        }
+      }
+    }
+
+    return () => {
+      if (state.temporaryAppointmentId) {
+        deleteTemporaryAppointment(state.temporaryAppointmentId);
+      }
+    };
+  }, [deleteTemporaryAppointment, setValue]);
+
   const handleSlotSelection = (slotId) => {
     dispatch({ type: "SET_SELECTED_SLOT", payload: slotId });
   };
 
-  const calculateAge = (dob) => {
-    const dobDate = new Date(dob);
+  const calculateAge = (DOB) => {
+    const dobDate = new Date(DOB);
     const today = new Date();
     let age = today.getFullYear() - dobDate.getFullYear();
     const monthDifference = today.getMonth() - dobDate.getMonth();
@@ -627,276 +774,17 @@ export default function AdvancedAppointmentForm() {
     doc.save("appointment_confirmation.pdf");
   };
 
-  const renderPatientDetails = () => (
+  const renderChooseSlot = () => (
     <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
-        <div className=" flex justify-between">
-          <CardTitle className="text-xl font-bold">
-         Personal Information
-          </CardTitle>
-          <ExistAppointment />
+        <div className="  flex justify-between">
+        <CardTitle className="text-xl font-bold">Select Slot</CardTitle>
+        <ExistAppointment />
         </div>
-      </CardHeader>
-      <CardContent className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="PatientName" className="text-lg font-semibold">
-              Full Name
-            </Label>
-            <Input
-              id="PatientName"
-              {...register("PatientName", { required: "Name is required" })}
-              className="w-full px-3 py-2 border rounded-md text-lg"
-            />
-            {errors.PatientName && (
-              <p className="text-red-500 text-sm">
-                {errors.PatientName.message}
-              </p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="DOB">Date of Birth</Label>
-            <Controller
-              name="DOB"
-              control={control}
-              rules={{ required: "Date of Birth is required" }}
-              render={({ field }) => (
-                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={`w-full justify-start text-left font-normal ${
-                        !field.value && "text-muted-foreground"
-                      }`}
-                      onClick={() => setIsCalendarOpen(true)}
-                    >
-                      {field.value ? (
-                        format(new Date(field.value), "yyyy-MM-dd")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <div className="space-y-4 p-3">
-                      <div className="flex justify-between space-x-2">
-                        <Select
-                          value={month.toString()}
-                          onValueChange={(value) => setMonth(parseInt(value))}
-                        >
-                          <SelectTrigger className="w-[140px]">
-                            <SelectValue placeholder="Select month" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {months.map((m, index) => (
-                              <SelectItem key={m} value={index.toString()}>
-                                {m}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Select
-                          value={year.toString()}
-                          onValueChange={(value) => setYear(parseInt(value))}
-                        >
-                          <SelectTrigger className="w-[100px]">
-                            <SelectValue placeholder="Select year" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {years.map((y) => (
-                              <SelectItem key={y} value={y.toString()}>
-                                {y}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <CalendarComponent
-                        mode="single"
-                        selected={
-                          field.value ? new Date(field.value) : undefined
-                        }
-                        onSelect={(date) => {
-                          if (date) {
-                            const formattedDate = format(date, "yyyy-MM-dd");
-                            field.onChange(formattedDate);
-                          } else {
-                            field.onChange(null);
-                          }
-                          setIsCalendarOpen(false);
-                        }}
-                        disabled={(date) =>
-                          date > new Date() || date < subYears(new Date(), 120)
-                        }
-                        initialFocus
-                        month={new Date(year, month)}
-                        onMonthChange={(newMonth) => {
-                          setMonth(newMonth.getMonth());
-                          setYear(newMonth.getFullYear());
-                        }}
-                        className="rounded-md border shadow"
-                      />
-                    </div>
-                  </PopoverContent>
-                </Popover>
-              )}
-            />
-            {errors.DOB && (
-              <p className="text-red-500 text-sm">{errors.DOB.message}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="Sex" className="text-lg font-semibold">
-              Gender
-            </Label>
-            <Controller
-              name="Sex"
-              control={control}
-              rules={{ required: "Gender is required" }}
-              render={({ field }) => (
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex space-x-4"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="MALE" id="MALE" />
-                    <Label htmlFor="MALE" className="text-lg">
-                      Male
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="FEMALE" id="FEMALE" />
-                    <Label htmlFor="FEMALE" className="text-lg">
-                      Female
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="OTHER" id="OTHER" />
-                    <Label htmlFor="OTHER" className="text-lg">
-                      Other
-                    </Label>
-                  </div>
-                </RadioGroup>
-              )}
-            />
-            {errors.Sex && (
-              <p className="text-red-500 text-sm">{errors.Sex.message}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="MobileNo" className="text-lg font-semibold">
-              Phone Number
-            </Label>
-            <Input
-              id="MobileNo"
-              {...register("MobileNo", {
-                required: "Phone number is required",
-                pattern: {
-                  value: /^[0-9]{10}$/,
-                  message: "Invalid phone number",
-                },
-              })}
-              className="w-full px-3 py-2 border rounded-md text-lg"
-            />
-            {errors.MobileNo && (
-              <p className="text-red-500 text-sm">{errors.MobileNo.message}</p>
-            )}
-          </div>
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="address" className="text-lg font-semibold">
-              Address
-            </Label>
-            <Textarea
-              id="address"
-              {...register("address", { required: "Address is required" })}
-              className="w-full px-3 py-2 border rounded-md text-lg"
-            />
-            {errors.address && (
-              <p className="text-red-500 text-sm">{errors.address.message}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="city" className="text-lg font-semibold">
-              City
-            </Label>
-            <Input
-              id="city"
-              {...register("city", { required: "City is required" })}
-              className="w-full px-3 py-2 border rounded-md text-lg"
-            />
-            {errors.city && (
-              <p className="text-red-500 text-sm">{errors.city.message}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="state" className="text-lg font-semibold">
-              State
-            </Label>
-            <Input
-              id="state"
-              {...register("state", { required: "State is required" })}
-              className="w-full px-3 py-2 border rounded-md text-lg"
-            />
-            {errors.state && (
-              <p className="text-red-500 text-sm">{errors.state.message}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="pin" className="text-lg font-semibold">
-              Pin Code
-            </Label>
-            <Input
-              id="pin"
-              type="text"
-              {...register("pin", {
-                required: "Pin code is required",
-                pattern: {
-                  value: /^[0-9]{6}$/,
-                  message: "Invalid pin code",
-                },
-              })}
-              className="w-full px-3 py-2 border rounded-md text-lg"
-            />
-            {errors.pin && (
-              <p className="text-red-500 text-sm">{errors.pin.message}</p>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  const renderBookAppointment = () => (
-    <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
-        <CardTitle className="text-xl font-bold">Book Appointment</CardTitle>
-        <CardDescription className="text-indigo-100">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-2">
-            <Label className="text-indigo-100">
-              MRNo:{" "}
-              <span className="ml-auto font-medium text-white">
-                {state.patientData?.MRNo}
-              </span>
-            </Label>
-            <Label className="text-indigo-100">
-              Patient Name:{" "}
-              <span className="ml-auto font-medium text-white">
-                {state.patientData?.PatientName}
-              </span>
-            </Label>
-            <Label className="text-indigo-100">
-              Mobile No.:{" "}
-              <span className="ml-auto font-medium text-white">
-                {state.patientData?.MobileNo}
-              </span>
-            </Label>
-          </div>
-        </CardDescription>
+        
       </CardHeader>
       <CardContent className="p-6 space-y-6">
-        {state.error && <p className="text-red-500 text-sm">{state.error}</p>}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="department" className="text-lg font-semibold">
             Department
@@ -992,18 +880,6 @@ export default function AdvancedAppointmentForm() {
           )}
         </div>
         <div className="space-y-2">
-          <Label className="text-lg font-semibold">
-            Fee:{" "}
-            <span className="ml-auto font-medium text-indigo-600">
-              {state.selectedDoctor
-                ? state.selectedDoctor.Fee
-                  ? `₹${state.selectedDoctor.Fee}`
-                  : "No fee available for this doctor"
-                : "Select a doctor"}
-            </span>
-          </Label>
-        </div>
-        <div className="space-y-2">
           <Label htmlFor="appointmentDate" className="text-lg font-semibold">
             Appointment Date
           </Label>
@@ -1059,6 +935,8 @@ export default function AdvancedAppointmentForm() {
             </p>
           )}
         </div>
+       
+        </div>
         <div className="space-y-2">
           <Label htmlFor="slotId" className="text-lg font-semibold">
             Available Slots
@@ -1090,56 +968,260 @@ export default function AdvancedAppointmentForm() {
                           : "bg-green-100 hover:bg-green-200"
                       }`}
                       onClick={() => {
-                        if (!slot.isBooked && slot.AvailableSlots > 0) {
+                        if (!slot.isBooked) {
                           handleSlotSelection(slot.SlotID);
                         }
                       }}
                     >
-                      <CardContent className="p-4 flex flex-col items-center justify-between h-full">
-                        <Clock className="h-6 w-6 mb-2 text-indigo-500" />
-                        <span className="text-sm font-semibold">
+                      <CardContent className="p-4 text-center">
+                        <p className="font-semibold">
                           {format(
                             parse(slot.SlotTime, "HH:mm:ss", new Date()),
-                            "h:mm a"
+                            "h: mm a"
                           )}
-                        </span>
-                        <Badge
-                          variant={slot.isBooked ? "destructive" : "secondary"}
-                          className="mt-2"
-                        >
+                        </p>
+                        <p className="text-sm">
                           {slot.isBooked ? "Booked" : "Available"}
-                        </Badge>
+                        </p>
                       </CardContent>
                     </Card>
                   ))}
                 </motion.div>
               </AnimatePresence>
             ) : (
-              <Alert>
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>No slots available</AlertTitle>
-                <AlertDescription>
-                  Please try selecting a different date or doctor.
-                </AlertDescription>
-              </Alert>
+              <p className="text-gray-500">No available slots for this date.</p>
             )}
           </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="reason" className="text-lg font-semibold">
-            Reason for Visit
-          </Label>
-          <Textarea
-            id="reason"
-            {...register("reason", { required: "Reason is required" })}
-            className="w-full px-3 py-2 border rounded-md text-lg"
-            placeholder="Please briefly describe the reason for your visit"
-          />
-          {errors.reason && (
-            <p className="text-red-500 text-sm">{errors.reason.message}</p>
-          )}
+      </CardContent>
+      <CardFooter className="bg-gray-50 p-6 flex justify-end">
+        
+        <Button
+          type="submit"
+          onClick={handleSubmit(onSubmit)}
+          disabled={!state.selectedSlot}
+        >
+          Next <ChevronRight className="ml-2 h-4 w-4" />
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+
+  const renderPatientDetails = () => (
+    <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+        <CardTitle className="text-xl font-bold">Patient Details</CardTitle>
+      </CardHeader>
+      <CardContent className="p-6 space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label htmlFor="patientName" className="text-lg font-semibold">
+              Patient Name
+            </Label>
+            <Input
+              id="patientName"
+              {...register("patientName", {
+                required: "Patient name is required",
+              })}
+              className="text-lg"
+              defaultValue={state.patientData?.PatientName || ""}
+            />
+            {errors.patientName && (
+              <p className="text-red-500 text-sm">
+                {errors.patientName.message}
+              </p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="mobileNo" className="text-lg font-semibold">
+              Mobile Number
+            </Label>
+            <Input
+              id="mobileNo"
+              {...register("mobileNo", {
+                required: "Mobile number is required",
+                pattern: {
+                  value: /^[0-9]{10}$/,
+                  message: "Invalid mobile number",
+                },
+              })}
+              className="text-lg"
+              defaultValue={state.patientData?.MobileNo || ""}
+            />
+            {errors.mobileNo && (
+              <p className="text-red-500 text-sm">{errors.mobileNo.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-lg font-semibold">
+              Email
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Invalid email address",
+                },
+              })}
+              className="text-lg"
+              defaultValue={state.patientData?.Email || ""}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="DOB">Date of Birth</Label>
+            <Controller
+              name="DOB"
+              control={control}
+              rules={{ required: "Date of Birth is required" }}
+              render={({ field }) => (
+                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={`w-full justify-start text-left font-normal ${
+                        !field.value && "text-muted-foreground"
+                      }`}
+                      onClick={() => setIsCalendarOpen(true)}
+                    >
+                      {field.value ? (
+                        format(new Date(field.value), "yyyy-MM-dd")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <div className="space-y-4 p-3">
+                      <div className="flex justify-between space-x-2">
+                        <Select
+                          value={month.toString()}
+                          onValueChange={(value) => setMonth(parseInt(value))}
+                        >
+                          <SelectTrigger className="w-[140px]">
+                            <SelectValue placeholder="Select month" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {months.map((m, index) => (
+                              <SelectItem key={m} value={index.toString()}>
+                                {m}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Select
+                          value={year.toString()}
+                          onValueChange={(value) => setYear(parseInt(value))}
+                        >
+                          <SelectTrigger className="w-[100px]">
+                            <SelectValue placeholder="Select year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {years.map((y) => (
+                              <SelectItem key={y} value={y.toString()}>
+                                {y}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <CalendarComponent
+                        mode="single"
+                        selected={
+                          field.value ? new Date(field.value) : undefined
+                        }
+                        onSelect={(date) => {
+                          if (date) {
+                            const formattedDate = format(date, "yyyy-MM-dd");
+                            field.onChange(formattedDate);
+                          } else {
+                            field.onChange(null);
+                          }
+                          setIsCalendarOpen(false);
+                        }}
+                        disabled={(date) =>
+                          date > new Date() || date < subYears(new Date(), 120)
+                        }
+                        initialFocus
+                        month={new Date(year, month)}
+                        onMonthChange={(newMonth) => {
+                          setMonth(newMonth.getMonth());
+                          setYear(newMonth.getFullYear());
+                        }}
+                        className="rounded-md border shadow"
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )}
+            />
+            {errors.DOB && (
+              <p className="text-red-500 text-sm">{errors.DOB.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="gender" className="text-lg font-semibold">
+              Gender
+            </Label>
+            <Controller
+              name="gender"
+              control={control}
+              rules={{ required: "Gender is required" }}
+              defaultValue={state.patientData?.Sex || ""}
+              render={({ field }) => (
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex space-x-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="male" id="male" />
+                    <Label htmlFor="male">Male</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="female" id="female" />
+                    <Label htmlFor="female">Female</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="other" id="other" />
+                    <Label htmlFor="other">Other</Label>
+                  </div>
+                </RadioGroup>
+              )}
+            />
+            {errors.gender && (
+              <p className="text-red-500 text-sm">{errors.gender.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="reason" className="text-lg font-semibold">
+              Reason for Visit
+            </Label>
+            <Textarea
+              id="reason"
+              {...register("reason", {
+                required: "Reason for visit is required",
+              })}
+              className="text-lg"
+            />
+            {errors.reason && (
+              <p className="text-red-500 text-sm">{errors.reason.message}</p>
+            )}
+          </div>
         </div>
       </CardContent>
+      <CardFooter className="bg-gray-50 p-6 flex justify-end">
+       
+        <Button type="submit" onClick={handleSubmit(onSubmit)}>
+          Next <ChevronRight className="ml-2 h-4 w-4" />
+        </Button>
+      </CardFooter>
     </Card>
   );
 
@@ -1147,128 +1229,32 @@ export default function AdvancedAppointmentForm() {
     <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
         <CardTitle className="text-xl font-bold">Payment</CardTitle>
-        <CardDescription className="text-indigo-100">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-2">
-            <Label className="text-indigo-100">
+      </CardHeader>
+      <CardContent className="p-6 space-y-6">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+            <Label className="text-md text-slate-500">
               Patient Name:{" "}
-              <span className="ml-auto font-medium text-white">
+              <span className="ml-auto font-medium text-md text-slate-900">
                 {state.patientData?.PatientName}
               </span>
             </Label>
-            <Label className="text-indigo-100">
+            <Label className="text-md text-slate-500">
+              MRNO:{" "}
+              <span className="ml-auto font-medium text-md text-slate-900">
+              {state.patientData?.MRNo}
+              </span>
+            </Label>
+            <Label className="text-md text-slate-500">
               Appointment Date:{" "}
-              <span className="ml-auto font-medium text-white">
-                {watch("appointmentDate")}
+              <span className="ml-auto font-medium text-md text-slate-900">
+                {watch("appointmentDate")} 
               </span>
             </Label>
-            <Label className="text-indigo-100">
-              Doctor:{" "}
-              <span className="ml-auto font-medium text-white">
-                {
-                  state.doctors.find(
-                    (d) => d.ConsultantID === state.selectedDoctor?.ConsultantID
-                  )?.ConsultantName
-                }
-              </span>
-            </Label>
-            <Label className="text-indigo-100">
-              Amount to Pay:{" "}
-              <span className="ml-auto font-medium text-white">
-                ₹{state.selectedDoctor?.Fee || "N/A"}
-              </span>
-            </Label>
-          </div>
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="paymentMethod" className="text-lg font-semibold">
-            Payment Method
-          </Label>
-          <Controller
-            name="paymentMethod"
-            control={control}
-            rules={{ required: "Payment method is required" }}
-            render={({ field }) => (
-              <Select onValueChange={field.onChange}>
-                <SelectTrigger className="w-full text-lg">
-                  <SelectValue placeholder="Select payment method" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="cash">Cash</SelectItem>
-                  <SelectItem value="online">Online Payment</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.paymentMethod && (
-            <p className="text-red-500 text-sm">{errors.paymentMethod.message}</p>
-          )}
-        </div>
-  
-        {watch("paymentMethod") === "online" && (
-          <div className="space-y-2">
-            <Label className="text-lg font-semibold">Online Payment Instructions</Label>
-            <p className="text-gray-600">
-              Please click the "Proceed to Payment" button below to be redirected to our secure payment gateway.
-            </p>
-  
-            {/* Proceed to Payment Button */}
-            <Button
-              className="mt-4"
-              onClick={() => processPayment({ amount: state.selectedDoctor?.Fee })}
-            >
-              Proceed to Payment
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-  
-
-  const renderAppointmentConfirmation = () => (
-    <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
-      <CardHeader className="bg-gradient-to-r  from-green-500 to-teal-600 text-white">
-        <CardTitle className="text-xl font-bold">
-          Appointment Confirmation
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        <Alert>
-          <Check className="h-4 w-4" />
-          <AlertTitle>Success</AlertTitle>
-          <AlertDescription>
-            Your appointment has been successfully booked and payment processed.
-          </AlertDescription>
-        </Alert>
-        <div className="space-y-2">
-          <h3 className="font-semibold text-xl">Patient Details</h3>
-          <p className="text-lg">Name: {state.patientData?.PatientName}</p>
-          <p className="text-lg">Phone: {state.patientData?.MobileNo}</p>
-        </div>
-        <div className="space-y-2">
-          <h3 className="font-semibold text-xl">Appointment Details</h3>
-          <p className="text-lg">
-            Department:{" "}
-            {
-              state.departments.find(
-                (d) => d.DepartmentID === state.selectedDepartmentId
-              )?.Department
-            }
-          </p>
-          <p className="text-lg">
-            Doctor:{" "}
-            {
-              state.doctors.find(
-                (d) => d.ConsultantID === state.selectedDoctor?.ConsultantID
-              )?.ConsultantName
-            }
-          </p>
-          <p className="text-lg">Date: {watch("appointmentDate")}</p>
-          <p className="text-lg">
-            Time:{" "}
-            {state.selectedSlot &&
+            <Label className="text-md text-slate-500">
+              Slot:{" "}
+              <span className="ml-auto font-medium text-md text-slate-900">
+              {state.selectedSlot &&
               format(
                 parse(
                   state.availableSlots.find(
@@ -1279,55 +1265,165 @@ export default function AdvancedAppointmentForm() {
                 ),
                 "h:mm a"
               )}
-          </p>
+              </span>
+            </Label>
+            <Label className="text-md text-slate-500">
+              Doctor:{" "}
+              <span className="ml-auto font-medium text-md text-slate-900">
+                {
+                  state.doctors.find(
+                    (d) => d.ConsultantID === state.selectedDoctor?.ConsultantID
+                  )?.ConsultantName
+                }
+              </span>
+            </Label>
+            <Label className="text-md text-slate-500">
+            Consultation Fee:{" "}
+              <span className="ml-auto font-medium text-md text-slate-900">
+                ₹ {state.selectedDoctor?.Fee || "N/A"}
+              </span>
+            </Label>
+            <div className="flex justify-between items-center">
+                <span className="text-lg font-semibold">Appointment ID:</span>
+                <span className="text-lg">
+                  {state.appointmentDetails?.OPDOnlineAppointmentID}
+                </span>
+              </div>
+          </div>
+         
         </div>
-        <div className="space-y-2">
-          <h3 className="font-semibold text-xl">Payment Details</h3>
-          <p className="text-lg">
-            Amount Paid: ₹{state.selectedDoctor?.Fee || "N/A"}
-          </p>
-          <p className="text-lg">Payment Method: {watch("paymentMethod")}</p>
-          <p className="text-lg">
-            Payment Status:{" "}
-            {state.paymentStatus === "success" ? "Successful" : "Pending"}
-          </p>
-        </div>
-        <div className="flex space-x-4">
-          <Button
-            onClick={() => window.print()}
-            className="w-full bg-indigo-500 hover:bg-indigo-600 text-white text-lg"
-          >
-            <Printer className="mr-2 h-5 w-5" /> Print Confirmation
-          </Button>
-          <Button
-            onClick={generatePDF}
-            className="w-full bg-green-500 hover:bg-green-600 text-white text-lg"
-          >
-            <Download className="mr-2 h-5 w-5" /> Download PDF
-          </Button>
-        </div>
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Payment Information</AlertTitle>
+          <AlertDescription>
+            You will be redirected to our secure payment gateway to complete
+            your payment.
+          </AlertDescription>
+        </Alert>
       </CardContent>
+      <CardFooter className="bg-gray-50 p-6 flex justify-end">
+     
+      <Button
+        type="button"
+        onClick={handleSubmit(onSubmit)}
+        className="bg-green-600 hover:bg-green-700"
+      >
+        Pay Now <CreditCard className="ml-2 h-4 w-4" />
+      </Button>
+      </CardFooter>
     </Card>
   );
 
-  const renderStep = () => {
-    switch (currentStep) {
-      case 0:
-        return renderPatientDetails();
-      case 1:
-        return renderBookAppointment();
-      case 2:
-        return renderPayment();
-      case 3:
-        return renderAppointmentConfirmation();
-      default:
-        return null;
-    }
-  };
+  const renderConfirmation = () => (
+    <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
+        <CardTitle className="text-xl font-bold">Confirmation</CardTitle>
+      </CardHeader>
+      <CardContent className="p-6 space-y-6">
+        {state.paymentStatus === "success" ? (
+          <>
+            <div className="text-center">
+              <Check className="mx-auto h-16 w-16 text-green-500" />
+              <h2 className="mt-4 text-2xl font-bold text-gray-900">
+                Payment Successful
+              </h2>
+              <p className="mt-2 text-lg text-gray-600">
+                Your appointment has been confirmed.
+              </p>
+            </div>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-semibold">Appointment ID:</span>
+                <span className="text-lg">
+                  {state.appointmentDetails?.OPDOnlineAppointmentID}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-semibold">Patient Name:</span>
+                <span className="text-lg">
+                  {state.patientData?.PatientName}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-semibold">Doctor:</span>
+                <span className="text-lg">
+                  {
+                    state.doctors.find(
+                      (d) =>
+                        d.ConsultantID === state.selectedDoctor?.ConsultantID
+                    )?.ConsultantName
+                  }
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-semibold">Date:</span>
+                <span className="text-lg">{watch("appointmentDate")}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-semibold">Time:</span>
+                <span className="text-lg">
+                  {state.selectedSlot &&
+                    format(
+                      parse(
+                        state.availableSlots.find(
+                          (s) => s.SlotID === state.selectedSlot
+                        )?.SlotTime,
+                        "HH:mm:ss",
+                        new Date()
+                      ),
+                      "h:mm a"
+                    )}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-semibold">Amount Paid:</span>
+                <span className="text-lg">₹{state.selectedDoctor?.Fee}</span>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="text-center">
+            <X className="mx-auto h-16 w-16 text-red-500" />
+            <h2 className="mt-4 text-2xl font-bold text-gray-900">
+              Payment Failed
+            </h2>
+            <p className="mt-2 text-lg text-gray-600">
+              There was an issue processing your payment. Please try again.
+            </p>
+          </div>
+        )}
+      </CardContent>
+      <CardFooter className="bg-gray-50 p-6 flex justify-between">
+        {state.paymentStatus === "success" ? (
+          <>
+            <Button
+              onClick={generatePDF}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Download PDF <Download className="ml-2 h-4 w-4" />
+            </Button>
+            <Link href="/">
+              <Button className="bg-green-600 hover:bg-green-700">
+                Back to Home <MoveLeft className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </>
+        ) : (
+          <Button
+            onClick={() => setCurrentStep(2)}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            Try Again <RefreshCw className="ml-2 h-4 w-4" />
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 pb-10">
-      <div className="bg-[url('/hospital/hospitallogo.png?height=300&width=1920')] bg-cover bg-center">
+    <>
+    <RazorpayLoader /> 
+     <div className="bg-[url('/hospital/hospitallogo.png?height=300&width=1920')] bg-cover bg-center">
         <div className="bg-blue-900 bg-opacity-75 py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <img
@@ -1357,8 +1453,9 @@ export default function AdvancedAppointmentForm() {
           </div>
         </div>
       </div>
-      <div className="max-w-5xl mx-auto">
-        <nav className="my-6">
+   
+    <div className="container mx-auto px-4 py-8">
+    <nav className="my-6">
           <ol className="flex items-center w-full p-3 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 sm:p-4 sm:space-x-4">
             {steps.map((step, index) => (
               <li
@@ -1377,99 +1474,26 @@ export default function AdvancedAppointmentForm() {
                   {step.icon}
                 </span>
                 {step.title}
-                {index < steps.length - 1 && (
-                  <svg
-                    className="w-3 h-3 ml-2 sm:ml-4"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 12 10"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m1 5 5 5 5-5"
-                    />
-                  </svg>
-                )}
+            
               </li>
             ))}
           </ol>
         </nav>
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStep}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
-            >
-              {renderStep()}
-            </motion.div>
-          </AnimatePresence>
-          {state.error && (
-            <Alert variant="destructive" className="mt-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{state.error}</AlertDescription>
-            </Alert>
-          )}
-          <div className="mt-8 flex justify-end">
-            {currentStep < steps.length - 1 && (
-              <Button
-                type="submit"
-                disabled={state.loading}
-                className="bg-indigo-500 hover:bg-indigo-600 text-white ml-auto text-md"
-              >
-                {state.loading ? (
-                  <>
-                    <RefreshCw className="mr-2 h-5 w-5 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    Next <ChevronRight className="ml-2 h-5 w-5" />
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
-        </form>
-      </div>
-     
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline" className="fixed bottom-4 right-4">
-            Need Help?
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Appointment Booking Help</DialogTitle>
-            <DialogDescription>
-              If you need assistance with booking your appointment, please don't
-              hesitate to contact us.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <p>Phone: +91 8987999200</p>
-            <p>Email: sjhrc.ranchi@gmail.com</p>
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => (window.location.href = "tel:+918987999200")}
-            >
-              Call Now
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {currentStep === 0 && renderChooseSlot()}
+        {currentStep === 1 && renderPatientDetails()}
+        {currentStep === 2 && renderPayment()}
+        {currentStep === 3 && renderConfirmation()}
+      </form>
+      {state.error && (
+        <Alert variant="destructive" className="mt-4">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{state.error}</AlertDescription>
+        </Alert>
+      )}
+      
     </div>
+    </>
   );
 }

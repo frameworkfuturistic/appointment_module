@@ -23,6 +23,7 @@ class Appointment extends Model
 
      // Specify the fields that can be mass assigned
      protected $fillable = [
+        'OPDOnlineAppointmentID',
          'ConsultantID',
          'MRNo',
          'ConsultationDate',
