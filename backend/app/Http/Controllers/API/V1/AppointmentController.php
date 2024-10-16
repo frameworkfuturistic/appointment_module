@@ -70,30 +70,31 @@ class AppointmentController extends Controller
     {
         // Find the appointment by ID
         $appointment = Appointment::find($id);
-
+    
         // Return error response if appointment not found
         if (!$appointment) {
             return response()->json(['error' => 'Appointment not found.'], 404);
         }
-
-        // Validate incoming request
+    
+        // Validate incoming request for partial updates (only validate fields that are present)
         $validated = $request->validate([
-            'ConsultantID' => 'required|integer|exists:gen_consultants,ConsultantID',
-            'MRNo' => 'required|string|exists:mr_master,MRNo',
-            'ConsultationDate' => 'required|date',
-            'SlotID' => 'required|integer|exists:opd_doctorslots,SlotID',
-            'SlotToken' => 'required|string|max:50',
+            'ConsultantID' => 'nullable|integer|exists:gen_consultants,ConsultantID',
+            'MRNo' => 'nullable|string|exists:mr_master,MRNo',
+            'ConsultationDate' => 'nullable|date',
+            'SlotID' => 'nullable|integer|exists:opd_doctorslots,SlotID',
+            'SlotToken' => 'nullable|string|max:50',
             'Remarks' => 'nullable|string|max:50',
-            'Pending' => 'required|boolean',
-            'PatientName' => 'required|string|max:50',
-            'MobileNo' => 'required|string|max:10',
+            'Pending' => 'nullable|boolean',  // Pending can be updated independently
+            'PatientName' => 'nullable|string|max:50',
+            'MobileNo' => 'nullable|string|max:10',
         ]);
-
-        // Update the appointment with validated data
+    
+        // Update only the fields that are present in the request
         $appointment->update($validated);
-
+    
         return response()->json(['message' => 'Appointment updated successfully.', 'appointment' => $appointment], 200);
     }
+    
 
    // Method to search appointments by mobile number, OPDOnlineAppointmentID, or MRNo
 public function searchAppointments(Request $request)

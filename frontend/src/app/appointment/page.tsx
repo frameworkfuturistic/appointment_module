@@ -1,9 +1,8 @@
+"use client";
 
-'use client'
-
-import React, { useState, useEffect, useCallback, useReducer } from "react"
-import { useForm, Controller } from "react-hook-form"
-import { motion, AnimatePresence } from "framer-motion"
+import React, { useState, useEffect, useCallback, useReducer } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   format,
   subYears,
@@ -12,8 +11,8 @@ import {
   isAfter,
   startOfYear,
   endOfYear,
-} from "date-fns"
-import axios from "axios"
+} from "date-fns";
+import axios from "axios";
 import {
   ChevronRight,
   User,
@@ -29,19 +28,19 @@ import {
   RefreshCw,
   Download,
   MoveLeft,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
@@ -49,23 +48,23 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { Calendar as CalendarComponent } from "@/components/ui/calendar"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { toast } from "@/components/ui/use-toast"
-import { Skeleton } from "@/components/ui/skeleton"
+} from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
-import { jsPDF } from "jspdf"
-import Link from "next/link"
-import ExistAppointment from "./ExistAppointment"
-import RazorpayLoader from '@/lib/RazorpayLoader'
+import { jsPDF } from "jspdf";
+import Link from "next/link";
+import ExistAppointment from "./ExistAppointment";
+import RazorpayLoader from "@/lib/RazorpayLoader";
 
-const API_BASE_URL = "http://127.0.0.1:8000/api/v1"
+const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
 
 const steps = [
   {
@@ -84,49 +83,61 @@ const steps = [
     title: "Confirmation",
     icon: <Printer className="h-6 w-6" />,
   },
-]
+];
 
 interface State {
-  departments: Array<{ DepartmentID: number; Department: string }>
-  doctors: Array<{ ConsultantID: number; ConsultantName: string; Fee?: number }>
-  selectedDoctor: { ConsultantID: number; ConsultantName: string; Fee?: number } | null
-  availableSlots: Array<{ SlotID: number; SlotTime: string; isBooked?: boolean }>
-  selectedSlot: number | null
-  error: string | null
-  loading: boolean
+  departments: Array<{ DepartmentID: number; Department: string }>;
+  doctors: Array<{
+    ConsultantID: number;
+    ConsultantName: string;
+    Fee?: number;
+  }>;
+  selectedDoctor: {
+    ConsultantID: number;
+    ConsultantName: string;
+    Fee?: number;
+  } | null;
+  availableSlots: Array<{
+    SlotID: number;
+    SlotTime: string;
+    isBooked?: boolean;
+  }>;
+  selectedSlot: number | null;
+  error: string | null;
+  loading: boolean;
   patientData: {
-    PatientName?: string
-    MobileNo?: string
-    Email?: string
-    Sex?: string
-    DOB?: string
-    MRNo?: string
-  } | null
+    PatientName?: string;
+    MobileNo?: string;
+    Email?: string;
+    Sex?: string;
+    DOB?: string;
+    MRNo?: string;
+  } | null;
   appointmentDetails: {
     appointment?: {
-      OPDOnlineAppointmentID?: number
-    }
-  } | null
-  selectedDepartmentId: number | null
-  paymentStatus: 'success' | 'failed' | null
-  temporaryAppointmentId: string | null
-  isProcessingPayment: boolean
+      OPDOnlineAppointmentID?: number;
+    };
+  } | null;
+  selectedDepartmentId: number | null;
+  paymentStatus: "success" | "failed" | null;
+  temporaryAppointmentId: string | null;
+  isProcessingPayment: boolean;
 }
 
 type Action =
-  | { type: 'SET_DEPARTMENTS'; payload: State['departments'] }
-  | { type: 'SET_DOCTORS'; payload: State['doctors'] }
-  | { type: 'SET_SELECTED_DOCTOR'; payload: number }
-  | { type: 'SET_AVAILABLE_SLOTS'; payload: State['availableSlots'] }
-  | { type: 'SET_SELECTED_SLOT'; payload: number }
-  | { type: 'SET_ERROR'; payload: string | null }
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_PATIENT_DATA'; payload: State['patientData'] }
-  | { type: 'SET_APPOINTMENT_DETAILS'; payload: State['appointmentDetails'] }
-  | { type: 'SET_SELECTED_DEPARTMENT_ID'; payload: number }
-  | { type: 'SET_PAYMENT_STATUS'; payload: State['paymentStatus'] }
-  | { type: 'SET_TEMPORARY_APPOINTMENT_ID'; payload: string }
-  | { type: 'SET_IS_PROCESSING_PAYMENT'; payload: boolean }
+  | { type: "SET_DEPARTMENTS"; payload: State["departments"] }
+  | { type: "SET_DOCTORS"; payload: State["doctors"] }
+  | { type: "SET_SELECTED_DOCTOR"; payload: number }
+  | { type: "SET_AVAILABLE_SLOTS"; payload: State["availableSlots"] }
+  | { type: "SET_SELECTED_SLOT"; payload: number }
+  | { type: "SET_ERROR"; payload: string | null }
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_PATIENT_DATA"; payload: State["patientData"] }
+  | { type: "SET_APPOINTMENT_DETAILS"; payload: State["appointmentDetails"] }
+  | { type: "SET_SELECTED_DEPARTMENT_ID"; payload: number }
+  | { type: "SET_PAYMENT_STATUS"; payload: State["paymentStatus"] }
+  | { type: "SET_TEMPORARY_APPOINTMENT_ID"; payload: string }
+  | { type: "SET_IS_PROCESSING_PAYMENT"; payload: boolean };
 
 const initialState: State = {
   departments: [],
@@ -142,81 +153,82 @@ const initialState: State = {
   paymentStatus: null,
   temporaryAppointmentId: null,
   isProcessingPayment: false,
-}
+};
 
 function formReducer(state: State, action: Action): State {
   switch (action.type) {
     case "SET_DEPARTMENTS":
-      return { ...state, departments: action.payload }
+      return { ...state, departments: action.payload };
     case "SET_DOCTORS":
-      return { ...state, doctors: action.payload }
+      return { ...state, doctors: action.payload };
     case "SET_SELECTED_DOCTOR":
       return {
         ...state,
-        selectedDoctor: state.doctors.find(
-          (doctor) => doctor.ConsultantID === action.payload
-        ) || null,
-      }
+        selectedDoctor:
+          state.doctors.find(
+            (doctor) => doctor.ConsultantID === action.payload
+          ) || null,
+      };
     case "SET_AVAILABLE_SLOTS":
-      return { ...state, availableSlots: action.payload }
+      return { ...state, availableSlots: action.payload };
     case "SET_SELECTED_SLOT":
-      return { ...state, selectedSlot: action.payload }
+      return { ...state, selectedSlot: action.payload };
     case "SET_ERROR":
-      return { ...state, error: action.payload }
+      return { ...state, error: action.payload };
     case "SET_LOADING":
-      return { ...state, loading: action.payload }
+      return { ...state, loading: action.payload };
     case "SET_PATIENT_DATA":
-      return { ...state, patientData: action.payload }
+      return { ...state, patientData: action.payload };
     case "SET_APPOINTMENT_DETAILS":
-      return { ...state, appointmentDetails: action.payload }
+      return { ...state, appointmentDetails: action.payload };
     case "SET_SELECTED_DEPARTMENT_ID":
-      return { ...state, selectedDepartmentId: action.payload }
+      return { ...state, selectedDepartmentId: action.payload };
     case "SET_PAYMENT_STATUS":
-      return { ...state, paymentStatus: action.payload }
+      return { ...state, paymentStatus: action.payload };
     case "SET_TEMPORARY_APPOINTMENT_ID":
-      return { ...state, temporaryAppointmentId: action.payload }
+      return { ...state, temporaryAppointmentId: action.payload };
     case "SET_IS_PROCESSING_PAYMENT":
-      return { ...state, isProcessingPayment: action.payload }
+      return { ...state, isProcessingPayment: action.payload };
     default:
-      return state
+      return state;
   }
 }
 
 const debounce = <F extends (...args: any[]) => any>(func: F, wait: number) => {
-  let timeout: NodeJS.Timeout | null = null
-  return function(this: any, ...args: Parameters<F>) {
-    const context = this
+  let timeout: NodeJS.Timeout | null = null;
+  return function (this: any, ...args: Parameters<F>) {
+    const context = this;
     if (timeout !== null) {
-      clearTimeout(timeout)
+      clearTimeout(timeout);
     }
-    timeout = setTimeout(() => func.apply(context, args), wait)
-  }
-}
+    timeout = setTimeout(() => func.apply(context, args), wait);
+  };
+};
 
 const saveToSessionStorage = (key: string, data: any) => {
-  sessionStorage.setItem(key, JSON.stringify(data))
-}
+  sessionStorage.setItem(key, JSON.stringify(data));
+};
 
 const getFromSessionStorage = (key: string) => {
-  const data = sessionStorage.getItem(key)
-  return data ? JSON.parse(data) : null
-}
+  const data = sessionStorage.getItem(key);
+  return data ? JSON.parse(data) : null;
+};
 
 const removeFromSessionStorage = (key: string) => {
-  sessionStorage.removeItem(key)
-}
+  sessionStorage.removeItem(key);
+};
 
 export default function Component() {
-  const [currentStep, setCurrentStep] = useState(0)
-  const [state, dispatch] = useReducer(formReducer, initialState)
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false)
-  const [month, setMonth] = useState(new Date().getMonth())
-  const [year, setYear] = useState(new Date().getFullYear())
+  const [currentStep, setCurrentStep] = useState(0);
+  const [state, dispatch] = useReducer(formReducer, initialState);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [month, setMonth] = useState(new Date().getMonth());
+  const [year, setYear] = useState(new Date().getFullYear());
 
   const years = Array.from(
     { length: 121 },
     (_, i) => new Date().getFullYear() - i
-  )
+  );
   const months = [
     "January",
     "February",
@@ -230,7 +242,7 @@ export default function Component() {
     "October",
     "November",
     "December",
-  ]
+  ];
 
   const {
     register,
@@ -239,28 +251,31 @@ export default function Component() {
     setValue,
     watch,
     formState: { errors },
-  } = useForm()
+  } = useForm();
 
   const createTemporaryAppointment = useCallback(async (data: any) => {
-    const tempAppointmentId = Date.now().toString()
-    saveToSessionStorage(tempAppointmentId, data)
+    const tempAppointmentId = Date.now().toString();
+    saveToSessionStorage(tempAppointmentId, data);
     dispatch({
       type: "SET_TEMPORARY_APPOINTMENT_ID",
       payload: tempAppointmentId,
-    })
-    return tempAppointmentId
-  }, [])
+    });
+    return tempAppointmentId;
+  }, []);
 
-  const updateTemporaryAppointment = useCallback(async (id: string, data: any) => {
-    const existingData = getFromSessionStorage(id)
-    if (existingData) {
-      saveToSessionStorage(id, { ...existingData, ...data })
-    }
-  }, [])
+  const updateTemporaryAppointment = useCallback(
+    async (id: string, data: any) => {
+      const existingData = getFromSessionStorage(id);
+      if (existingData) {
+        saveToSessionStorage(id, { ...existingData, ...data });
+      }
+    },
+    []
+  );
 
   const deleteTemporaryAppointment = useCallback(async (id: string) => {
-    removeFromSessionStorage(id)
-  }, [])
+    removeFromSessionStorage(id);
+  }, []);
 
   const createPatient = useCallback(async (data: any) => {
     if (data) {
@@ -271,94 +286,97 @@ export default function Component() {
           MobileNo: data.mobileNo,
           Email: data.email,
           DOB: data.DOB,
-        })
-        dispatch({ type: "SET_PATIENT_DATA", payload: response.data.patient })
+        });
+        dispatch({ type: "SET_PATIENT_DATA", payload: response.data.patient });
         toast({
           title: "Patient Created",
           description: "Your patient profile has been created successfully.",
-        })
-        return response.data.patient
+        });
+        return response.data.patient;
       } catch (err) {
-        console.error("Error creating patient:", err.response?.data)
-        dispatch({ type: "SET_ERROR", payload: "Error creating patient" })
+        console.error("Error creating patient:", err.response?.data);
+        dispatch({ type: "SET_ERROR", payload: "Error creating patient" });
         toast({
           title: "Error",
           description: "Failed to create patient profile. Please try again.",
           variant: "destructive",
-        })
-        throw err
+        });
+        throw err;
       }
     }
-  }, [])
+  }, []);
 
   const fetchDepartments = useCallback(async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/departments`)
-      dispatch({ type: "SET_DEPARTMENTS", payload: response.data })
+      const response = await axios.get(`${API_BASE_URL}/departments`);
+      dispatch({ type: "SET_DEPARTMENTS", payload: response.data });
     } catch (err) {
-      dispatch({ type: "SET_ERROR", payload: "Error fetching departments" })
+      dispatch({ type: "SET_ERROR", payload: "Error fetching departments" });
       toast({
         title: "Error",
         description: "Failed to fetch departments. Please refresh the page.",
         variant: "destructive",
-      })
+      });
     }
-  }, [])
+  }, []);
 
   const fetchDoctors = useCallback(async (departmentId: number) => {
     if (departmentId) {
       try {
         const response = await axios.get(
           `${API_BASE_URL}/doctors/${departmentId}`
-        )
-        dispatch({ type: "SET_DOCTORS", payload: response.data })
+        );
+        dispatch({ type: "SET_DOCTORS", payload: response.data });
       } catch (err) {
-        dispatch({ type: "SET_ERROR", payload: "Error fetching doctors" })
+        dispatch({ type: "SET_ERROR", payload: "Error fetching doctors" });
         toast({
           title: "Error",
           description: "Failed to fetch doctors. Please try again.",
           variant: "destructive",
-        })
+        });
       }
     }
-  }, [])
+  }, []);
 
   const fetchAvailableSlots = async (doctorId: number, date: string) => {
-    if (!doctorId || !date) return
+    if (!doctorId || !date) return;
 
-    dispatch({ type: "SET_LOADING", payload: true })
+    dispatch({ type: "SET_LOADING", payload: true });
     try {
       const response = await axios.get(
         `${API_BASE_URL}/slots/${doctorId}/${date}`
-      )
-      dispatch({ type: "SET_AVAILABLE_SLOTS", payload: response.data || [] })
+      );
+      dispatch({ type: "SET_AVAILABLE_SLOTS", payload: response.data || [] });
     } catch (err) {
       dispatch({
         type: "SET_ERROR",
         payload: "Error fetching available slots",
-      })
+      });
       toast({
         title: "Error",
         description: "Failed to fetch available slots. Please try again.",
         variant: "destructive",
-      })
+      });
     } finally {
-      dispatch({ type: "SET_LOADING", payload: false })
+      dispatch({ type: "SET_LOADING", payload: false });
     }
-  }
+  };
 
   const debouncedFetchAvailableSlots = useCallback(
     debounce((doctorId: number, date: string) => {
-      fetchAvailableSlots(doctorId, date)
+      fetchAvailableSlots(doctorId, date);
     }, 300),
     []
-  )
+  );
 
   const bookAppointment = async (data: any) => {
     // Check if an appointment already exists
     if (state.appointmentDetails?.appointment?.OPDOnlineAppointmentID) {
-      console.log("Appointment already exists, using existing ID:", state.appointmentDetails.appointment.OPDOnlineAppointmentID)
-      return state.appointmentDetails
+      console.log(
+        "Appointment already exists, using existing ID:",
+        state.appointmentDetails.appointment.OPDOnlineAppointmentID
+      );
+      return state.appointmentDetails;
     }
 
     const appointmentData = {
@@ -371,87 +389,94 @@ export default function Component() {
       Remarks: data.reason,
       PatientName: state.patientData?.PatientName,
       MobileNo: state.patientData?.MobileNo,
-    }
+    };
 
     try {
       const response = await axios.post(
         `${API_BASE_URL}/appointments`,
         appointmentData
-      )
-      console.log("Appointment Response:", response.data.data)
+      );
+      console.log("Appointment Response:", response.data.data);
       dispatch({
         type: "SET_APPOINTMENT_DETAILS",
         payload: response.data.data,
-      })
+      });
       toast({
         title: "Appointment Booked",
         description:
           "Your appointment has been booked successfully. Please proceed to payment.",
-      })
-      return response.data
+      });
+      return response.data;
     } catch (error: any) {
-      let errorMessage = "Error booking appointment"
+      let errorMessage = "Error booking appointment";
 
       if (error.response) {
-        errorMessage = error.response.data?.message || errorMessage
-        console.error("Error response data:", error.response.data)
+        errorMessage = error.response.data?.message || errorMessage;
+        console.error("Error response data:", error.response.data);
       } else if (error.request) {
-        errorMessage = "No response from the server"
-        console.error("Error request data:", error.request)
+        errorMessage = "No response from the server";
+        console.error("Error request data:", error.request);
       } else {
-        console.error("Error message:", error.message)
+        console.error("Error message:", error.message);
       }
 
       toast({
         title: "Error",
         description: errorMessage,
         variant: "destructive",
-      })
-      throw new Error(errorMessage)
+      });
+      throw new Error(errorMessage);
     }
-  }
+  };
 
   const processPayment = async (data: { amount: number }) => {
     if (state.isProcessingPayment) {
-      console.log("Payment is already being processed")
-      return
+      console.log("Payment is already being processed");
+      return;
     }
 
-    dispatch({ type: "SET_IS_PROCESSING_PAYMENT", payload: true })
+    dispatch({ type: "SET_IS_PROCESSING_PAYMENT", payload: true });
 
     try {
-      console.log("Appointment Details:", state.appointmentDetails)
-      
-      const appointmentId  = state.appointmentDetails?.appointment?.OPDOnlineAppointmentID
-      console.log("Extracted OPDOnlineAppointmentID:", appointmentId)
-      
-      if (!appointmentId || typeof appointmentId !== 'number') {
-        throw new Error("Invalid OPDOnlineAppointmentID. It must be an integer.")
+      console.log("Appointment Details:", state.appointmentDetails);
+
+      const appointmentId =
+        state.appointmentDetails?.appointment?.OPDOnlineAppointmentID;
+      console.log("Extracted OPDOnlineAppointmentID:", appointmentId);
+
+      if (!appointmentId || typeof appointmentId !== "number") {
+        throw new Error(
+          "Invalid OPDOnlineAppointmentID. It must be an integer."
+        );
       }
-      
-      const amountPaid = Math.floor(parseFloat(data.amount.toString()))
+
+      const amountPaid = Math.floor(parseFloat(data.amount.toString()));
       if (isNaN(amountPaid) || amountPaid <= 0) {
-        throw new Error("Invalid amount. It must be a positive integer.")
+        throw new Error("Invalid amount. It must be a positive integer.");
       }
-      
+
       const paymentData = {
         OPDOnlineAppointmentID: appointmentId,
         AmountPaid: amountPaid,
         PaymentMode: "Razorpay",
-      }
-      
-      console.log("Payment Request Data:", paymentData)
-      
-      const paymentResponse = await axios.post(`${API_BASE_URL}/payments`, paymentData)
-      
-      const { order_id } = paymentResponse.data
-      
+      };
+
+      console.log("Payment Request Data:", paymentData);
+
+      const paymentResponse = await axios.post(
+        `${API_BASE_URL}/payments`,
+        paymentData
+      );
+
+      const { order_id } = paymentResponse.data;
+
       if (!order_id) {
-        throw new Error("Order ID not found in the payment response.")
+        throw new Error("Order ID not found in the payment response.");
       }
-      
+
       const razorpayOptions = {
-        key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_4clm2oRR0AjqFE",
+        key_id:
+          process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_4clm2oRR0AjqFE",
         amount: amountPaid * 100,
         currency: "INR",
         name: "Shree Jagannath Hospital & Research Center",
@@ -465,34 +490,41 @@ export default function Component() {
               PaymentStatus: "Paid",
               AmountPaid: amountPaid,
               TransactionID: response.razorpay_payment_id,
-            }
-            
-            console.log("Payment Data for Callback:", callbackPaymentData)
-            
-            await axios.post(`${API_BASE_URL}/payments/callback`, callbackPaymentData)
-            
-            await axios.put(`${API_BASE_URL}/appointments/${appointmentId}`, { Pending: 0 })
-            
-            dispatch({ type: "SET_PAYMENT_STATUS", payload: "success" })
+            };
+
+            console.log("Payment Data for Callback:", callbackPaymentData);
+
+            // await axios.post(`${API_BASE_URL}/payments/callback`, callbackPaymentData)
+
+            await axios.put(`${API_BASE_URL}/appointments/${appointmentId}`, {
+              Pending: 0,
+            });
+
+            dispatch({ type: "SET_PAYMENT_STATUS", payload: "success" });
             toast({
               title: "Payment Successful",
-              description: "Your payment has been processed and appointment confirmed.",
-            })
-            
+              description:
+                "Your payment has been processed and appointment confirmed.",
+            });
+
             if (state.temporaryAppointmentId) {
-              removeFromSessionStorage(state.temporaryAppointmentId)
+              removeFromSessionStorage(state.temporaryAppointmentId);
             }
-            
-            setCurrentStep(currentStep + 1)
+
+            setCurrentStep(currentStep + 1);
           } catch (error) {
-            console.error("Error updating payment or appointment status:", error)
+            console.error(
+              "Error updating payment or appointment status:",
+              error
+            );
             toast({
               title: "Payment Error",
-              description: "Payment was processed, but there was an error confirming your appointment.",
+              description:
+                "Payment was processed, but there was an error confirming your appointment.",
               variant: "destructive",
-            })
+            });
           } finally {
-            dispatch({ type: "SET_IS_PROCESSING_PAYMENT", payload: false })
+            dispatch({ type: "SET_IS_PROCESSING_PAYMENT", payload: false });
           }
         },
         prefill: {
@@ -503,57 +535,57 @@ export default function Component() {
         theme: {
           color: "#3399cc",
         },
-      }
-      
-      const razorpay = new (window as any).Razorpay(razorpayOptions)
-      razorpay.open()
+      };
+
+      const razorpay = new (window as any).Razorpay(razorpayOptions);
+      razorpay.open();
     } catch (error) {
-      console.error("Payment processing error:", error)
+      console.error("Payment processing error:", error);
       toast({
         title: "Payment Error",
         description: "Unable to process the payment. Please try again.",
         variant: "destructive",
-      })
-      dispatch({ type: "SET_IS_PROCESSING_PAYMENT", payload: false })
+      });
+      dispatch({ type: "SET_IS_PROCESSING_PAYMENT", payload: false });
     }
-  }
+  };
 
   const onSubmit = useCallback(
     async (data: any) => {
-      dispatch({ type: "SET_LOADING", payload: true })
-      dispatch({ type: "SET_ERROR", payload: null })
+      dispatch({ type: "SET_LOADING", payload: true });
+      dispatch({ type: "SET_ERROR", payload: null });
 
       try {
         switch (currentStep) {
           case 0: // Choose Slot
             if (!state.selectedSlot) {
-              throw new Error("Please select a slot before proceeding.")
+              throw new Error("Please select a slot before proceeding.");
             }
             const tempAppointmentId = await createTemporaryAppointment({
               doctorId: data.doctorId,
               appointmentDate: data.appointmentDate,
               slotId: state.selectedSlot,
-            })
-            setCurrentStep(currentStep + 1)
-            break
+            });
+            setCurrentStep(currentStep + 1);
+            break;
           case 1: // Patient Details
-            let patient
+            let patient;
             if (!state.patientData) {
-              patient = await createPatient(data)
+              patient = await createPatient(data);
             } else {
-              patient = state.patientData
+              patient = state.patientData;
             }
             await updateTemporaryAppointment(state.temporaryAppointmentId!, {
               patientData: patient,
-            })
-            dispatch({ type: "SET_PATIENT_DATA", payload: patient })
-            setCurrentStep(currentStep + 1)
-            break
+            });
+            dispatch({ type: "SET_PATIENT_DATA", payload: patient });
+            setCurrentStep(currentStep + 1);
+            break;
           case 2: // Payment
             if (!state.patientData || !state.patientData.MRNo) {
               throw new Error(
                 "Patient data is missing. Please go back and fill in the patient details."
-              )
+              );
             }
             const appointmentDetails = await bookAppointment({
               ...data,
@@ -564,28 +596,28 @@ export default function Component() {
               shiftId: state.availableSlots.find(
                 (slot) => slot.SlotID === state.selectedSlot
               )?.ShiftID,
-            })
+            });
             dispatch({
               type: "SET_APPOINTMENT_DETAILS",
               payload: appointmentDetails,
-            })
-            await processPayment({ amount: state.selectedDoctor?.Fee || 0 })
-            break
+            });
+            await processPayment({ amount: state.selectedDoctor?.Fee || 0 });
+            break;
           default:
-            break
+            break;
         }
       } catch (err: any) {
         dispatch({
           type: "SET_ERROR",
           payload: err.message || "An error occurred. Please try again.",
-        })
+        });
         toast({
           title: "Error",
           description: err.message || "An error occurred. Please try again.",
           variant: "destructive",
-        })
+        });
       } finally {
-        dispatch({ type: "SET_LOADING", payload: false })
+        dispatch({ type: "SET_LOADING", payload: false });
       }
     },
     [
@@ -598,158 +630,173 @@ export default function Component() {
       bookAppointment,
       processPayment,
     ]
-  )
+  );
 
   useEffect(() => {
-    fetchDepartments()
-  }, [fetchDepartments])
+    fetchDepartments();
+  }, [fetchDepartments]);
 
   useEffect(() => {
-    fetchDoctors(state.selectedDepartmentId!)
-  }, [state.selectedDepartmentId, fetchDoctors])
+    fetchDoctors(state.selectedDepartmentId!);
+  }, [state.selectedDepartmentId, fetchDoctors]);
 
   useEffect(() => {
     if (state.selectedDoctor && watch("appointmentDate")) {
       debouncedFetchAvailableSlots(
         state.selectedDoctor.ConsultantID,
         watch("appointmentDate")
-      )
+      );
     }
   }, [
     state.selectedDoctor,
     watch("appointmentDate"),
     debouncedFetchAvailableSlots,
-  ])
+  ]);
 
   useEffect(() => {
-    const tempAppointmentId = sessionStorage.getItem("temporaryAppointmentId")
+    const tempAppointmentId = sessionStorage.getItem("temporaryAppointmentId");
     if (tempAppointmentId) {
-      const tempAppointmentData = getFromSessionStorage(tempAppointmentId)
+      const tempAppointmentData = getFromSessionStorage(tempAppointmentId);
       if (tempAppointmentData) {
         dispatch({
           type: "SET_TEMPORARY_APPOINTMENT_ID",
           payload: tempAppointmentId,
-        })
+        });
         if (tempAppointmentData.doctorId) {
           dispatch({
             type: "SET_SELECTED_DOCTOR",
             payload: parseInt(tempAppointmentData.doctorId),
-          })
+          });
         }
         if (tempAppointmentData.appointmentDate) {
-          setValue("appointmentDate", tempAppointmentData.appointmentDate)
+          setValue("appointmentDate", tempAppointmentData.appointmentDate);
         }
         if (tempAppointmentData.slotId) {
           dispatch({
             type: "SET_SELECTED_SLOT",
             payload: tempAppointmentData.slotId,
-          })
+          });
         }
         if (tempAppointmentData.patientData) {
           dispatch({
             type: "SET_PATIENT_DATA",
             payload: tempAppointmentData.patientData,
-          })
+          });
         }
       }
     }
 
     return () => {
       if (state.temporaryAppointmentId) {
-        deleteTemporaryAppointment(state.temporaryAppointmentId)
+        deleteTemporaryAppointment(state.temporaryAppointmentId);
       }
-    }
-  }, [deleteTemporaryAppointment, setValue])
+    };
+  }, [deleteTemporaryAppointment, setValue]);
 
   const handleSlotSelection = (slotId: number) => {
-    dispatch({ type: "SET_SELECTED_SLOT", payload: slotId })
-  }
+    dispatch({ type: "SET_SELECTED_SLOT", payload: slotId });
+  };
 
   const calculateAge = (DOB: string) => {
-    const dobDate = new Date(DOB)
-    const today = new Date()
-    let age = today.getFullYear() - dobDate.getFullYear()
-    const monthDifference = today.getMonth() - dobDate.getMonth()
+    const dobDate = new Date(DOB);
+    const today = new Date();
+    let age = today.getFullYear() - dobDate.getFullYear();
+    const monthDifference = today.getMonth() - dobDate.getMonth();
 
     if (
       monthDifference < 0 ||
       (monthDifference === 0 && today.getDate() < dobDate.getDate())
     ) {
-      age--
+      age--;
     }
 
-    return age < 0 ? "N/A" : age
-  }
+    return age < 0 ? "N/A" : age;
+  };
 
   const generatePDF = () => {
-    const doc = new jsPDF()
+    const doc = new jsPDF();
 
-    const pageWidth = doc.internal.pageSize.getWidth()
-    const pageHeight = doc.internal.pageSize.getHeight()
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
 
-    const slipWidth = pageWidth - 20
-    const slipHeight = pageHeight - 210
+    const slipWidth = pageWidth - 20;
+    const slipHeight = pageHeight - 190;
 
-    doc.setDrawColor(0)
-    doc.setLineWidth(0.5)
-    doc.rect(10, 10, slipWidth, slipHeight)
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.rect(10, 10, slipWidth, slipHeight);
 
-    doc.setFontSize(16)
-    doc.text(
-      "Shree Jagannath Hospital & Research Center",
-      pageWidth / 2,
-      20,
-      { align: "center" }
-    )
-    doc.setFontSize(12)
+    doc.setFontSize(16);
+    doc.text("Shree Jagannath Hospital & Research Center", pageWidth / 2, 20, {
+      align: "center",
+    });
+    doc.setFontSize(10);
     doc.text(
       "Mayor Road, Behind Machhli Ghar, Ranchi, Jharkhand - 834001, INDIA",
       pageWidth / 2,
       30,
       { align: "center" }
-    )
+    );
     doc.text(
       "Phone: +91 8987999200, Email: sjhrc.ranchi@gmail.com",
       pageWidth / 2,
       36,
       { align: "center" }
-    )
+    );
 
-    doc.setDrawColor(200)
-    doc.line(10, 40, pageWidth - 10, 40)
+    doc.setDrawColor(200);
+    doc.line(10, 40, pageWidth - 10, 40);
 
-    doc.setFontSize(12)
-    doc.setTextColor(0, 0, 255)
-    doc.text("Appointment Slip", pageWidth / 2, 45, { align: "center" })
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 255);
+    doc.text("Appointment Slip", pageWidth / 2, 45, { align: "center" });
 
-    doc.setFontSize(10)
-    doc.setTextColor(0, 0, 0)
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
 
-    const leftColumnStart = 20
-    const rightColumnStart = pageWidth / 2 + 10
-    let currentY = 52
+    const leftColumnStart = 20;
+    const rightColumnStart = pageWidth / 2 + 10;
+    let currentY = 52;
 
+
+    
+    doc.text(
+      `MRNo: ${  state.appointmentDetails?.appointment?.MRNo || "N/A"}`,
+      leftColumnStart,
+      currentY
+    );  
+    doc.text(
+      `TransactionID : ${
+        state.appointmentDetails?.appointment?.OPDOnlineAppointmentID || "N/A"
+      }`,
+      rightColumnStart,
+      currentY
+    );
+
+    currentY += 10;
     doc.text(
       `Patient Name: ${state.patientData?.PatientName}`,
       leftColumnStart,
       currentY
-    )
+    );
     doc.text(
       `Gender: ${state.patientData?.Sex || "N/A"}`,
       rightColumnStart,
       currentY
-    )
+    );
 
-    currentY += 10
+  
+
+    currentY += 10;
     doc.text(
       `Phone: ${state.patientData?.MobileNo}`,
       leftColumnStart,
       currentY
-    )
-    const age = calculateAge(state.patientData?.DOB || "")
-    doc.text(`Age: ${age}`, rightColumnStart, currentY)
+    );
+    const age = calculateAge(state.patientData?.DOB || "");
+    doc.text(`Age: ${age}`, rightColumnStart, currentY);
 
-    currentY += 10
+    currentY += 10;
     doc.text(
       `Department: ${
         state.departments.find(
@@ -758,7 +805,7 @@ export default function Component() {
       }`,
       leftColumnStart,
       currentY
-    )
+    );
     doc.text(
       `Doctor: ${
         state.doctors.find(
@@ -767,10 +814,10 @@ export default function Component() {
       }`,
       rightColumnStart,
       currentY
-    )
+    );
 
-    currentY += 10
-    doc.text(`Date: ${watch("appointmentDate")}`, leftColumnStart, currentY)
+    currentY += 10;
+    doc.text(`Date: ${watch("appointmentDate")}`, leftColumnStart, currentY);
     doc.text(
       `Time: ${
         state.selectedSlot &&
@@ -786,192 +833,207 @@ export default function Component() {
       }`,
       rightColumnStart,
       currentY
-    )
+    );
 
-    currentY += 10
+    currentY += 10;
+    doc.text(
+      `Slot Token: ${
+        state.appointmentDetails?.appointment?.SlotToken || "N/A"
+      }`,
+      leftColumnStart,
+      currentY
+    );
+    doc.text(
+      `Appointment ID: ${
+        state.appointmentDetails?.appointment?.OPDOnlineAppointmentID || "N/A"
+      }`,
+      rightColumnStart,
+      currentY
+    );
+
+    currentY += 10;
     doc.text(
       `Total Amount Paid: ${state.selectedDoctor?.Fee}`,
       leftColumnStart,
       currentY
-    )
+    );
     doc.text(
       `Payment Status: ${
         state.paymentStatus === "success" ? "Successful" : "Pending"
       }`,
       rightColumnStart,
       currentY
-    )
+    );
 
-    currentY += 10
-    doc.text(
-      `Appointment ID: ${state.appointmentDetails?.appointment?.OPDOnlineAppointmentID || "N/A"}`,
-      leftColumnStart,
-      currentY
-    )
+   
+    
 
-    doc.save("appointment_confirmation.pdf")
-  }
+    doc.save("appointment_confirmation.pdf");
+  };
 
   const renderChooseSlot = () => (
     <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
         <div className="flex justify-between">
-        <CardTitle className="text-xl font-bold">Select Slot</CardTitle>
-        <ExistAppointment />
+          <CardTitle className="text-xl font-bold">Select Slot</CardTitle>
+          <ExistAppointment />
         </div>
       </CardHeader>
       <CardContent className="p-6 space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <Label htmlFor="department" className="text-lg font-semibold">
-            Department
-          </Label>
-          <Controller
-            name="departmentId"
-            control={control}
-            rules={{ required: "Department is required" }}
-            render={({ field }) => (
-              <Select
-                onValueChange={(value) => {
-                  dispatch({
-                    type: "SET_SELECTED_DEPARTMENT_ID",
-                    payload: Number(value),
-                  })
-                  field.onChange(value)
-                }}
-              >
-                <SelectTrigger className="w-full text-lg">
-                  <SelectValue placeholder="Select department" />
-                </SelectTrigger>
-                <SelectContent>
-                  {state.departments.length > 0 ? (
-                    state.departments.map((dept) => (
-                      <SelectItem
-                        key={dept.DepartmentID}
-                        value={dept.DepartmentID.toString()}
-                      >
-                        {dept.Department}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="loading" disabled>
-                      Loading departments...
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.departmentId && (
-            <p className="text-red-500 text-sm">
-              {errors.departmentId.message}
-            </p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="doctor" className="text-lg font-semibold">
-            Doctor
-          </Label>
-          <Controller
-            name="doctorId"
-            control={control}
-            rules={{ required: "Doctor is required" }}
-            render={({ field }) => (
-              <Select
-                onValueChange={(value) => {
-                  dispatch({
-                    type: "SET_SELECTED_DOCTOR",
-                    payload: parseInt(value),
-                  })
-                  field.onChange(value)
-                  debouncedFetchAvailableSlots(parseInt(value), watch("appointmentDate"))
-                }}
-                disabled={!state.selectedDepartmentId}>
-                <SelectTrigger className="w-full text-lg">
-                  <SelectValue placeholder="Select doctor" />
-                </SelectTrigger>
-                <SelectContent>
-                  {state.doctors.length > 0 ? (
-                    state.doctors.map((doctor) => (
-                      <SelectItem
-                        key={doctor.ConsultantID}
-                        value={doctor.ConsultantID.toString()}
-                      >
-                        {doctor.ConsultantName}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="loading" disabled>
-                      {state.selectedDepartmentId
-                        ? "Loading doctors..."
-                        : "Select a department first"}
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.doctorId && (
-            <p className="text-red-500 text-sm">{errors.doctorId.message}</p>
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="appointmentDate" className="text-lg font-semibold">
-            Appointment Date
-          </Label>
-          <Controller
-            name="appointmentDate"
-            control={control}
-            rules={{ required: "Appointment date is required" }}
-            render={({ field }) => (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={`w-full justify-start text-left font-normal text-lg ${
-                      !field.value && "text-muted-foreground"
-                    }`}
-                  >
-                    {field.value ? (
-                      format(new Date(field.value), "yyyy-MM-dd")
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label htmlFor="department" className="text-lg font-semibold">
+              Department
+            </Label>
+            <Controller
+              name="departmentId"
+              control={control}
+              rules={{ required: "Department is required" }}
+              render={({ field }) => (
+                <Select
+                  onValueChange={(value) => {
+                    dispatch({
+                      type: "SET_SELECTED_DEPARTMENT_ID",
+                      payload: Number(value),
+                    });
+                    field.onChange(value);
+                  }}
+                >
+                  <SelectTrigger className="w-full text-lg">
+                    <SelectValue placeholder="Select department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {state.departments.length > 0 ? (
+                      state.departments.map((dept) => (
+                        <SelectItem
+                          key={dept.DepartmentID}
+                          value={dept.DepartmentID.toString()}
+                        >
+                          {dept.Department}
+                        </SelectItem>
+                      ))
                     ) : (
-                      <span>Pick a date</span>
+                      <SelectItem value="loading" disabled>
+                        Loading departments...
+                      </SelectItem>
                     )}
-                    <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <CalendarComponent
-                    mode="single"
-                    selected={field.value ? new Date(field.value) : undefined}
-                    onSelect={(date) => {
-                      const formattedDate = date
-                        ? format(date, "yyyy-MM-dd")
-                        : null
-                      field.onChange(formattedDate)
-                      if (state.selectedDoctor && formattedDate) {
-                        debouncedFetchAvailableSlots(
-                          state.selectedDoctor.ConsultantID,
-                          formattedDate
-                        )
-                      }
-                    }}
-                    disabled={(date) =>
-                      date < new Date() || date > addDays(new Date(), 30)
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.departmentId && (
+              <p className="text-red-500 text-sm">
+                {errors.departmentId.message}
+              </p>
             )}
-          />
-          {errors.appointmentDate && (
-            <p className="text-red-500 text-sm">
-              {errors.appointmentDate.message}
-            </p>
-          )}
-        </div>
-       
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="doctor" className="text-lg font-semibold">
+              Doctor
+            </Label>
+            <Controller
+              name="doctorId"
+              control={control}
+              rules={{ required: "Doctor is required" }}
+              render={({ field }) => (
+                <Select
+                  onValueChange={(value) => {
+                    dispatch({
+                      type: "SET_SELECTED_DOCTOR",
+                      payload: parseInt(value),
+                    });
+                    field.onChange(value);
+                    debouncedFetchAvailableSlots(
+                      parseInt(value),
+                      watch("appointmentDate")
+                    );
+                  }}
+                  disabled={!state.selectedDepartmentId}
+                >
+                  <SelectTrigger className="w-full text-lg">
+                    <SelectValue placeholder="Select doctor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {state.doctors.length > 0 ? (
+                      state.doctors.map((doctor) => (
+                        <SelectItem
+                          key={doctor.ConsultantID}
+                          value={doctor.ConsultantID.toString()}
+                        >
+                          {doctor.ConsultantName}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="loading" disabled>
+                        {state.selectedDepartmentId
+                          ? "Loading doctors..."
+                          : "Select a department first"}
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.doctorId && (
+              <p className="text-red-500 text-sm">{errors.doctorId.message}</p>
+            )}
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="appointmentDate" className="text-lg font-semibold">
+              Appointment Date
+            </Label>
+            <Controller
+              name="appointmentDate"
+              control={control}
+              rules={{ required: "Appointment date is required" }}
+              render={({ field }) => (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={`w-full justify-start text-left font-normal text-lg ${
+                        !field.value && "text-muted-foreground"
+                      }`}
+                    >
+                      {field.value ? (
+                        format(new Date(field.value), "yyyy-MM-dd")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <CalendarComponent
+                      mode="single"
+                      selected={field.value ? new Date(field.value) : undefined}
+                      onSelect={(date) => {
+                        const formattedDate = date
+                          ? format(date, "yyyy-MM-dd")
+                          : null;
+                        field.onChange(formattedDate);
+                        if (state.selectedDoctor && formattedDate) {
+                          debouncedFetchAvailableSlots(
+                            state.selectedDoctor.ConsultantID,
+                            formattedDate
+                          );
+                        }
+                      }}
+                      disabled={(date) =>
+                        date < new Date() || date > addDays(new Date(), 30)
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              )}
+            />
+            {errors.appointmentDate && (
+              <p className="text-red-500 text-sm">
+                {errors.appointmentDate.message}
+              </p>
+            )}
+          </div>
         </div>
         <div className="space-y-2">
           <Label htmlFor="slotId" className="text-lg font-semibold">
@@ -1005,7 +1067,7 @@ export default function Component() {
                       }`}
                       onClick={() => {
                         if (!slot.isBooked) {
-                          handleSlotSelection(slot.SlotID)
+                          handleSlotSelection(slot.SlotID);
                         }
                       }}
                     >
@@ -1034,12 +1096,13 @@ export default function Component() {
         <Button
           type="submit"
           onClick={handleSubmit(onSubmit)}
-          disabled={!state.selectedSlot}>
+          disabled={!state.selectedSlot}
+        >
           Next <ChevronRight className="ml-2 h-4 w-4" />
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 
   const renderPatientDetails = () => (
     <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
@@ -1172,12 +1235,12 @@ export default function Component() {
                         }
                         onSelect={(date) => {
                           if (date) {
-                            const formattedDate = format(date, "yyyy-MM-dd")
-                            field.onChange(formattedDate)
+                            const formattedDate = format(date, "yyyy-MM-dd");
+                            field.onChange(formattedDate);
                           } else {
-                            field.onChange(null)
+                            field.onChange(null);
                           }
-                          setIsCalendarOpen(false)
+                          setIsCalendarOpen(false);
                         }}
                         disabled={(date) =>
                           date > new Date() || date < subYears(new Date(), 120)
@@ -1185,8 +1248,8 @@ export default function Component() {
                         initialFocus
                         month={new Date(year, month)}
                         onMonthChange={(newMonth) => {
-                          setMonth(newMonth.getMonth())
-                          setYear(newMonth.getFullYear())
+                          setMonth(newMonth.getMonth());
+                          setYear(newMonth.getFullYear());
                         }}
                         className="rounded-md border shadow"
                       />
@@ -1256,7 +1319,7 @@ export default function Component() {
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 
   const renderPayment = () => (
     <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
@@ -1275,29 +1338,29 @@ export default function Component() {
             <Label className="text-md text-slate-500">
               MRNO:{" "}
               <span className="ml-auto font-medium text-md text-slate-900">
-              {state.patientData?.MRNo}
+                {state.patientData?.MRNo}
               </span>
             </Label>
             <Label className="text-md text-slate-500">
               Appointment Date:{" "}
               <span className="ml-auto font-medium text-md text-slate-900">
-                {watch("appointmentDate")} 
+                {watch("appointmentDate")}
               </span>
             </Label>
             <Label className="text-md text-slate-500">
               Slot:{" "}
               <span className="ml-auto font-medium text-md text-slate-900">
-              {state.selectedSlot &&
-              format(
-                parse(
-                  state.availableSlots.find(
-                    (s) => s.SlotID === state.selectedSlot
-                  )?.SlotTime || "",
-                  "HH:mm:ss",
-                  new Date()
-                ),
-                "h:mm a"
-              )}
+                {state.selectedSlot &&
+                  format(
+                    parse(
+                      state.availableSlots.find(
+                        (s) => s.SlotID === state.selectedSlot
+                      )?.SlotTime || "",
+                      "HH:mm:ss",
+                      new Date()
+                    ),
+                    "h:mm a"
+                  )}
               </span>
             </Label>
             <Label className="text-md text-slate-500">
@@ -1311,20 +1374,19 @@ export default function Component() {
               </span>
             </Label>
             <Label className="text-md text-slate-500">
-            Consultation Fee:{" "}
+              Consultation Fee:{" "}
               <span className="ml-auto font-medium text-md text-slate-900">
                 ₹ {state.selectedDoctor?.Fee || "N/A"}
               </span>
             </Label>
 
             <Label className="text-md text-slate-500">
-            Appointment ID:{" "}
+              Appointment ID:{" "}
               <span className="ml-auto font-medium text-md text-slate-900">
-              {state.appointmentDetails?.appointment?.OPDOnlineAppointmentID}
+                {state.appointmentDetails?.appointment?.OPDOnlineAppointmentID}
               </span>
             </Label>
           </div>
-         
         </div>
         <Alert>
           <AlertCircle className="h-4 w-4" />
@@ -1336,90 +1398,116 @@ export default function Component() {
         </Alert>
       </CardContent>
       <CardFooter className="bg-gray-50 p-6 flex justify-end">
-      <Button
-        type="button"
-        onClick={handleSubmit(onSubmit)}
-        className="bg-green-600 hover:bg-green-700"
-        disabled={state.isProcessingPayment}
-      >
-        {state.isProcessingPayment ? (
-          <>
-            Processing... <RefreshCw className="ml-2 h-4 w-4 animate-spin" />
-          </>
-        ) : (
-          <>
-            Pay Now <CreditCard className="ml-2 h-4 w-4" />
-          </>
-        )}
-      </Button>
+        <Button
+          type="button"
+          onClick={handleSubmit(onSubmit)}
+          className="bg-green-600 hover:bg-green-700"
+          disabled={state.isProcessingPayment}
+        >
+          {state.isProcessingPayment ? (
+            <>
+              Processing... <RefreshCw className="ml-2 h-4 w-4 animate-spin" />
+            </>
+          ) : (
+            <>
+              Pay Now <CreditCard className="ml-2 h-4 w-4" />
+            </>
+          )}
+        </Button>
       </CardFooter>
     </Card>
-  )
+  );
 
   const renderConfirmation = () => (
     <Card className="bg-white shadow-lg rounded-lg overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
         <CardTitle className="text-xl font-bold">Confirmation</CardTitle>
       </CardHeader>
-      <CardContent className="p-6 space-y-6">
+      <CardContent className="px-8 space-y-6">
         {state.paymentStatus === "success" ? (
           <>
-            <div className="text-center">
-              <Check className="mx-auto h-16 w-16 text-green-500" />
-              <h2 className="mt-4 text-2xl font-bold text-gray-900">
-                Payment Successful
-              </h2>
-              <p className="mt-2 text-lg text-gray-600">
-                Your appointment has been confirmed.
-              </p>
-            </div>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold">Appointment ID:</span>
-                <span className="text-lg">
-                  {state.appointmentDetails?.appointment?.OPDOnlineAppointmentID}
-                </span>
+            <div className="p-2 mx-auto ">
+              <div className="text-center">
+                <Check className="mx-auto h-16 w-16 text-green-500" />
+                <h2 className="mt-4 text-3xl font-extrabold text-gray-900">
+                  Payment Successful
+                </h2>
+                <p className="mt-2 text-lg text-gray-600">
+                  Your appointment has been confirmed.
+                </p>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold">Patient Name:</span>
-                <span className="text-lg">
-                  {state.patientData?.PatientName}
-                </span>
+
+              <div className="mt-8 border-t pt-6">
+                <ul className="space-y-4">
+                  <li className="flex justify-between">
+                    <span className="font-medium text-gray-700">
+                      Appointment ID:
+                    </span>
+                    <span className="font-semibold text-gray-900">
+                      {
+                        state.appointmentDetails?.appointment
+                          ?.OPDOnlineAppointmentID
+                      }
+                    </span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span className="font-medium text-gray-700">
+                      Patient Name:
+                    </span>
+                    <span className="font-semibold text-gray-900">
+                      {state.patientData?.PatientName}
+                    </span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span className="font-medium text-gray-700">Doctor:</span>
+                    <span className="font-semibold text-gray-900">
+                      {
+                        state.doctors.find(
+                          (d) =>
+                            d.ConsultantID ===
+                            state.selectedDoctor?.ConsultantID
+                        )?.ConsultantName
+                      }
+                    </span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span className="font-medium text-gray-700">Date:</span>
+                    <span className="font-semibold text-gray-900">
+                      {watch("appointmentDate")}
+                    </span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span className="font-medium text-gray-700">Time:</span>
+                    <span className="font-semibold text-gray-900">
+                      {state.selectedSlot &&
+                        format(
+                          parse(
+                            state.availableSlots.find(
+                              (s) => s.SlotID === state.selectedSlot
+                            )?.SlotTime || "",
+                            "HH:mm:ss",
+                            new Date()
+                          ),
+                          "h:mm a"
+                        )}
+                    </span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span className="font-medium text-gray-700">
+                      Amount Paid:
+                    </span>
+                    <span className="font-semibold text-gray-900">
+                      ₹{state.selectedDoctor?.Fee}
+                    </span>
+                  </li>
+                </ul>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold">Doctor:</span>
-                <span className="text-lg">
-                  {
-                    state.doctors.find(
-                      (d) =>
-                        d.ConsultantID === state.selectedDoctor?.ConsultantID
-                    )?.ConsultantName
-                  }
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold">Date:</span>
-                <span className="text-lg">{watch("appointmentDate")}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold">Time:</span>
-                <span className="text-lg">
-                  {state.selectedSlot &&
-                    format(
-                      parse(
-                        state.availableSlots.find(
-                          (s) => s.SlotID === state.selectedSlot
-                        )?.SlotTime || "",
-                        "HH:mm:ss",
-                        new Date()
-                      ),
-                      "h:mm a"
-                    )}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold">Amount Paid:</span>
-                <span className="text-lg">₹{state.selectedDoctor?.Fee}</span>
+
+              <div className="text-center mt-8">
+                <p className="text-sm text-gray-500">
+                  Thank you for choosing our service. We look forward to seeing
+                  you at your appointment!
+                </p>
               </div>
             </div>
           </>
@@ -1460,12 +1548,12 @@ export default function Component() {
         )}
       </CardFooter>
     </Card>
-  )
+  );
 
   return (
     <>
-    <RazorpayLoader />
-     <div className="bg-[url('/hospital/hospitallogo.png?height=300&width=1920')] bg-cover bg-center">
+      <RazorpayLoader />
+      <div className="bg-[url('/hospital/hospitallogo.png?height=300&width=1920')] bg-cover bg-center">
         <div className="bg-blue-900 bg-opacity-75 py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <img
@@ -1494,9 +1582,9 @@ export default function Component() {
           </div>
         </div>
       </div>
-   
-    <div className="container mx-auto px-4 py-8">
-    <nav className="my-6">
+
+      <div className="container mx-auto px-4 py-8">
+        <nav className="my-6">
           <ol className="flex items-center w-full p-3 space-x-2 text-sm font-medium text-center text-gray-500 bg-white border border-gray-200 rounded-lg shadow-sm dark:text-gray-400 sm:text-base dark:bg-gray-800 dark:border-gray-700 sm:p-4 sm:space-x-4">
             {steps.map((step, index) => (
               <li
@@ -1519,20 +1607,20 @@ export default function Component() {
             ))}
           </ol>
         </nav>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {currentStep === 0 && renderChooseSlot()}
-        {currentStep === 1 && renderPatientDetails()}
-        {currentStep === 2 && renderPayment()}
-        {currentStep === 3 && renderConfirmation()}
-      </form>
-      {state.error && (
-        <Alert variant="destructive" className="mt-4">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{state.error}</AlertDescription>
-        </Alert>
-      )}
-    </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {currentStep === 0 && renderChooseSlot()}
+          {currentStep === 1 && renderPatientDetails()}
+          {currentStep === 2 && renderPayment()}
+          {currentStep === 3 && renderConfirmation()}
+        </form>
+        {state.error && (
+          <Alert variant="destructive" className="mt-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{state.error}</AlertDescription>
+          </Alert>
+        )}
+      </div>
     </>
-  )
+  );
 }
