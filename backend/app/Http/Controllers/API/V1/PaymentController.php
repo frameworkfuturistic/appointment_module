@@ -81,33 +81,47 @@ class PaymentController extends Controller
     
 
 
-    // Handle Razorpay payment callback
-    public function handlePaymentCallback(Request $request)
-    {
-        $webhookBody = $request->getContent();
-        $webhookSignature = $request->header('X-Razorpay-Signature');
-        $webhookSecret = config('razorpay.webhook_secret');
-    
-        // Call the service method for verifying the webhook signature
-        $isValidSignature = $this->razorpayService->verifyWebhookSignature($webhookBody, $webhookSignature, $webhookSecret);
-    
-        if ($isValidSignature) {
-            $payload = json_decode($webhookBody, true);
-            $paymentId = $payload['payload']['payment']['id'];
+   // Handle Razorpay payment callback
+public function handlePaymentCallback(Request $request)
+{
+    $webhookBody = $request->getContent(); // Raw request body
+    $webhookSignature = $request->header('X-Razorpay-Signature'); // Razorpay signature header
 
-            // Update the payment status based on the received webhook
-            $payment = Payment::where('TransactionID', $paymentId)->first();
-            if ($payment && $payment->PaymentStatus !== 'Completed') {
-                $payment->PaymentStatus = 'Completed';
-                $payment->PaymentDate = now();
-                $payment->save();
-            }
-    
-            return response()->json(['message' => 'Webhook processed successfully'], 200);
-        }
-    
-        return response()->json(['message' => 'Invalid signature'], 400);
+    // Check if the Razorpay signature is missing
+    if (is_null($webhookSignature)) {
+        \Log::error('Missing Razorpay signature.', [
+            'headers' => $request->headers->all(), // Log all headers for debugging
+            'webhookBody' => $webhookBody, // Log the raw webhook payload for analysis
+        ]);
+
+        return response()->json(['message' => 'Missing Razorpay signature'], 400);
     }
+
+    $webhookSecret = config('razorpay.webhook_secret'); // Fetch webhook secret from config
+
+    // Verify the webhook signature
+    $isValidSignature = $this->razorpayService->verifyWebhookSignature($webhookBody, $webhookSignature, $webhookSecret);
+
+    if ($isValidSignature) {
+        $payload = json_decode($webhookBody, true);
+        $paymentId = $payload['payload']['payment']['entity']['id'];
+
+        // Find the payment record associated with this transaction
+        $payment = Payment::where('TransactionID', $paymentId)->first();
+        if ($payment && $payment->PaymentStatus !== 'Completed') {
+            $payment->PaymentStatus = 'Completed'; // Mark payment as completed
+            $payment->PaymentDate = now(); // Update payment date
+            $payment->save();
+        }
+
+        return response()->json(['message' => 'Webhook processed successfully'], 200);
+    }
+
+    // Return invalid signature response
+    return response()->json(['message' => 'Invalid signature'], 400);
+}
+
+    
     
     // Method to reconcile payment (for internal use, if needed)
     public function reconcilePayment($paymentId)
