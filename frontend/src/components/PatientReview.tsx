@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { CalendarDays, Hospital, Stethoscope, User } from "lucide-react";
 import {
@@ -18,7 +19,7 @@ export function PatientReview() {
     {
       id: 1,
       review:
-        " Doctors took the time to thoroughly explain my treatment plan and answered all of my questions. I left the clinic feeling confident and well-cared for. I highly recommend this practice for anyone seeking top-notch medical care!",
+        "Doctors took the time to thoroughly explain my treatment plan and answered all of my questions. I left the clinic feeling confident and well-cared for. I highly recommend this practice for anyone seeking top-notch medical care!",
       image: "/PROFPIC.png",
       name: "Asish Aggarwal",
     },
@@ -32,7 +33,7 @@ export function PatientReview() {
     {
       id: 3,
       review:
-        "My overall experience at the clinic was positive, though there were a few things that could be improved. While the staff was friendly and professional, I did experience a longer-than-expected wait time before my appointment. ",
+        "My overall experience at the clinic was positive, though there were a few things that could be improved. While the staff was friendly and professional, I did experience a longer-than-expected wait time before my appointment.",
       image: "/PROFPIC.png",
       name: "Ganga Mohini",
     },
@@ -59,84 +60,65 @@ export function PatientReview() {
   };
 
   return (
-    <div className="section">
-      <div className="sm:min-h-[500px] grid justify-center space-y-2">
-       
-
-        <div className="bg-slate-50 bg-pattern4-bg rounded-md   h-[160px] w-[80%] sm:w-[1000px] text-center  place-self-center grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center ">
-          <div className="grid grid-flow-row place-items-center py-4 bottom-2">
-            <CalendarDays
-              color="#e22222"
-              strokeWidth={1.25}
-              className="bg-white shadow-lg rounded-full h-16 w-16 p-2"
-            />
+    <div className="min-h-fit bg-gradient-to-b from-blue-50 to-white py-12">
+      <div className="container mx-auto px-4">
+        <div className="bg-slate-50 rounded-md shadow-md p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="flex flex-col items-center">
+            <CalendarDays className="bg-white shadow-lg rounded-full h-16 w-16 p-2 text-red-500" />
             <p className="text-slate-700 font-medium">Years of Experience</p>
             <p className="text-2xl md:text-3xl">09</p>
           </div>
-          <div className="grid grid-flow-row place-items-center py-4">
-            <Stethoscope
-              color="#e22222"
-              strokeWidth={1.25}
-              className="bg-white shadow-lg rounded-full h-16 w-16 p-2"
-            />
-            <p className="text-slate-700 font-medium">Medical Specialist</p>
+          <div className="flex flex-col items-center">
+            <Stethoscope className="bg-white shadow-lg rounded-full h-16 w-16 p-2 text-red-500" />
+            <p className="text-slate-700 font-medium">Medical Specialists</p>
             <p className="text-2xl md:text-3xl">25</p>
           </div>
-          <div className="grid grid-flow-row place-items-center py-4">
-            <Hospital
-              color="#e22222"
-              strokeWidth={1.25}
-              className="bg-white shadow-lg rounded-full h-16 w-16 p-2"
-            />
-            <p className="text-slate-700 font-medium">Advance Treatment</p>
+          <div className="flex flex-col items-center">
+            <Hospital className="bg-white shadow-lg rounded-full h-16 w-16 p-2 text-red-500" />
+            <p className="text-slate-700 font-medium">Advanced Treatments</p>
             <p className="text-2xl md:text-3xl">30</p>
           </div>
-          <div className="grid grid-flow-row place-items-center py-4">
-            <User
-              color="#e22222"
-              strokeWidth={1.25}
-              className="bg-white shadow-lg rounded-full h-16 w-16 p-2"
-            />
+          <div className="flex flex-col items-center">
+            <User className="bg-white shadow-lg rounded-full h-16 w-16 p-2 text-red-500" />
             <p className="text-slate-700 font-medium">Happy Patients</p>
             <p className="text-2xl md:text-3xl">150+</p>
           </div>
         </div>
 
-        {/*  Patient's Review */}
-        <div className="bg-dottedmap bg-cover bg-slate-200">
+        {/* Patient's Review Section */}
+        <div className="bg-dottedmap bg-cover bg-slate-200 my-10 p-6 rounded-md">
           <div className="flex flex-col items-center text-center gap-2">
             <Title title={"HAPPY PATIENTS"} />
-            <Subtitle subtitle={" What says our Patients"} />
+            <Subtitle subtitle={"What our Patients say"} />
             <img
               src="/activity.png"
               alt="icon"
               className="h-6 w-8 md:h-6 md:w-10"
             />
-            <Carousel className="sm:h-64 w-[90%] sm:w-[500px]">
+            <Carousel className="sm:h-64 w-full md:w-[600px]">
               <CarouselContent
                 style={{
                   transform: `translateX(-${activeIndex * 100}%)`,
                   transition: "transform 0.5s ease-in-out",
                 }}
               >
-                {patientReview.map((reviews, id) => (
-                  <CarouselItem
-                    key={id}
-                    className="font-light grid grid-flow-row"
-                  >
-                    <p>{reviews.review}</p>
+                {patientReview.map((review) => (
+                  <CarouselItem key={review.id} className="flex flex-col items-center p-4">
+                    <p className="text-center text-lg font-light mb-4">{review.review}</p>
                     <img
-                      src={reviews.image}
-                      alt="img"
-                      className="h-12 w-12 rounded-full place-self-center"
+                      src={review.image}
+                      alt="Patient"
+                      className="h-20 w-20 rounded-full border-4 border-white shadow-md"
                     />
-                    <h1 className="text-black font-medium">Patient</h1>
-                    <p className="text-xs">{reviews.name}</p>
+                    <h1 className="text-black font-medium mt-2">{review.name}</h1>
+                    <p className="text-xs text-gray-500">Patient</p>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious onClick={handlePrevious} />
-              <CarouselNext onClick={handleNext} />
+              <div className="flex justify-between mt-4">
+                <CarouselPrevious onClick={handlePrevious} className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition" />
+                <CarouselNext onClick={handleNext} className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition" />
+              </div>
             </Carousel>
           </div>
         </div>

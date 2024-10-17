@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
   Ambulance,
   BriefcaseMedical,
@@ -17,6 +10,7 @@ import {
 } from "lucide-react";
 import Title from "./Title";
 import Subtitle from "./Subtitle";
+
 const service = [
   {
     id: 1,
@@ -64,38 +58,35 @@ const service = [
 
 const Ourservice = () => {
   return (
-    <section className="section">
+    <section className="section py-8">
       <div
-        className=" bg-pattern3 bg-center bg-cover  sm:w-full lg:w-full grid grid-flow-col justify-center "
+        className="bg-pattern3 bg-center bg-cover sm:w-full lg:w-full flex justify-center"
         id="Speciality"
       >
-        <div className="">
-          <div className="  flex flex-col items-center text-center   ">
+        <div className="container mx-auto px-4 min-h-fit">
+          <div className="flex flex-col items-center text-center mb-8">
             <Title title={"OUR SERVICES"} />
-            <Subtitle subtitle={"We Care Our Patients"}/>
-            {/* <img src="/activity.png" alt="icon" className="  h-10 w-10 py-2" /> */}
+            <Subtitle subtitle={"We Care About Our Patients"} />
+            {/* <img src="/activity.png" alt="icon" className="h-10 w-10 py-2" /> */}
           </div>
-          <div className="grid grid-cols-3 gap-x-20 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {service.map((index) => {
               const Icon = index.icon; // Assign the icon dynamically
 
               return (
                 <Card
                   key={index.id}
-                  className=" transition ease-in-out delay-150  hover:-translate-y-1 hover:scale-110 hover:bg-white duration-300 ...  shadow-none border-none md:max-w-72 md:max-h-48 text-wrap  flex flex-col items-center hover:shadow-md  hover:shadow-rose-200  "
+                  className="transition-transform duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:bg-white shadow-md border-none flex flex-col items-center text-center p-4 min-h-[250px] hover:shadow-rose-200 "
                 >
                   <Icon
                     color="#847575"
                     strokeWidth={1.25}
-                    className="size-16 rounded-full bg-white"
+                    className="size-16 rounded-full bg-white p-2 mb-2"
                   />
-
-                  <div className="grid grid-flow-row text-center text-wrap gap-2 m-2">
-                    <h1 className="text-lg font-medium">{index.title}</h1>
-                    <p className="text-sm font-light  text-slate-800 hidden md:block ">
-                      {index.description}
-                    </p>
-                  </div>
+                  <h1 className="text-lg font-medium">{index.title}</h1>
+                  <p className="text-sm font-light text-slate-800 ">
+                    {index.description}
+                  </p>
                 </Card>
               );
             })}

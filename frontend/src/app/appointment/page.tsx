@@ -1602,7 +1602,8 @@ export default function Component() {
                 >
                   {step.icon}
                 </span>
-                {step.title}
+                <span className=" hidden md:flex"> {step.title}</span>
+               
               </li>
             ))}
           </ol>

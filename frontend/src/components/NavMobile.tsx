@@ -54,30 +54,27 @@ export const navigationLinks: NavLink[] = [
     submenu: [
       { title: "About Us", href: "/about/aboutUs" },
       { title: "Gallery", href: "/about/gallery" },
-      { title: "Values and Policy", href:"/about/policy&values" },
+      { title: "Values and Policy", href: "/about/policy&values" },
     ],
   },
   {
     title: "SERVICES",
     href: "/services",
-    
   },
   {
     title: "SPECIALITY",
     href: "/departments",
     submenu: [
-      { title:"Our Speciality", href: "/speciality/ourSpeciality" },
+      { title: "Our Speciality", href: "/speciality/ourSpeciality" },
       { title: "Key Performance", href: "/speciality/keyPerformance" },
-      
     ],
   },
   {
     title: "DEPARTMENTS",
     href: "#",
     submenu: [
-      { title:"OPD Schedule", href: "/opd" },
+      { title: "OPD Schedule", href: "/opd" },
       { title: "Department Detail", href: "/departmentDetail" },
-      
     ],
   },
   {
@@ -118,98 +115,113 @@ const NavMobile: React.FC = () => {
       <div className="flex flex-col md:hidden">
         <header className="flex h-14 items-center justify-between gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           {/* Sheet for Mobile Menu */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shrink-0 md:hidden"
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
-            </SheetTrigger>
-
-            <SheetContent side="left" className="flex flex-col w-1/2">
-              <nav className="grid gap-4 text-base font-medium text-muted-foreground">
-                <Link
-                  href="/"
-                  className="flex items-center gap-2 text-lg font-bold text-foreground"
+          <div className="flex items-center gap-2">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="shrink-0 md:hidden"
                 >
-                  <Hospital  className="w-5 h-5  " />
-                  <span className="sr-only">Acme Inc</span>
-                </Link>
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle navigation menu</span>
+                </Button>
+              </SheetTrigger>
 
-                {navigationLinks.map((link: NavLink) => (
-                  <div key={link.title} className="w-full">
-                    {/* Check if submenu exists */}
-                    {link.submenu ? (
-                      <>
-                        <div
-                          className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 cursor-pointer ${
+              <SheetContent
+                side="left"
+                className="flex flex-col w-1/2 rounded-r-xl"
+              >
+                <nav className="grid gap-4 text-base font-medium text-muted-foreground">
+                  <Link
+                    href="/"
+                    className="flex items-center gap-2 text-lg font-bold text-foreground"
+                  >
+                    <div className="flex items-center py-4">
+                      <img
+                        src="/hospital/hospitallogo.png"
+                        alt="Logo"
+                        className="h-10 w-auto lg:h-12"
+                      />
+                      <span className="ml-2 text-xs font-semibold ">
+                        Shree Jagannath Hospital & Research Centre
+                      </span>{" "}
+                      {/* Optional brand name for larger screens */}
+                    </div>
+                  </Link>
+
+                  {navigationLinks.map((link: NavLink) => (
+                    <div key={link.title} className="w-full">
+                      {/* Check if submenu exists */}
+                      {link.submenu ? (
+                        <>
+                          <div
+                            className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 cursor-pointer ${
+                              isActive(link.href)
+                                ? "bg-muted text-foreground font-semibold"
+                                : "hover:text-foreground"
+                            }`}
+                            onClick={() => toggleSubmenu(link.title)}
+                          >
+                            <span>{link.title}</span>
+                            {openMenu === link.title ? (
+                              <ChevronUp className="ml-auto h-4 w-4" />
+                            ) : (
+                              <ChevronDown className="ml-auto h-4 w-4" />
+                            )}
+                          </div>
+                          {openMenu === link.title && (
+                            <div className="ml-6 space-y-2 transition-all">
+                              {link.submenu.map((sublink) => (
+                                <Link
+                                  href={sublink.href}
+                                  key={sublink.title}
+                                  className={`block text-sm text-muted-foreground hover:text-foreground ${
+                                    isActive(sublink.href)
+                                      ? "text-foreground font-semibold"
+                                      : ""
+                                  }`}
+                                >
+                                  {sublink.title}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <Link
+                          href={link.href}
+                          className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 ${
                             isActive(link.href)
                               ? "bg-muted text-foreground font-semibold"
                               : "hover:text-foreground"
                           }`}
-                          onClick={() => toggleSubmenu(link.title)}
                         >
-                          <span>{link.title}</span>
-                          {openMenu === link.title ? (
-                            <ChevronUp className="ml-auto h-4 w-4" />
-                          ) : (
-                            <ChevronDown className="ml-auto h-4 w-4" />
-                          )}
-                        </div>
-                        {openMenu === link.title && (
-                          <div className="ml-6 space-y-2 transition-all">
-                            {link.submenu.map((sublink) => (
-                              <Link
-                                href={sublink.href}
-                                key={sublink.title}
-                                className={`block text-sm text-muted-foreground hover:text-foreground ${
-                                  isActive(sublink.href)
-                                    ? "text-foreground font-semibold"
-                                    : ""
-                                }`}
-                              >
-                                {sublink.title}
-                              </Link>
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <Link
-                        href={link.href}
-                        className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 ${
-                          isActive(link.href)
-                            ? "bg-muted text-foreground font-semibold"
-                            : "hover:text-foreground"
-                        }`}
-                      >
-                        {link.title}
-                      </Link>
-                    )}
-                  </div>
-                ))}
-              </nav>
-            </SheetContent>
-          </Sheet>
-          <div >
-          <Dialog>
-            <DialogTrigger asChild className="">
-              <Button variant="hms" className="transition ease-in-out delay-100 hover:translate-4 hover:scale-110 duration-400 group block" >Appointment</Button>
-            </DialogTrigger>
-            <DialogContent className=" bg-slate-100  ">
-              <DialogHeader>
-                <DialogTitle></DialogTitle>
-                <DialogDescription></DialogDescription>
-              </DialogHeader>
+                          {link.title}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </nav>
+              </SheetContent>
+            </Sheet>
 
-              <Appointmentform />
-            </DialogContent>
-          </Dialog>
-        </div>
+            <img
+              src="/hospital/hospitallogo.png"
+              alt="Logo"
+              className="h-10 w-auto lg:h-12"
+            />
+          </div>
+          <div>
+            <Link href="/appointment">
+              <Button
+                variant="hms"
+                className="transition ease-in-out delay-100 hover:translate-4 hover:scale-110 duration-400 group block"
+              >
+                Appointment
+              </Button>
+            </Link>
+          </div>
           {/* User Account Dropdown */}
           {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>

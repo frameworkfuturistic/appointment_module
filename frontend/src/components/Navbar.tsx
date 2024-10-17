@@ -25,8 +25,7 @@ import { Home, Menu, Package2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-// import Appointmentform from "./Appointmentform";
-// import Appointment from "@/app/(root)/Appointment/page";
+
 import Link from "next/link";
 
 function CustomNavigationMenu() {
@@ -49,7 +48,7 @@ function CustomNavigationMenu() {
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <NavigationMenuLink>
-                    <ul className="grid gap-1  p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
+                    <ul className="grid gap-1 bg-rose-100 p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
                       <ListItem
                         href="/about/aboutUs"
                         title="About Us"
@@ -82,7 +81,7 @@ function CustomNavigationMenu() {
                   SPECIALITY
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid gap-1  p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
+                  <ul className="grid gap-1 bg-rose-100  p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
                     <ListItem
                       href="/speciality/ourSpeciality"
                       title="Our Speciality"
@@ -102,7 +101,7 @@ function CustomNavigationMenu() {
                   DEPARTMENTS
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid  p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
+                  <ul className="grid bg-rose-100 p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
                     <ListItem href="/opd" title="OPD Schedule"></ListItem>
 
                     <ListItem
@@ -157,12 +156,12 @@ function CustomNavigationMenu() {
           </NavigationMenuList>
         </NavigationMenuComponent>
 
-        <div>
+        {/* <div>
           <Dialog>
-            <DialogTrigger className="shadow-xl  rounded-full   min-w-8 min-h-8 hover:border-2 hover:border-rose-300   ">
+            <DialogTrigger asChild>
               <Search className="m-2 size-8 text-slate-600" />
             </DialogTrigger>
-            <DialogContent className="min-h-16 ">
+            <DialogContent className="sm:max-w-[60vw] h-[60vh] overflow-y-auto">
               <div className="flex  items-center justify-between">
                 <Input
                   type="input"
@@ -175,7 +174,7 @@ function CustomNavigationMenu() {
               </div>
             </DialogContent>
           </Dialog>
-        </div>
+        </div> */}
         <div className="animate-bounce">
           <Link href="/appointment">
           <Button
@@ -201,7 +200,7 @@ const ListItem = React.forwardRef<
         <a
           ref={ref}
           className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            "block  select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors  hover:text-rose-900 focus:bg-accent focus:text-rose-900",
             className
           )}
           {...props}

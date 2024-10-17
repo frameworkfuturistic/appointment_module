@@ -46,7 +46,7 @@ const Header = () => {
       <NavMobile/>
 
       {/* Logo & Info */}
-      <div className="container mx-auto flex flex-col md:flex-row justify-center items-center px-4 py-2 text-center md:text-left">
+      <div className="container mx-auto flex flex-col md:flex-row justify-center items-center px-4 py-2 text-center md:text-left hidden md:flex">
         <img src="/hospital/hospitallogo.png" alt="Hospital Logo" className="h-28 w-auto md:h-16 lg:h-28" />
         <div className="flex flex-col items-center md:items-center space-y-2 md:space-y-0">
           <h1 className="text-2xl md:text-3xl font-serif font-semibold">

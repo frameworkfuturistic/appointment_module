@@ -1,56 +1,140 @@
 "use client";
 
 import React from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
-import SimpleImageSlider from "react-simple-image-slider";
 import Ourmedical from "@/components/Ourmedical";
 import Ourservice from "@/components/Ourservice";
-
 import PatientsReview from "@/components/PatientReview";
-
 import { CarouselDemo } from "@/components/sliderImg";
 import OurHeads from "@/components/OurHeads";
 import { NoticeSlider } from "@/components/NoticeSlider";
 import BlogCards from "@/components/BlogCards";
-
-import { GraduationCap } from "lucide-react";
-import {EventDisplay} from "@/app/(root)/EventSlider/EventDisplay/page";
 import WhatsAppWidget from "@/components/widget/WhatsApp";
-import FetchData from "@/components/FetchData";
-import AppointForm from "@/components/AppointForm";
+
+// Animation variants for scroll effects
+const fadeInUp = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+};
+
+const fadeInLeft = {
+  hidden: { opacity: 0, x: -50 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } },
+};
+
+const fadeInRight = {
+  hidden: { opacity: 0, x: 50 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } },
+};
+
+// Enhanced parallax effect for the hero section
+const parallaxHeroVariants = {
+  hidden: { opacity: 0, scale: 1.1 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 1.2, ease: "easeOut" } },
+};
 
 const Dashboard = () => {
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.85, 0]);
+
   return (
-    <section className="section">
-      <main>
-        <div className="sticky grid flex-1 items-start   mt-2 rounded-md sm:px-6 sm:py-0 md:gap-8   w-full inset to-background  overflow-hidden ">
-          <CarouselDemo />
-        </div>
+    <section className="bg-gray-50 overflow-hidden">
+      <main className="w-full">
+        {/* Hero Section with parallax effect */}
+        <motion.div
+          className="sticky grid flex-1 items-start mt-6 rounded-md shadow-lg overflow-hidden"
+          initial="hidden"
+          animate="visible"
+          variants={parallaxHeroVariants}
+        >
+          <motion.div style={{ y, opacity, scale }}>
+            <CarouselDemo />
+          </motion.div>
+        </motion.div>
 
         {/* Medical Cards Section */}
-        <div className="py-2  sm:px-4 lg:px-4 ">
+        <motion.div
+          className="py-10 sm:py-16 w-full"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeInUp}
+        >
           <Ourmedical />
-        </div>
-      
+        </motion.div>
+
         {/* Notice Slider */}
-        <NoticeSlider />
-        {/* <EventDisplay/> */}
-        {/* Services Section */}
-        <Ourservice />
+        <motion.div
+          className="mb-10 w-full"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={fadeInLeft}
+        >
+          <NoticeSlider />
+        </motion.div>
 
-        {/* Doctors Section */}
-        <OurHeads />
+        {/* Services Section with staggered animations */}
+        <motion.div
+          className="mb-10 w-full"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={{
+            visible: {
+              transition: { staggerChildren: 0.2 },
+            },
+          }}
+        >
+          <Ourservice />
+        </motion.div>
 
-        {/*Patient's Review */}
-        <PatientsReview />
+        {/* Doctors Section with fade from the right */}
+        <motion.div
+          className="mb-10 w-full"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={fadeInRight}
+        >
+          <OurHeads />
+        </motion.div>
 
-        {/* Price Board Section */}
-        <BlogCards />
+        {/* Patient's Review Section with interactive hover effects */}
+        <motion.div
+          className="mb-10 w-full"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={fadeInUp}
+          whileHover={{ scale: 1.05, }}
+          transition={{ type: "spring", stiffness: 400, damping: 15 }}
+        >
+          <PatientsReview />
+        </motion.div>
 
-       {/* <AppointForm/> */}
+        {/* Blog Cards Section with staggered animations */}
+        <motion.div
+          className="mb-10 w-full"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={{
+            visible: {
+              transition: { staggerChildren: 0.2 },
+            },
+          }}
+        >
+          <BlogCards />
+        </motion.div>
 
-        
-     <WhatsAppWidget/>
+        {/* WhatsApp Widget */}
+        <div className="mb-6 w-full">
+          <WhatsAppWidget />
+        </div>
       </main>
     </section>
   );

@@ -1,210 +1,164 @@
-// import * as React from "react";
-// import { useState, useEffect } from "react";
-// import { Card, CardContent } from "@/components/ui/card";
-// import {
-//   Carousel,
-//   CarouselContent,
-//   CarouselItem,
-//   CarouselNext,
-//   CarouselPrevious,
-// } from "@/components/ui/carousel";
-
-// export function CarouselDemo({ userImages = [] }) {
-//   const [activeIndex, setActiveIndex] = useState(0);
-//   const autoPlayInterval = 3000; // Interval for autoplay in milliseconds
-//   const [isHovered, setIsHovered] = useState(false);
-//   const [images, setImages] = useState(userImages.length > 0 ? userImages : [
-//     { url: "/sliderPic/Dialysis.png" },
-//     // { url: "/sliderPic/eyeopd.png" },
-//     { url: "/sliderPic/frontpage4.png" },
-//     { url: "/sliderPic/frontpage7.png" },
-//     { url: "/sliderPic/newicu.png" },
-//     { url: "/sliderPic/newreception.png" },
-//     { url: "/sliderPic/sjhrchos1.png" },
-//   ]);
-//   const [newImageUrl, setNewImageUrl] = useState("");
-
-//   const itemLength = images.length;
-
-//   useEffect(() => {
-//     if (!isHovered) {
-//       const interval = setInterval(() => {
-//         setActiveIndex((prevIndex) =>
-//           prevIndex === itemLength - 1 ? 0 : prevIndex + 1
-//         );
-//       }, autoPlayInterval);
-
-//       return () => clearInterval(interval); // Cleanup the interval on unmount
-//     }
-//   }, [itemLength, isHovered]);
-
-//   const handlePrevious = () => {
-//     setActiveIndex(activeIndex === 0 ? itemLength - 1 : activeIndex - 1);
-//   };
-
-//   const handleNext = () => {
-//     setActiveIndex(activeIndex === itemLength - 1 ? 0 : activeIndex + 1);
-//   };
-
-//   const handleMouseEnter = () => {
-//     setIsHovered(true);
-//   };
-
-//   const handleMouseLeave = () => {
-//     setIsHovered(false);
-//   };
-
-//   return (
-//     <div className="section">
-//     <div className="w-full max-w-full relative">
-
-//       {/* Carousel Section */}
-//       <Carousel
-//         onMouseEnter={handleMouseEnter}
-//         onMouseLeave={handleMouseLeave}
-//       >
-//         <CarouselContent
-//           style={{
-//             transform: `translateX(-${activeIndex * 100}%)`,
-//             transition: "transform 0.8s ease-in-out", // Smoother transition
-//           }}
-//         >
-//           {images.map((image, index) => (
-//             <CarouselItem key={index} className="min-w-full">
-//               <div className="p-1">
-//                 <Card className="rounded-lg shadow-lg overflow-hidden">
-//                   <CardContent className="flex items-center justify-center p-0 h-[450px]">
-//                     <img
-//                       src={image.url}
-//                       alt={`Slide ${index + 1}`}
-//                       className="w-full h-full object-cover transition-transform duration-700 ease-in-out transform hover:scale-105"
-//                     />
-//                   </CardContent>
-//                 </Card>
-//               </div>
-//             </CarouselItem>
-//           ))}
-//         </CarouselContent>
-//         <CarouselPrevious onClick={handlePrevious} />
-//         <CarouselNext onClick={handleNext} />
-//       </Carousel>
-//     </div>
-//     </div>
-//   );
-// }
-
-import * as React from "react";
-import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { useState, useEffect, useRef } from "react";
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Button } from "./ui/button";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
+import {
+  ChevronRight,
+  Heart,
+  Activity,
+  Stethoscope,
+  Users,
+  ChevronLeft,
+  ChevronDown,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
+const services = [
+  { icon: Heart, title: "Cardiology", description: "Expert heart care", color: "bg-red-500" },
+  { icon: Activity, title: "Emergency", description: "24/7 urgent care", color: "bg-yellow-500" },
+  { icon: Stethoscope, title: "General Medicine", description: "Comprehensive health", color: "bg-green-500" },
+  { icon: Users, title: "Family Care", description: "For all ages", color: "bg-blue-500" },
+]
 
-export function CarouselDemo({ userImages = [], textInfo = [] }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const autoPlayInterval = 3000; // Interval for autoplay in milliseconds
-  const [isHovered, setIsHovered] = useState(false);
-  const [images, setImages] = useState(
-    userImages.length > 0
-      ? userImages
-      : [
-          { url: "/sliderPic/Dialysis.png" },
-          { url: "/sliderPic/frontpage4.png" },
-          { url: "/sliderPic/frontpage7.png" },
-          { url: "/sliderPic/newicu.png" },
-          { url: "/sliderPic/newreception.png" },
-          { url: "/sliderPic/sjhrchos1.png" },
-        ]
-  );
+const testimonials = [
+  {
+    name: "John Doe",
+    text: "The care I received was exceptional. The staff went above and beyond!",
+    image: "/doctors/image-4.png?height=100&width=100",
+  },
+  {
+    name: "Jane Smith",
+    text: "Professional staff and state-of-the-art facilities. Highly recommended!",
+    image: "/sliderPic/sjhrchos1.png?height=100&width=100",
+  },
+  {
+    name: "Alex Johnson",
+    text: "Quick, efficient, and compassionate service. They saved my life!",
+    image: "/sliderPic/sjhrchos1.png?height=100&width=100",
+  },
+];
 
-  const itemLength = images.length;
+const heroImages = [
+  "/sliderPic/newicu.png?height=300&width=800",
+  "/sliderPic/newreception.png?height=300&width=800",
+];
+
+export function CarouselDemo() {
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [currentHeroImage, setCurrentHeroImage] = useState(0);
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 0.5, 0]);
 
   useEffect(() => {
-    if (!isHovered) {
-      const interval = setInterval(() => {
-        setActiveIndex((prevIndex) =>
-          prevIndex === itemLength - 1 ? 0 : prevIndex + 1
-        );
-      }, autoPlayInterval);
+    const testimonialTimer = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
 
-      return () => clearInterval(interval); // Cleanup the interval on unmount
-    }
-  }, [itemLength, isHovered]);
+    const heroImageTimer = setInterval(() => {
+      setCurrentHeroImage((prev) => (prev + 1) % heroImages.length);
+    }, 7000);
 
-  const handlePrevious = () => {
-    setActiveIndex(activeIndex === 0 ? itemLength - 1 : activeIndex - 1);
-  };
-
-  const handleNext = () => {
-    setActiveIndex(activeIndex === itemLength - 1 ? 0 : activeIndex + 1);
-  };
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
+    return () => {
+      clearInterval(testimonialTimer);
+      clearInterval(heroImageTimer);
+    };
+  }, []);
 
   return (
-    <div className="flex justify-between  items-center w-full max-w-5xl mx-auto gap-x-16">
-      {/* Carousel Section */}
-      <div className="w-2/3 relative">
-        <Carousel
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <CarouselContent
-            style={{
-              transform: `translateX(-${activeIndex * 100}%)`,
-              transition: "transform 0.8s ease-in-out", // Smoother transition
-            }}
-          >
-            {images.map((image, index) => (
-              <CarouselItem key={index} className="min-w-full">
-                <div className="p-1">
-                  <Card className="rounded-lg shadow-lg overflow-hidden">
-                    <CardContent className="flex items-center justify-center p-0 h-[350px]">
-                      <img
-                        src={image.url}
-                        alt={`Slide ${index + 1}`}
-                        className="w-full h-full object-cover transition-transform duration-700 ease-in-out transform hover:scale-105"
-                      />
-                    </CardContent>
-                  </Card>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious onClick={handlePrevious} />
-          <CarouselNext onClick={handleNext} />
-        </Carousel>
-      </div>  
+    <div ref={containerRef} className="relative min-h-[200px] md:min-h-[550px] overflow-hidden">
+      {/* Hero image background */}
+      <motion.div className="absolute inset-0 z-0" style={{ y, opacity }}>
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={currentHeroImage}
+            src={heroImages[currentHeroImage]}
+            alt="Hospital Hero"
+            className="object-cover w-full h-full"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+          />
+        </AnimatePresence>
+        <div className="absolute inset-0 bg-blue-900 bg-opacity-50" />
+      </motion.div>
 
-      {/* Text Section */}
-      <div className="w-1/3  flex-col justify-center p-4 bg-rose-200 shadow-lg rounded-lg h-[350px] hidden md:block">
-        
-        {/* <div className="bg-rose-300 grid grid-cols-1 md:grid-cols-2  w-full items-center"> */}
-            <div className="text-white grid grid-flow-row px-6  ">
-              <h1 className="text-xl md:text-2xl">Need a Doctor for Check-up?</h1>
-              <h2 className="text-2xl md:text-4xl font-semibold">
-                Just Make an Appointment and You’re Done!
-              </h2>
-              <p className="text-lg md:text-xl">Get Your Quote or Call:</p>
-              <p className="text-lg md:text-xl font-semibold">+91 8987999200</p>
-              <Button  variant={"hms2"} ><Link href={"/contact"} className="flex" > Contact Us <ArrowRight/></Link></Button>
-            </div>
-          
-        {/* </div> */}
+      {/* Service List */}
+      <div className=" absolute z-10 container mx-auto px-4 py-8  hidden md:flex justify-end   right-10 ">
+        {/* Hide service list on small devices */}
+          <motion.div
+            className="space-y-6"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            {services.map((service, index) => (
+               <motion.div
+               key={service.title}
+               className="flex items-center space-x-4 p-4 rounded-xl backdrop-blur-3xl  shadow-md transition-all duration-300 hover:shadow-xl"
+               whileHover={{ scale: 1.05 }}
+               initial={{ opacity: 0, x: -50 }}
+               animate={{ opacity: 1, x: 0 }}
+               transition={{ duration: 0.5, delay: index * 0.1 }}
+             >
+               <div className={`p-3 rounded-full ${service.color}`}>
+                 <service.icon className="w-6 h-6 text-white" />
+               </div>
+               <div>
+                 <h3 className="text-md font-semibold text-gray-100">{service.title}</h3>
+                 <p className="text-gray-300 text-sm">{service.description}</p>
+               </div>
+             </motion.div>
+            ))}
+          </motion.div>
+      </div>
+
+      {/* Scroll down icon */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
+        >
+          <ChevronDown className="w-8 h-8 text-white" />
+        </motion.div>
+      </div>
+
+      {/* Navigation Buttons */}
+      <div className="absolute top-1/2 left-4 transform -translate-y-1/2 z-20">
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-blue-800"
+          onClick={() =>
+            setCurrentHeroImage(
+              (prev) => (prev - 1 + heroImages.length) % heroImages.length
+            )
+          }
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </Button>
+      </div>
+
+      <div className="absolute top-1/2 right-4 transform -translate-y-1/2 z-20">
+        <Button
+          variant="outline"
+          size="icon"
+          className="rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white hover:text-blue-800"
+          onClick={() =>
+            setCurrentHeroImage((prev) => (prev + 1) % heroImages.length)
+          }
+        >
+          <ChevronRight className="h-6 w-6" />
+        </Button>
       </div>
     </div>
   );
