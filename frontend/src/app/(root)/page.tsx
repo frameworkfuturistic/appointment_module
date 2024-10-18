@@ -11,6 +11,8 @@ import OurHeads from "@/components/OurHeads";
 import { NoticeSlider } from "@/components/NoticeSlider";
 import BlogCards from "@/components/BlogCards";
 import WhatsAppWidget from "@/components/widget/WhatsApp";
+import { Button } from "@/components/ui/button";
+import { ChevronUp } from "lucide-react";
 
 // Animation variants for scroll effects
 const fadeInUp = {
@@ -42,10 +44,10 @@ const Dashboard = () => {
 
   return (
     <section className="bg-gray-50 overflow-hidden">
-      <main className="w-full">
+      <main className="w-full p-1">
         {/* Hero Section with parallax effect */}
         <motion.div
-          className="sticky grid flex-1 items-start mt-6 rounded-md shadow-lg overflow-hidden"
+          className="sticky grid flex-1 items-start mt-4 rounded-md shadow-lg overflow-hidden"
           initial="hidden"
           animate="visible"
           variants={parallaxHeroVariants}
@@ -135,6 +137,8 @@ const Dashboard = () => {
         <div className="mb-6 w-full">
           <WhatsAppWidget />
         </div>
+       
+       
       </main>
     </section>
   );

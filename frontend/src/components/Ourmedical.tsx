@@ -61,15 +61,15 @@ function HospitalHero() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-2xl md:text-4xl font-bold text-blue-800 mb-4">
-              Your Health, Our Priority 
+              Your Health, Our Priority
             </h1>
             <p className="text-md text-gray-600 mb-6">
-            Our superspecialist doctors provide the highest quality of care through a team-based, doctor-led model. Trained at some of
-             the world's most renowned institutions, our highly experienced doctors are distinguished experts in their respective specialities.
-              Our doctors work full-time and exclusively across Medanta hospitals. In addition to offering superspecialised care in their own field, 
+              Our superspecialist doctors provide the highest quality of care through a team-based, doctor-led model. Trained at some of
+              the world's most renowned institutions, our highly experienced doctors are distinguished experts in their respective specialities.
+              Our doctors work full-time and exclusively across Medanta hospitals. In addition to offering superspecialised care in their own field,
               the Medanta organisational structure enables every doctor to help create a culture of collaboration and multispecialty care integration.
             </p>
-          
+
           </motion.div>
           <motion.div
             className="relative h-64 md:h-96"
@@ -83,7 +83,7 @@ function HospitalHero() {
               className="rounded-lg shadow-lg object-cover w-full h-full"
             />
             <div className="absolute inset-0 bg-blue-800 bg-opacity-20 rounded-lg" />
-            <Card className="absolute bottom-4 left-4 right-4 bg-white bg-opacity-90 backdrop-blur-xl">
+            {/* <Card className="absolute bottom-4 left-4 right-4 bg-white bg-opacity-90 backdrop-blur-xl">
               <CardContent className="p-4">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -94,11 +94,11 @@ function HospitalHero() {
                     transition={{ duration: 0.5 }}
                   >   <p className="text-sm font-semibold text-blue-800 mt-2">{testimonials[currentTestimonial].name}</p>
                     <p className="text-sm text-gray-600 italic">{testimonials[currentTestimonial].text}</p>
-                 
+
                   </motion.div>
                 </AnimatePresence>
               </CardContent>
-            </Card>
+            </Card> */}
           </motion.div>
         </div>
 
@@ -112,7 +112,7 @@ function HospitalHero() {
             {facilities.map((service, index) => (
               <motion.div
                 key={service.title}
-               initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
@@ -128,7 +128,7 @@ function HospitalHero() {
           </div>
         </motion.div>
 
-        
+
       </div>
     </div>
   )
