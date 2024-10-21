@@ -28,6 +28,8 @@ import {
   RefreshCw,
   Download,
   MoveLeft,
+  Search,
+  Edit,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,6 +60,15 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 
 import { jsPDF } from "jspdf";
 import Link from "next/link";
@@ -108,7 +119,7 @@ interface State {
   patientData: {
     PatientName?: string;
     MobileNo?: string;
-    Email?: string;
+    // Email?: string;
     Sex?: string;
     DOB?: string;
     MRNo?: string;
@@ -122,6 +133,12 @@ interface State {
   paymentStatus: "success" | "failed" | null;
   temporaryAppointmentId: string | null;
   isProcessingPayment: boolean;
+  existingPatient: boolean;
+  multiplePatients: Array<{
+    PatientName: string;
+    MobileNo: string;
+    MRNo: string;
+  }>;
 }
 
 type Action =
@@ -137,7 +154,9 @@ type Action =
   | { type: "SET_SELECTED_DEPARTMENT_ID"; payload: number }
   | { type: "SET_PAYMENT_STATUS"; payload: State["paymentStatus"] }
   | { type: "SET_TEMPORARY_APPOINTMENT_ID"; payload: string }
-  | { type: "SET_IS_PROCESSING_PAYMENT"; payload: boolean };
+  | { type: "SET_IS_PROCESSING_PAYMENT"; payload: boolean }
+  | { type: "SET_EXISTING_PATIENT"; payload: boolean }
+  | { type: "SET_MULTIPLE_PATIENTS"; payload: State["multiplePatients"] };
 
 const initialState: State = {
   departments: [],
@@ -153,6 +172,8 @@ const initialState: State = {
   paymentStatus: null,
   temporaryAppointmentId: null,
   isProcessingPayment: false,
+  existingPatient: false,
+  multiplePatients: [],
 };
 
 function formReducer(state: State, action: Action): State {
@@ -189,10 +210,15 @@ function formReducer(state: State, action: Action): State {
       return { ...state, temporaryAppointmentId: action.payload };
     case "SET_IS_PROCESSING_PAYMENT":
       return { ...state, isProcessingPayment: action.payload };
+    case "SET_EXISTING_PATIENT":
+      return { ...state, existingPatient: action.payload };
+    case "SET_MULTIPLE_PATIENTS":
+      return { ...state, multiplePatients: action.payload };
     default:
       return state;
   }
 }
+
 
 const debounce = <F extends (...args: any[]) => any>(func: F, wait: number) => {
   let timeout: NodeJS.Timeout | null = null;
@@ -224,6 +250,8 @@ export default function Component() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
 
   const years = Array.from(
     { length: 121 },
@@ -284,7 +312,7 @@ export default function Component() {
           PatientName: data.patientName,
           Sex: data.gender,
           MobileNo: data.mobileNo,
-          Email: data.email,
+          // Email: data.email,
           DOB: data.DOB,
         });
         dispatch({ type: "SET_PATIENT_DATA", payload: response.data.patient });
@@ -370,7 +398,6 @@ export default function Component() {
   );
 
   const bookAppointment = async (data: any) => {
-    // Check if an appointment already exists
     if (state.appointmentDetails?.appointment?.OPDOnlineAppointmentID) {
       console.log(
         "Appointment already exists, using existing ID:",
@@ -441,6 +468,7 @@ export default function Component() {
       console.log("Appointment Details:", state.appointmentDetails);
 
       const appointmentId =
+        
         state.appointmentDetails?.appointment?.OPDOnlineAppointmentID;
       console.log("Extracted OPDOnlineAppointmentID:", appointmentId);
 
@@ -494,8 +522,6 @@ export default function Component() {
 
             console.log("Payment Data for Callback:", callbackPaymentData);
 
-            // await axios.post(`${API_BASE_URL}/payments/callback`, callbackPaymentData)
-
             await axios.put(`${API_BASE_URL}/appointments/${appointmentId}`, {
               Pending: 0,
             });
@@ -529,7 +555,7 @@ export default function Component() {
         },
         prefill: {
           name: state.patientData?.PatientName,
-          email: state.patientData?.Email,
+          // email: state.patientData?.Email,
           contact: state.patientData?.MobileNo,
         },
         theme: {
@@ -549,6 +575,52 @@ export default function Component() {
       dispatch({ type: "SET_IS_PROCESSING_PAYMENT", payload: false });
     }
   };
+
+  const searchExistingPatient = useCallback(async (mrdOrMobile: string) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/patients/search`, {
+        params: { mrdOrMobile },
+      });
+      if (response.data.patients && Array.isArray(response.data.patients) && response.data.patients.length > 0) {
+        setSearchResults(response.data.patients);
+        toast({
+          title: "Patients Found",
+          description: "Please select the correct patient from the list.",
+        });
+      } else {
+        setSearchResults([]);
+        dispatch({ type: "SET_EXISTING_PATIENT", payload: false });
+        toast({
+          title: "Patient Not Found",
+          description: "No existing patient found with the provided details.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error searching for patient:", error);
+      setSearchResults([]);
+      toast({
+        title: "Error",
+        description: "An error occurred while searching for the patient.",
+        variant: "destructive",
+      });
+    }
+  }, [dispatch]);
+
+  const autoFillPatientData = useCallback((patient: any) => {
+    if (patient) {
+      setValue("patientName", patient.PatientName || "");
+      setValue("mobileNo", patient.MobileNo || "");
+      setValue("gender", patient.Sex || "");
+      setValue("DOB", patient.DOB || "");
+      dispatch({ type: "SET_PATIENT_DATA", payload: patient });
+      dispatch({ type: "SET_EXISTING_PATIENT", payload: true });
+      toast({
+        title: "Patient Selected",
+        description: "Patient details have been auto-filled.",
+      });
+    }
+  }, [dispatch, setValue]);
 
   const onSubmit = useCallback(
     async (data: any) => {
@@ -570,7 +642,7 @@ export default function Component() {
             break;
           case 1: // Patient Details
             let patient;
-            if (!state.patientData) {
+            if (!state.existingPatient) {
               patient = await createPatient(data);
             } else {
               patient = state.patientData;
@@ -624,6 +696,7 @@ export default function Component() {
       currentStep,
       state.selectedSlot,
       state.patientData,
+      state.existingPatient,
       createPatient,
       createTemporaryAppointment,
       updateTemporaryAppointment,
@@ -758,13 +831,11 @@ export default function Component() {
     const rightColumnStart = pageWidth / 2 + 10;
     let currentY = 52;
 
-
-    
     doc.text(
-      `MRNo: ${  state.appointmentDetails?.appointment?.MRNo || "N/A"}`,
+      `MRNo: ${state.appointmentDetails?.appointment?.MRNo || "N/A"}`,
       leftColumnStart,
       currentY
-    );  
+    );
     doc.text(
       `TransactionID : ${
         state.appointmentDetails?.appointment?.OPDOnlineAppointmentID || "N/A"
@@ -784,8 +855,6 @@ export default function Component() {
       rightColumnStart,
       currentY
     );
-
-  
 
     currentY += 10;
     doc.text(
@@ -864,9 +933,6 @@ export default function Component() {
       rightColumnStart,
       currentY
     );
-
-   
-    
 
     doc.save("appointment_confirmation.pdf");
   };
@@ -1110,6 +1176,42 @@ export default function Component() {
         <CardTitle className="text-xl font-bold">Patient Details</CardTitle>
       </CardHeader>
       <CardContent className="p-6 space-y-6">
+      <div className="space-y-4">
+          <div className="flex space-x-2">
+            <Input
+              placeholder="Enter MRD or Mobile Number"
+              {...register("searchMrdOrMobile")}
+            />
+            <Button
+              onClick={() => searchExistingPatient(watch("searchMrdOrMobile"))}
+            >
+              <Search className="mr-2 h-4 w-4" /> Search
+            </Button>
+          </div>
+          {searchResults.length > 0 && (
+            <Select onValueChange={(value) => autoFillPatientData(JSON.parse(value))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a patient" />
+              </SelectTrigger>
+              <SelectContent>
+                {searchResults.map((patient) => (
+                  <SelectItem key={patient.MRNo} value={JSON.stringify(patient)}>
+                    {patient.PatientName} - {patient.MobileNo}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {initialState.existingPatient && (
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Existing Patient</AlertTitle>
+              <AlertDescription>
+                Patient details have been auto-filled. Please review and update if necessary.
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="patientName" className="text-lg font-semibold">
@@ -1122,6 +1224,7 @@ export default function Component() {
               })}
               className="text-lg"
               defaultValue={state.patientData?.PatientName || ""}
+              disabled={state.existingPatient && !isEditMode}
             />
             {errors.patientName && (
               <p className="text-red-500 text-sm">
@@ -1144,12 +1247,13 @@ export default function Component() {
               })}
               className="text-lg"
               defaultValue={state.patientData?.MobileNo || ""}
+              disabled={state.existingPatient && !isEditMode}
             />
             {errors.mobileNo && (
               <p className="text-red-500 text-sm">{errors.mobileNo.message}</p>
             )}
           </div>
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="email" className="text-lg font-semibold">
               Email
             </Label>
@@ -1165,11 +1269,12 @@ export default function Component() {
               })}
               className="text-lg"
               defaultValue={state.patientData?.Email || ""}
+              disabled={state.existingPatient && !isEditMode}
             />
             {errors.email && (
               <p className="text-red-500 text-sm">{errors.email.message}</p>
             )}
-          </div>
+          </div> */}
           <div className="space-y-2">
             <Label htmlFor="DOB">Date of Birth</Label>
             <Controller
@@ -1185,6 +1290,7 @@ export default function Component() {
                         !field.value && "text-muted-foreground"
                       }`}
                       onClick={() => setIsCalendarOpen(true)}
+                      disabled={state.existingPatient && !isEditMode}
                     >
                       {field.value ? (
                         format(new Date(field.value), "yyyy-MM-dd")
@@ -1276,6 +1382,7 @@ export default function Component() {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                   className="flex space-x-4"
+                  disabled={state.existingPatient && !isEditMode}
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="male" id="male" />
@@ -1313,7 +1420,20 @@ export default function Component() {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="bg-gray-50 p-6 flex justify-end">
+      <CardFooter className="bg-gray-50 p-6 flex justify-between">
+        {state.existingPatient && (
+          <Button onClick={() => setIsEditMode(!isEditMode)}>
+            {isEditMode ? (
+              <>
+                <Check className="mr-2 h-4 w-4" /> Save Changes
+              </>
+            ) : (
+              <>
+                <Edit className="mr-2 h-4 w-4" /> Edit Details
+              </>
+            )}
+          </Button>
+        )}
         <Button type="submit" onClick={handleSubmit(onSubmit)}>
           Next <ChevronRight className="ml-2 h-4 w-4" />
         </Button>
@@ -1602,8 +1722,21 @@ export default function Component() {
                 >
                   {step.icon}
                 </span>
-                <span className=" hidden md:flex"> {step.title}</span>
-               
+                <span className="hidden md:inline">{step.title}</span>
+                {index < steps.length - 1 && (
+                  <div className="flex-1 hidden sm:inline">
+                    <div className="w-44 mx-auto bg-gray-200 rounded h-2.5 dark:bg-gray-700">
+                      <div
+                        className="bg-blue-600 h-2.5 rounded"
+                        style={{
+                          width: `${
+                            index < currentStep ? "100%" : "0%"
+                          }`,
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
               </li>
             ))}
           </ol>
@@ -1622,6 +1755,34 @@ export default function Component() {
           </Alert>
         )}
       </div>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button className="hidden">Open</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Multiple Patients Found</DialogTitle>
+            <DialogDescription>
+              Please select the correct patient from the list below:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            {state.multiplePatients.map((patient) => (
+              <Button
+                key={patient.MRNo}
+                onClick={() => {
+                  dispatch({ type: "SET_PATIENT_DATA", payload: patient });
+                  dispatch({ type: "SET_EXISTING_PATIENT", payload: true });
+                  autoFillPatientData(patient);
+                }}
+                className="justify-start"
+              >
+                {patient.PatientName} - {patient.MobileNo}
+              </Button>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

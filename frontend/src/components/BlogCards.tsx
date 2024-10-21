@@ -62,7 +62,16 @@ const BlogCards = () => {
             </CarouselContent>
             <CarouselPrevious />
             <CarouselNext />
-          </Carousel>
+          </Carousel>    
+          <div className="flex flex-col sm:flex-row justify-center gap-6">
+              <Link href="/blogDash/blog">
+              <Button size="lg" variant="link" className="text-gray-600 text-md hover:text-rose-900 px-8 py-6">
+              View All News & Events
+              </Button>
+              </Link>
+            </div>
+
+
         </div>
       </div>
     </section>

@@ -60,7 +60,7 @@ function HospitalHero() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-2xl md:text-4xl font-bold text-blue-800 mb-4">
+            <h1 className="text-2xl md:text-4xl font-bold text-rose-800 mb-4">
               Your Health, Our Priority
             </h1>
             <p className="text-md text-gray-600 mb-6">
@@ -118,8 +118,8 @@ function HospitalHero() {
               >
                 <Card className="h-full hover:shadow-lg  transition-shadow   ease-in-out delay-150 hover:shadow-rose-200  hover:-translate-y-1 hover:scale-110 hover:bg-white duration-300 ...  shadow-none">
                   <CardContent className="p-6 flex flex-col items-center text-center">
-                    <service.icon className="w-12 h-12 text-blue-600 mb-4" />
-                    <h3 className="text-xl font-semibold text-blue-800 mb-2">{service.title}</h3>
+                    <service.icon className="w-12 h-12 text-rose-600 mb-4" />
+                    <h3 className="text-xl font-semibold text-rose-800 mb-2">{service.title}</h3>
                     <p className="text-gray-600">{service.description}</p>
                   </CardContent>
                 </Card>

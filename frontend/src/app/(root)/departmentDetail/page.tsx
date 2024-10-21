@@ -6,23 +6,18 @@ import React from "react";
 
 import departmentData from "@/json/departmentData";
 import Link from "next/link";
+import HeaderBanner from "@/components/HeaderBanner";
 
 const page = () => {
   return (
     <section className="section">
     <div className="relative justify-self-center">
-      <div className="relative">
-        <img
-          src="/hospital/speciality.png"
-          alt="img"
-          className="w-full h-96 object-fill"
-        />
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
-          <h1 className="text-4xl sm:text-4xl font-semibold text-white">
-          Department Details
-          </h1>
-        </div>
-      </div>
+    
+      <HeaderBanner
+        title=" Department Details"
+        subtitle="Providing Exceptional Healthcare with Compassion and Excellence"
+        bgImage="/hospital/speciality.png" // Replace with your actual image path
+      />
 
       <div className="  grid items-center justify-center bg-pattern3    md:p-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 ">

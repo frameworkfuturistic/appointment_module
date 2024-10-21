@@ -1,193 +1,237 @@
-"use client"; // Ensure this is at the top of your file
+"use client";
 
 import * as React from "react";
-
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
   NavigationMenu,
-  NavigationMenu as NavigationMenuComponent,
   NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Home, Menu, Package2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Calendar,
+  ChevronDown,
+  Heart,
+  Menu,
+  Phone,
+  Search,
+  User,
+  Clock,
+  MapPin,
+} from "lucide-react";
+
+const navigationLinks = [
+  { title: "HOME", href: "/" },
+  {
+    title: "ABOUT US",
+    href: "/about/aboutUs",
+    children: [
+      {
+        title: "About Us",
+        href: "/about/aboutUs",
+        description: "Learn about our commitment to healthcare excellence",
+      },
+      {
+        title: "Gallery",
+        href: "/about/gallery",
+        description: "Explore our  all excellent events or news",
+      },
+      {
+        title: "Our Policy",
+        href: "/about/policy&values",
+        description: "Our initiatives to improve community health Policy",
+      },
+    ],
+  },
+  {
+    title: "SERVICES",
+    href: "/services",
+
+  },
+  {
+    title: "SPECIALITY",
+    href: "/speciality/ourSpeciality",
+    children: [
+      {
+        title: "Our Speciality",
+        href: "/speciality/ourSpeciality",
+        description: "24/7 emergency medical services",
+      },
+     
+      {
+        title: "Key Performance",
+        href: "/speciality/keyPerformance",
+        description: "Key Performance",
+      },
+    ],
+  },
+  {
+    title: "DEPARTMENTS",
+    href: "/departments",
+    children: [
+      {
+        title: "OPD Schedule",
+        href: "/opd",
+        description: "Shift & Schedule of OPD Department Srvices",
+      },
+      {
+        title: "Cardiology",
+        href: "inDepartment/cardiology",
+        description: "Heart and cardiovascular care",
+      },
+      {
+        title: "General Medicine",
+        href: "/inDepartment/generalMedicine",
+        description: "All infections related specialists",
+      },
+      {
+        title: "Neurosurgery",
+        href: "/departments/oncology",
+        description: "Treatment of diseases related with nurves",
+      },
+      {
+        title: "More..",
+        href: "/departmentDetail",
+        description: "View all Departments",
+      },
+      
+    ],
+  },
+  { title: "COURSES", href: "/" },
+  { title: "CAREER", href: "/career/currentOpenings" },
+  { title: "BLOG", href: "/blogDash/blog" },
+
+  { title: "CONTACT", href: "/contact" },
+];
+
+const quickSearch = [
+  { name: "Cardiology", href: "/departments/cardiology" },
+  { name: "Neurology", href: "/departments/neurology" },
+  { name: "Oncology", href: "/departments/oncology" },
+  { name: "Pediatrics", href: "/departments/pediatrics" },
+  { name: "Orthopedics", href: "/departments/orthopedics" },
+  { name: "Emergency Care", href: "/services/emergency" },
+  { name: "Laboratory Services", href: "/services/laboratory" },
+  { name: "Radiology", href: "/services/radiology" },
+  { name: "Rehabilitation", href: "/services/rehabilitation" },
+  { name: "Mental Health", href: "/services/mental-health" },
+]
 
 
-import Link from "next/link";
 
-function CustomNavigationMenu() {
+export default function AdvancedHospitalNavbar() {
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+
   return (
-    <div className="hidden md:flex">
-      <div className="bg-rose-100 shadow-lg grid lg:grid-flow-col max-w-[1000px] min-h-[60px]   gap-x-2  hover:z-10 top-0 mx-auto rounded-full items-center  border-b bg-background px-4 ">
-        <NavigationMenuComponent>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuContent></NavigationMenuContent>
-              <a className="font-medium text-sm mr-2" href="/">
-                HOME
-              </a>
-            </NavigationMenuItem>
+    <header className="sticky top-0 z-50 w-full shadow-xl">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-center py-4">
+          <div className="hidden lg:flex items-center space-x-4">
+            <NavigationMenu>
+              <NavigationMenuList>
+                {renderNavigationMenuItems(navigationLinks)}
+              </NavigationMenuList>
+            </NavigationMenu>
 
-            <NavigationMenuComponent>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent ">
-                  ABOUT
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <NavigationMenuLink>
-                    <ul className="grid gap-1 bg-rose-100 p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
-                      <ListItem
-                        href="/about/aboutUs"
-                        title="About Us"
-                      ></ListItem>
-                      <ListItem
-                        href="/about/gallery"
-                        title="Gallery"
-                      ></ListItem>
-
-                      <ListItem
-                        href="/about/policy&values"
-                        title="Values and Policy"
-                      ></ListItem>
-                    </ul>
-                  </NavigationMenuLink>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuComponent>
-
-            <NavigationMenuItem>
-              <NavigationMenuContent></NavigationMenuContent>
-              <a className="font-medium text-sm mr-4" href="/services">
-                SERVICES{" "}
-              </a>
-            </NavigationMenuItem>
-
-            <NavigationMenuComponent>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">
-                  SPECIALITY
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid gap-1 bg-rose-100  p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
-                    <ListItem
-                      href="/speciality/ourSpeciality"
-                      title="Our Speciality"
-                    ></ListItem>
-                    <ListItem
-                      href="/speciality/keyPerformance"
-                      title="Key Performance"
-                    ></ListItem>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuComponent>
-
-            <NavigationMenuComponent>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">
-                  DEPARTMENTS
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid bg-rose-100 p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
-                    <ListItem href="/opd" title="OPD Schedule"></ListItem>
-
-                    <ListItem
-                      href="/departmentDetail"
-                      title="Department Detail"
-                    ></ListItem>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuComponent>
-
-            <NavigationMenuItem>
-              <NavigationMenuContent></NavigationMenuContent>
-              <a className="font-medium text-sm mr-4" href="/">
-                COURSES{" "}
-              </a>
-            </NavigationMenuItem>
-
-            <NavigationMenuComponent>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">
-                  CAREER
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid   p-2 md:w-[200px] lg:w-[200px] lg:grid-flow-row">
-                    <ListItem
-                      href="/career/currentOpenings"
-                      title="Current Openings"
-                    ></ListItem>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuComponent>
-
-            <NavigationMenuItem>
-              <NavigationMenuContent></NavigationMenuContent>
-              <a
-                className="font-medium text-sm mr-4"
-                href="/blogDash/blog"
-                target="_"
-              >
-                BLOG{" "}
-              </a>
-            </NavigationMenuItem>
-
-            <NavigationMenuItem>
-              <NavigationMenuContent></NavigationMenuContent>
-              <a href="/contact" className="font-medium text-sm">
-                CONTACT
-              </a>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenuComponent>
-
-        {/* <div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Search className="m-2 size-8 text-slate-600" />
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[60vw] h-[60vh] overflow-y-auto">
-              <div className="flex  items-center justify-between">
-                <Input
-                  type="input"
-                  placeholder="search"
-                  className=" w-full mx-6"
-                />
-                <Button className=" bg-destructive h-full ">
-                  <Search />
+            <Popover open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-rose-600  hover:text-rose-800"
+                >
+                  <Search className="h-4 w-4" />
+                  <span className="sr-only">Search</span>
                 </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div> */}
-        <div className="animate-bounce">
-          <Link href="/appointment">
-          <Button
-            variant="hms"
-            className="transition ease-in-out delay-100 hover:translate-4 hover:scale-110 duration-400 group block"
-          >
-            Appointment
-          </Button>
-          </Link>
+              </PopoverTrigger>
+              <PopoverContent className="w-[300px] p-0" align="end">
+                <Command>
+                  <CommandInput placeholder="Search..." />
+                  <CommandList>
+                    <CommandEmpty>No results found.</CommandEmpty>
+                    <CommandGroup heading="Quick Search">
+                      {quickSearch.map((dept) => (
+                        <CommandItem key={dept.name} onSelect={() => {
+                          setIsSearchOpen(false)
+                          // Navigate to department page
+                        }}>
+                          {dept.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+
+            <div className="animate-bounce">
+              <Link href="/appointment">
+                <Button
+                  variant="hms"
+                  className=" w-full transition ease-in-out delay-100 hover:translate-4 hover:scale-110 duration-400 group block"
+                >
+                  Book Appointment
+                </Button>
+              </Link>
+            </div>
+            
+          </div>
         </div>
       </div>
-    </div>
+    </header>
   );
+}
+
+function renderNavigationMenuItems(links: typeof navigationLinks) {
+  return links.map((link) => (
+    <NavigationMenuItem key={link.title}>
+      {link.children ? (
+        <>
+          <NavigationMenuTrigger className="bg-transparent hover:text-rose-800 text-black">
+            {link.title}
+          </NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+              {link.children.map((child) => (
+                <ListItem
+                  key={child.title}
+                  title={child.title}
+                  href={child.href}
+                >
+                  {child.description}
+                </ListItem>
+              ))}
+            </ul>
+          </NavigationMenuContent>
+        </>
+      ) : (
+        <Link href={link.href} legacyBehavior passHref>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            {link.title}
+          </NavigationMenuLink>
+        </Link>
+      )}
+    </NavigationMenuItem>
+  ));
 }
 
 const ListItem = React.forwardRef<
@@ -195,26 +239,23 @@ const ListItem = React.forwardRef<
   React.ComponentPropsWithoutRef<"a">
 >(({ className, title, children, ...props }, ref) => {
   return (
-    <div>
+    <li>
       <NavigationMenuLink asChild>
         <a
           ref={ref}
           className={cn(
-            "block  select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors  hover:text-rose-900 focus:bg-accent focus:text-rose-900",
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-rose-200 hover:text-rose-900 focus:bg-rose-100 focus:text-rose-900",
             className
           )}
           {...props}
         >
-          <h1 className="text-sm font-medium leading-none">{title}</h1>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-gray-600">
             {children}
           </p>
         </a>
       </NavigationMenuLink>
-    </div>
+    </li>
   );
 });
-
 ListItem.displayName = "ListItem";
-
-export default CustomNavigationMenu;

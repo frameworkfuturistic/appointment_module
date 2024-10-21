@@ -60,14 +60,21 @@ class PatientController extends Controller
         return response()->json(['message' => 'Patient created successfully.', 'patient' => $patient], 201);
     }
 
-    // Method to retrieve a patient by MRNo
-    public function getPatient($mrNo)
-    {
-        $patient = Patient::find($mrNo);
-        if (!$patient) {
-            return response()->json(['message' => 'Patient not found'], 404);
-        }
+   // Method to retrieve a patient by MRNo or MobileNo
+public function getPatient(Request $request)
+{
+    $searchQuery = $request->input('mrdOrMobile');
 
-        return response()->json($patient);
+    // Attempt to find the patient by MRNo or MobileNo
+    $patients = Patient::where('MRNo', $searchQuery)
+        ->orWhere('MobileNo', $searchQuery)
+        ->get();
+
+    if ($patients->isEmpty()) {
+        return response()->json(['message' => 'Patient not found'], 404);
     }
+
+    return response()->json(['patients' => $patients], 200);
+}
+
 }

@@ -1,96 +1,102 @@
+import HeaderBanner from "@/components/HeaderBanner";
 import React from "react";
+
+const policies = [
+  {
+    title: "Quality Policy",
+    description:
+      "We are committed to providing excellent care to our patients in the most personal, sympathetic, confidential, and dignified manner possible.",
+  },
+  {
+    title: "Environmental Policy",
+    commitments: [
+      {
+        subtitle: "Our Commitments",
+        description:
+          "We will make every effort to be responsive to the psychosocial and cultural values of our patients and their families and honor their rights.",
+      },
+      {
+        subtitle: "Our Responsibilities",
+        description:
+          "To ensure the environmental impacts of our activities and services are kept to a minimum. Safe disposal of waste and recycling whenever possible.",
+      },
+      {
+        subtitle: "Our Strategies",
+        points: [
+          "Integration of policies, programs, and practices into the management of our business.",
+          "Efficient use of resources, technology, and effective management practices to prevent pollution.",
+          "Manage the wastes in an environmentally acceptable manner that prevents pollution.",
+          "Comply with all applicable legal and corporate requirements relating to the environment and adopt current best practices to increase environmental performance.",
+          "Attempt to improve our environmental performance through innovations and self-discipline.",
+          "Consciously attempt to make continual improvement, considering the expectations of the community and regulators.",
+          "Communicate the policy to our patrons, employees, visitors, contractors, and the public.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "Safety Policy",
+    description: [
+      "We are committed to the health and safety of our employees and patients and to the safety of their environment.",
+      "Establish and maintain adequate standards, policies, procedures, work practices, and maintenance of all the equipment to ensure a safe working environment.",
+      "Maintenance of good housekeeping of the hospital.",
+      "Orient and train all staff in safe work practices and procedures.",
+    ],
+  },
+];
 
 const Page = () => {
   return (
-    <div className="grid relative justify-center">
+    <div className=" relative justify-center">
       {/* Header Image Section */}
-      <div className="relative">
-        <img
-          src="/hospital/facility.png"
-          alt="img"
-          className="w-full h-96 sm:h-[32rem] object-cover"
-        />
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <h1 className="text-4xl sm:text-5xl font-bold text-white">
-            Policy & Values
-          </h1>
-        </div>
-      </div>
+
+      <HeaderBanner
+        title="Our Policy"
+        subtitle="Providing Exceptional Healthcare with Compassion and Excellence"
+        bgImage="/hospital/facility.png" // Replace with your actual image path
+      />
 
       {/* Values and Policy Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start justify-center bg-pattern5-bg p-8">
-        {/* OUR VALUES */}
-        <div className="bg-rose-100 rounded-lg p-6">
-          <h2 className="bg-rose-200 rounded-lg p-4 text-xl font-semibold text-black text-center mb-6">
-            Our Values
-          </h2>
-          <ol className="list-decimal space-y-4 text-lg">
-            <li>
-              <strong>Quality:</strong> 
-              <p className="text-base">
-                We value quality and strive for excellence in everything that we do, working together as a team to deliver services exceeding expectations. A multidisciplinary committee of physicians, nurses, administrators, and board members continuously monitor the quality of care.
-              </p>
-            </li>
-            <li>
-              <strong>Compassion:</strong>
-              <p className="text-base">
-                We deliver our services with care, treating those we serve with professionalism, concern, and kindness. Each patient is unique and deserves personalized care, respect, and appreciation.
-              </p>
-            </li>
-            <li>
-              <strong>Integrity:</strong>
-              <p className="text-base">
-                We adhere to strong moral principles, operating with honesty and ethics in all that we do. Integrity guides our actions and decisions, ensuring we earn the trust of those we serve.
-              </p>
-            </li>
-            <li>
-              <strong>Dignity:</strong>
-              <p className="text-base">
-                We value the dignity of human life, which is sacred and deserves respect and fairness. We show care and concern for patients, their families, and professional colleagues.
-              </p>
-            </li>
-            <li>
-              <strong>Responsibility:</strong>
-              <p className="text-base">
-                We communicate honestly, operate ethically, and assume responsibility for our actions. We are committed to fostering an environment that supports learning, adaptation, and growth.
-              </p>
-            </li>
-          </ol>
-        </div>
-
+      <div className="grid grid-cols-1 mx-0  md:mx-28  gap-8 items-center  justify-center bg-pattern5-bg p-8">
+        
         {/* OUR POLICY */}
         <div className="bg-rose-100 rounded-lg p-6">
-          <h2 className="bg-rose-200 rounded-lg p-4 text-xl font-semibold text-black text-center mb-6">
-            Our Policy
-          </h2>
-          <ol className="list-decimal space-y-4 text-lg">
-            <li>
-              <strong>Quality Policy:</strong>
-              <p className="text-base">
-                We are committed to providing excellent care to our patients in the most personal, sympathetic, and dignified manner possible.
-              </p>
-            </li>
-            <li>
-              <strong>Environmental Policies:</strong>
-              <h3 className="text-lg font-semibold">Our Commitments</h3>
-              <p className="text-base">
-                We will make every effort to be responsive to the psychosocial and cultural values of our patients and their families and honor their rights.
-              </p>
-              <h3 className="text-lg font-semibold">Our Responsibilities</h3>
-              <p className="text-base">
-                To ensure the environmental impacts of our activities and services are kept to a minimum. Safe disposal of waste and recycling whenever possible.
-              </p>
-              <h3 className="text-lg font-semibold">Our Strategies</h3>
-              <p className="text-base">
-                Integration of policies, programs, and practices into the management of our business. Efficient use of resources, technology, and effective management practices to prevent pollution.
-              </p>
-            </li>
-            <li>
-              <strong>Safety Policy:</strong>
-              <p className="text-base">
-                We are committed to the health and safety of our employees and patients and to the safety of their environment. We maintain high standards to ensure a safe working environment.
-              </p>
-            </li>
+        
+          <ol className="list-decimal space-y-6 gap-4 text-lg p-4 ">
+            {policies.map((policy, index) => (
+              <li key={index}>
+                <strong>{policy.title}:</strong>
+                {policy.description &&
+                typeof policy.description === "string" ? (
+                  <p className="text-base">{policy.description}</p>
+                ) : (
+                  policy.description &&
+                  policy.description.map((desc, idx) => (
+                    <p key={idx} className="text-base">
+                      {desc}
+                    </p>
+                  ))
+                )}
+                {policy.commitments &&
+                  policy.commitments.map((commitment, idx) => (
+                    <div key={idx}>
+                      <h3 className="text-lg font-semibold">
+                        {commitment.subtitle}
+                      </h3>
+                      <p className="text-base">{commitment.description}</p>
+                      {commitment.points && (
+                        <ul className="list-disc ml-5 space-y-1">
+                          {commitment.points.map((point, pointIdx) => (
+                            <li key={pointIdx} className="text-base">
+                              {point}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
+              </li>
+            ))}
           </ol>
         </div>
       </div>

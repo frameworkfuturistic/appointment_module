@@ -99,7 +99,7 @@ export function NoticeSlider() {
 
       <Title title={"EVENTS"} />
 
-      <div className="grid justify-center">
+      <div className="grid justify-center mt-10">
         <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-6 max-w-7xl h-full">
           {/* Carousel Section */}
           <div className="relative px-4 flex items-center justify-center max-w-full">

@@ -23,7 +23,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
 
     // Patient Management
     Route::post('/patients', [PatientController::class, 'createPatient']);
-    Route::get('/patients/{mrNo}', [PatientController::class, 'getPatient']);
+    Route::get('/patients/search', [PatientController::class, 'getPatient']);
 
     // Department and Doctor Management
     Route::get('/departments', [DepartmentController::class, 'index']);
