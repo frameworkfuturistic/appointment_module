@@ -1,15 +1,14 @@
-// controllers/blogController.js
-const blogService = require('../services/blogService');
+const blogService = require('../../services/blogService');
 
-
+// Test endpoint
 exports.test = async (req, res) => {
-  
-    res.status(200).json( "I'm here for testing");
-  
+  res.status(200).json("I'm here for testing");
 };
 
+// Create a new blog post
 exports.createBlog = async (req, res) => {
   try {
+    // Handle image upload separately if necessary (e.g., with Multer)
     const blog = await blogService.createBlog(req.body);
     res.status(201).json({ success: true, data: blog });
   } catch (error) {
@@ -17,10 +16,13 @@ exports.createBlog = async (req, res) => {
   }
 };
 
+// Get paginated list of blogs with optional category filter
 exports.getBlogs = async (req, res) => {
   try {
     const { page = 1, limit = 8, category } = req.query;
     const query = category ? { category } : {};
+    
+    // Call service to fetch blogs with pagination
     const { total, blogs } = await blogService.getBlogs(query, parseInt(page), parseInt(limit));
     
     res.status(200).json({
@@ -37,6 +39,7 @@ exports.getBlogs = async (req, res) => {
   }
 };
 
+// Get a single blog post by its ID
 exports.getBlogById = async (req, res) => {
   try {
     const blog = await blogService.getBlogById(req.params.id);
@@ -47,6 +50,7 @@ exports.getBlogById = async (req, res) => {
   }
 };
 
+// Update a blog post by ID
 exports.updateBlog = async (req, res) => {
   try {
     const blog = await blogService.updateBlog(req.params.id, req.body);
@@ -57,6 +61,7 @@ exports.updateBlog = async (req, res) => {
   }
 };
 
+// Delete a blog post by ID
 exports.deleteBlog = async (req, res) => {
   try {
     const blog = await blogService.deleteBlog(req.params.id);
