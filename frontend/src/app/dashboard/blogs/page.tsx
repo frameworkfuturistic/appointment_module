@@ -117,9 +117,9 @@ export default function AdvancedBlogManagement() {
     try {
       setIsLoading(true)
       setError(null)
-      
+
       const response = await axiosInstance.get<ApiResponse<Blog[]>>('/blogs')
-      
+
       if (response.data.blogs && response.data.blogs.length > 0) {
         setBlogs(response.data.blogs)
       } else {
@@ -133,7 +133,7 @@ export default function AdvancedBlogManagement() {
       setIsLoading(false)
     }
   }
-  
+
   useEffect(() => {
     fetchBlogs()
   }, [])
@@ -238,7 +238,6 @@ export default function AdvancedBlogManagement() {
         tags: [],
         status: "draft",
         image: "",
-        readTime: 0,
         publishDate: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"),
       }
     )
@@ -280,8 +279,8 @@ export default function AdvancedBlogManagement() {
               {mode === "view"
                 ? "View the details of this blog post."
                 : mode === "edit"
-                ? "Make changes to your blog post here."
-                : "Fill in the details for your new blog post."}
+                  ? "Make changes to your blog post here."
+                  : "Fill in the details for your new blog post."}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit}>
@@ -368,7 +367,9 @@ export default function AdvancedBlogManagement() {
                 <Select
                   name="status"
                   value={formData.status}
-                  onValueChange={(value: "draft" | "published") => setFormData(prev => ({ ...prev, status: value }))}
+                  onValueChange={(value: "draft" | "published" | "archived") =>
+                    setFormData(prev => ({ ...prev, status: value }))
+                  }
                   disabled={mode === "view"}
                 >
                   <SelectTrigger className="col-span-3">
@@ -377,9 +378,11 @@ export default function AdvancedBlogManagement() {
                   <SelectContent>
                     <SelectItem value="draft">Draft</SelectItem>
                     <SelectItem value="published">Published</SelectItem>
+                    <SelectItem value="archived">Archived</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="image" className="text-right">
                   Image
@@ -396,7 +399,7 @@ export default function AdvancedBlogManagement() {
                   ) : (
                     formData.image && (
                       <img
-                        src={typeof formData.image === 'string' ? formData.image :   URL.createObjectURL(formData.image)}
+                        src={typeof formData.image === 'string' ? formData.image : URL.createObjectURL(formData.image)}
                         alt="Blog post image"
                         className="max-w-full h-auto"
                       />
@@ -404,20 +407,7 @@ export default function AdvancedBlogManagement() {
                   )}
                 </div>
               </div>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="readTime" className="text-right">
-                  Read Time (minutes)
-                </Label>
-                <Input
-                  id="readTime"
-                  name="readTime"
-                  type="number"
-                  value={formData.readTime}
-                  onChange={handleChange}
-                  className="col-span-3"
-                  disabled={mode === "view"}
-                />
-              </div>
+
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="publishDate" className="text-right">
                   Publish Date
@@ -452,9 +442,7 @@ export default function AdvancedBlogManagement() {
     )
   }
 
-  if (error) {
-    return <div className="flex justify-center items-center h-screen text-red-500">{error}</div>
-  }
+
 
   return (
     <main className="flex-1 overflow-hidden flex flex-col">
@@ -819,7 +807,7 @@ export default function AdvancedBlogManagement() {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                                                    {sortedBlogs.filter(blog => blog.status === "draft").map((blog) => (
+                          {sortedBlogs.filter(blog => blog.status === "draft").map((blog) => (
                             <TableRow key={blog._id}>
                               <TableCell>{blog.title}</TableCell>
                               <TableCell>{blog.author}</TableCell>

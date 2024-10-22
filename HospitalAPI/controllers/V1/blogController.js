@@ -13,6 +13,7 @@ exports.createBlog = async (req, res) => {
       content: req.body.content,
       author: req.body.author,
       category: req.body.category,
+      status: req.body.status || 'draft', // Ensure the status is properly handled
       tags: req.body.tags ? JSON.parse(req.body.tags) : [], // Ensure tags are parsed
       image: req.file ? req.file.path.replace(/\\/g, '/') : null, // Normalize file path
     };
@@ -29,15 +30,15 @@ exports.getBlogs = async (req, res) => {
   try {
     const { page = 1, limit = 8, category } = req.query;
     const query = category ? { category } : {};
-    
-    const { total, blogs } = await blogService.getBlogs(query, parseInt(page), parseInt(limit));
-    
+
+    const { total, blogs } = await blogService.getBlogs(query, parseInt(page, 10), parseInt(limit, 10));
+
     res.status(200).json({
       success: true,
       data: {
         blogs,
         total,
-        page: parseInt(page),
+        page: parseInt(page, 10),
         pages: Math.ceil(total / limit),
       },
     });
@@ -50,7 +51,9 @@ exports.getBlogs = async (req, res) => {
 exports.getBlogById = async (req, res) => {
   try {
     const blog = await blogService.getBlogById(req.params.id);
-    if (!blog) return res.status(404).json({ success: false, message: 'Blog not found' });
+    if (!blog) {
+      return res.status(404).json({ success: false, message: 'Blog not found' });
+    }
     res.status(200).json({ success: true, data: blog });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -65,12 +68,15 @@ exports.updateBlog = async (req, res) => {
       content: req.body.content,
       author: req.body.author,
       category: req.body.category,
+      status: req.body.status || 'draft', // Ensure the status is properly handled
       tags: req.body.tags ? JSON.parse(req.body.tags) : [], // Ensure tags are parsed
       image: req.file ? req.file.path.replace(/\\/g, '/') : null, // Normalize file path
     };
 
     const blog = await blogService.updateBlog(req.params.id, blogData);
-    if (!blog) return res.status(404).json({ success: false, message: 'Blog not found' });
+    if (!blog) {
+      return res.status(404).json({ success: false, message: 'Blog not found' });
+    }
     res.status(200).json({ success: true, data: blog });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -81,7 +87,9 @@ exports.updateBlog = async (req, res) => {
 exports.deleteBlog = async (req, res) => {
   try {
     const blog = await blogService.deleteBlog(req.params.id);
-    if (!blog) return res.status(404).json({ success: false, message: 'Blog not found' });
+    if (!blog) {
+      return res.status(404).json({ success: false, message: 'Blog not found' });
+    }
     res.status(200).json({ success: true, message: 'Blog deleted successfully' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

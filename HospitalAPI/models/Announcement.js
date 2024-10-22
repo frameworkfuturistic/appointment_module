@@ -30,7 +30,6 @@ const announcementSchema = new mongoose.Schema(
         message: props => `${props.value} is not a valid URL!`
       }
     },
-    createdBy: { type: String, required: true },
     status: {
       type: String,
       enum: ["Draft", "Published", "Archived", "Upcoming", "Ongoing", "Past"],
