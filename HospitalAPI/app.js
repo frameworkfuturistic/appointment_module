@@ -10,6 +10,10 @@ const connectDB = require('./config/db');
 const blogRoutes = require('./routes/V1/blogRoutes');
 const announcementRoutes = require('./routes/V1/announcementRoutes');
 const galleryRoutes = require('./routes/V1/galleryRoutes');
+const consultantRoutes = require('./routes/V1/consultantScheduleRoutes');
+const jobPostingRoutes = require('./routes/v1/jobPostingRoutes');
+const jobApplicationRoutes = require('./routes/V1/jobApplicationRoutes');
+const contactUsRoutes = require('./routes/V1/contactUsRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 
 // Load environment variables
@@ -65,6 +69,13 @@ app.use('/api/announcement', announcementRoutes);
 
 // Notice routes
 app.use('/api/gallery', galleryRoutes);
+
+// Notice routes
+app.use('/api/consultant', consultantRoutes);
+
+app.use('/api/jobs', jobPostingRoutes);
+app.use('/api/applications', jobApplicationRoutes);
+app.use('/api/contact-us', contactUsRoutes);
 
 // Error Handler Middleware
 app.use(errorHandler);
