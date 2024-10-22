@@ -8,8 +8,16 @@ exports.test = async (req, res) => {
 // Create a new blog post
 exports.createBlog = async (req, res) => {
   try {
-    // Handle image upload separately if necessary (e.g., with Multer)
-    const blog = await blogService.createBlog(req.body);
+    const blogData = {
+      title: req.body.title,
+      content: req.body.content,
+      author: req.body.author,
+      category: req.body.category,
+      tags: req.body.tags ? JSON.parse(req.body.tags) : [], // Ensure tags are parsed
+      image: req.file ? req.file.path.replace(/\\/g, '/') : null, // Normalize file path
+    };
+
+    const blog = await blogService.createBlog(blogData);
     res.status(201).json({ success: true, data: blog });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -22,7 +30,6 @@ exports.getBlogs = async (req, res) => {
     const { page = 1, limit = 8, category } = req.query;
     const query = category ? { category } : {};
     
-    // Call service to fetch blogs with pagination
     const { total, blogs } = await blogService.getBlogs(query, parseInt(page), parseInt(limit));
     
     res.status(200).json({
@@ -53,7 +60,16 @@ exports.getBlogById = async (req, res) => {
 // Update a blog post by ID
 exports.updateBlog = async (req, res) => {
   try {
-    const blog = await blogService.updateBlog(req.params.id, req.body);
+    const blogData = {
+      title: req.body.title,
+      content: req.body.content,
+      author: req.body.author,
+      category: req.body.category,
+      tags: req.body.tags ? JSON.parse(req.body.tags) : [], // Ensure tags are parsed
+      image: req.file ? req.file.path.replace(/\\/g, '/') : null, // Normalize file path
+    };
+
+    const blog = await blogService.updateBlog(req.params.id, blogData);
     if (!blog) return res.status(404).json({ success: false, message: 'Blog not found' });
     res.status(200).json({ success: true, data: blog });
   } catch (error) {

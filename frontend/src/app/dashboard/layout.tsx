@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -56,14 +56,29 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { AuthContext } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const { user, logout, loading } = useContext(AuthContext);
+  const router = useRouter();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMasterSubmenuOpen, setIsMasterSubmenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false)
+
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth'); // Redirect to login if not authenticated
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Optionally show a loading state
+  }
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -73,19 +88,17 @@ export default function RootLayout({
   const menuItems = [
     { icon: Home, label: "Dashboard", href: "/dashboard" },
     { icon: CalendarIcon, label: "Appointments", href: "/dashboard/appointments" },
-    { icon: Users, label: "Departments", href: "/dashboard/department" },
-    { icon: Users, label: "Doctor", href: "/dashboard/doctors" },
-    { icon: Users, label: "Patients", href: "/dashboard/patients" },
-    { icon: FileText, label: "Medical Records", href: "/dashboard/records" },
-    { icon: LineChart, label: "Analytics", href: "/dashboard/analytics" },
-    { icon: MessageSquare, label: "Blogs", href: "/dashboard/blogs" },
-    { icon: Settings, label: "Master", href: "#" },
+    { icon: MessageSquare, label: "Blog", href: "/dashboard/blogs" },
+    { icon: FileText, label: "Academics", href: "/dashboard/academics" },
+    { icon: FileText, label: "Notice Board", href: "/dashboard/noticeBoard" },
+    { icon: FileText, label: "Job Applications", href: "/dashboard/JobApplications" },
+    { icon: FileText, label: "Schedule", href: "/dashboard/masters/schedule" },
+    { icon: LineChart, label: "Gallery", href: "/dashboard/gallery" },
+    { icon: FileText, label: "Contact Us", href: "/dashboard/masters/contactus" },
+    // { icon: Settings, label: "Master", href: "#" },
   ];
   const masterSubmenuItems = [
-    { label: "Departments", href: "/dashboard/masters/departments" },
-    { label: "Doctors", href: "/dashboard/masters/doctors" },
-    { label: "Notice", href: "/dashboard/masters/noticeBoard" },
-    { label: "Gallery", href: "/dashboard/masters/Gallery" },
+    { label: "Departments", href: "#" },
   ];
 
   return (
@@ -266,10 +279,10 @@ export default function RootLayout({
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">
-                      Dr. Smith
+                    {user?.username}
                     </p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      doctor@example.com
+                      ADMIN
                     </p>
                   </div>
                 </DropdownMenuLabel>
@@ -283,7 +296,7 @@ export default function RootLayout({
                   <span>Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={logout} >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>

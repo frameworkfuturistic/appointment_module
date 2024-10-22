@@ -26,13 +26,11 @@ const blogSchema = new mongoose.Schema({
     category: {
         type: String,
         required: [true, 'Category is required'],
-        enum: ['health', 'wellness', 'research', 'news'], // Restricting to specific categories
         index: true, // Indexing for better query performance
     },
     tags: [
         {
             type: String,
-            trim: true,
             maxlength: [30, 'Tag cannot exceed 30 characters'],
         },
     ],
@@ -47,14 +45,15 @@ const blogSchema = new mongoose.Schema({
         index: true, // Indexing for performance on filtering
     },
     image: {
-        type: String, // This should be the image path or URL
+        type: String,
+        required: false, // Make it optional or required based on your needs
         validate: {
-            validator: function (value) {
-                return value.startsWith('http://') || value.startsWith('https://') || value.startsWith('/uploads/');
-            },
-            message: 'Invalid image path. Must be a URL or a valid upload path.',
-        },
-    },
+          validator: function (v) {
+            return /^[a-zA-Z0-9\/_.-]+$/.test(v) || v.startsWith('http'); // Regex for local path or URL
+          },
+          message: props => `${props.value} is not a valid image path!`
+        }
+      },
     readTime: {
         type: Number,
         default: 0,

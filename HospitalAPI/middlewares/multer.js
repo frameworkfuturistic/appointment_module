@@ -1,19 +1,18 @@
-// middlewares/multer.js
 const multer = require('multer');
 const path = require('path');
 
-// Define storage for the uploaded files
+// Set storage engine
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Path where files will be stored
-    },
-    filename: (req, file, cb) => {
-        // Create a unique filename using the current timestamp
-        cb(null, Date.now() + path.extname(file.originalname)); // Save as timestamp + original extension
-    }
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Destination folder for uploaded files
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname)); // File name with extension
+  }
 });
 
-// Create the upload instance
-const upload = multer({ storage });
+// Initialize upload
+const upload = multer({ storage: storage });
 
 module.exports = upload;

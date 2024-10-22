@@ -1,25 +1,17 @@
-
 const express = require('express');
 const blogController = require('../../controllers/V1/blogController');
+const upload = require('../../middlewares/multer'); // Adjust the path as necessary
 
 const router = express.Router();
 
-// Test route
+// Public routes for users
 router.get('/test', blogController.test);
+router.get('/', blogController.getBlogs); // Get all blogs
+router.get('/:id', blogController.getBlogById); // Get a single blog by ID
 
-// Create a new blog post
-router.post('/', blogController.createBlog);
-
-// Get all blogs (with pagination and optional category filtering)
-router.get('/', blogController.getBlogs);
-
-// Get a single blog by ID
-router.get('/:id', blogController.getBlogById);
-
-// Update a blog by ID
-router.put('/:id', blogController.updateBlog);
-
-// Delete a blog by ID
-router.delete('/:id', blogController.deleteBlog);
+// Admin-only routes
+router.post('/', upload.single('image'), blogController.createBlog); // Create a new blog post with image upload
+router.put('/:id', upload.single('image'), blogController.updateBlog); // Update a blog by ID with image upload
+router.delete('/:id', blogController.deleteBlog); // Delete a blog by ID
 
 module.exports = router;

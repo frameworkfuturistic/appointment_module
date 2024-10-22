@@ -117,7 +117,7 @@ const navigationLinks = [
   },
   { title: "COURSES", href: "/" },
   { title: "CAREER", href: "/career/currentOpenings" },
-  { title: "BLOG", href: "/blogDash/blog" },
+  { title: "BLOG", href: "/blog" },
 
   { title: "CONTACT", href: "/contact" },
 ];

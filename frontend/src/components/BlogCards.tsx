@@ -22,8 +22,8 @@ const BlogCards = () => {
       <div className=" max-w-7xl mx-auto px-4">
           <div className="flex flex-col items-center text-center gap-2 mb-6">
             <Title title={"LATEST BLOGS"} />
-            <img src="/activity.png" alt="icon" className="h-10 w-10" />
           </div>
+          
           <Carousel opts={{ align: "start" }} className="w-full">
             <CarouselContent className="flex">
               {BlogData.map((blog) => (
@@ -51,7 +51,7 @@ const BlogCards = () => {
                             <MessageCircle size={16} color="#141414" strokeWidth={1} />
                           </Link>
                         </div>
-                        <Link href={`/blogDash/blog/${blog.id}`}>
+                        <Link href={`/blog/${blog.id}`}>
                           <Button variant="hms">Read More</Button>
                         </Link>
                       </div>
@@ -64,7 +64,7 @@ const BlogCards = () => {
             <CarouselNext />
           </Carousel>    
           <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <Link href="/blogDash/blog">
+              <Link href="/blog">
               <Button size="lg" variant="link" className="text-gray-600 text-md hover:text-rose-900 px-8 py-6">
               View All News & Events
               </Button>
