@@ -3,9 +3,6 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:5555/api', // Replace with your Node API base URL
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 // Add request interceptor
@@ -16,6 +13,15 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Check if data is FormData to set content type accordingly
+    if (config.data instanceof FormData) {
+      // Do not set Content-Type for FormData, let axios handle it
+      delete config.headers['Content-Type'];
+    } else {
+      config.headers['Content-Type'] = 'application/json'; // Default to JSON
+    }
+
     return config;
   },
   (error) => {

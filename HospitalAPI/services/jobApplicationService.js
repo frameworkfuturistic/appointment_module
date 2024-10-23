@@ -6,6 +6,10 @@ const createJobApplication = async (applicationData) => {
     return await jobApplication.save();
 };
 
+const getAllJobs = async () => {
+    return await JobApplication.find().populate('jobId'); // Adjust this if you want to include more data
+};
+
 const getApplicationsByJobId = async (jobId) => {
     return await JobApplication.find({ jobId }).populate('jobId');
 };
@@ -16,6 +20,7 @@ const updateApplicationStatus = async (applicationId, status) => {
 
 module.exports = {
     createJobApplication,
+    getAllJobs,
     getApplicationsByJobId,
     updateApplicationStatus,
 };
