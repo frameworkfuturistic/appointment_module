@@ -36,6 +36,12 @@ exports.getBlogById = async (id) => {
   }
 };
 
+// Get a blog by its slug
+exports.getBlogBySlug = async (slug) => {
+  return Blog.findOne({ slug }); // Assuming you're using Mongoose or similar ORM
+};
+
+
 // Update a blog by ID
 exports.updateBlog = async (id, blogData) => {
   try {

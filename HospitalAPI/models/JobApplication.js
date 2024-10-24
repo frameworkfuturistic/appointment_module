@@ -10,7 +10,12 @@ const jobApplicationSchema = new mongoose.Schema({
     coverLetter: { type: String },
     linkedInProfile: { type: String },
     portfolio: { type: String },
-    status: { type: String, enum: ['Applied', 'In Review', 'Shortlisted', 'Rejected', 'Accepted'], default: 'Applied' },
+    status: {
+        type: String,
+        enum: ['Applied', 'In Review', 'Shortlisted', 'Rejected', 'Accepted', 'Reviewed', 'Interviewed', 'Hired'],
+        default: 'Applied',
+      },
+      
     appliedAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion";
 import {
@@ -12,7 +12,6 @@ import {
   Loader2,
   ArrowUpDown,
   Clock,
-  Copy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -54,11 +53,18 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "react-error-boundary";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import axios from "axios";
 import axiosInstance from "@/lib/axiosInstance";
 
 interface ConsultantSchedule {
-  id: string;
+  _id: string;
   consultantName: string;
   departmentName: string;
   designation: string;
@@ -81,10 +87,21 @@ const DAYS_OF_WEEK = [
   "Sunday",
 ];
 
-const DEPARTMENTS = ["Cardiology", "Neurology", "Pediatrics", "Orthopedics"];
+const DEPARTMENTS = ["Orthopaedics", "	Ophthalmology", "Gen. Medicine", "Gen. Surgery", 
+  "Neurosurgery", "Nephrology", "Cardiology", "Psychiatry", "Radiology & Imaging", "Anesthesia", 
+  "Micro-Biology", "Bio-Chemistry", "Pathology", "Emergency & Trauma"];
+
+const queryClient = new QueryClient();
 
 export default function AdvancedOPDScheduleManagement() {
-  const [schedules, setSchedules] = useState<ConsultantSchedule[]>([]);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ScheduleManagementContent />
+    </QueryClientProvider>
+  );
+}
+
+function ScheduleManagementContent() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState<ConsultantSchedule | null>(null);
   const [sortConfig, setSortConfig] = useState<{
@@ -92,9 +109,6 @@ export default function AdvancedOPDScheduleManagement() {
     direction: "asc" | "desc";
   } | null>(null);
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [filterDepartment, setFilterDepartment] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [scheduleToDelete, setScheduleToDelete] = useState<string | null>(null);
@@ -106,105 +120,94 @@ export default function AdvancedOPDScheduleManagement() {
     restDelta: 0.001,
   });
 
+  const queryClient = useQueryClient();
+
   const {
     control,
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
-  } = useForm<ConsultantSchedule>();
+  } = useForm<ConsultantSchedule>({
+    defaultValues: {
+      days: ['Monday'],
+    },
+  });
 
-  const fetchSchedules = useCallback(async () => {
-    try {
-      setLoading(true);
+  const { data: schedules, isLoading, error } = useQuery<ConsultantSchedule[]>({
+    queryKey: ['schedules'],
+    queryFn: async () => {
       const response = await axiosInstance.get("/consultant");
-      const data = response;
+      return response;
+    },
+  });
 
-      console.log("Shift", data);
-      
-      if (Array.isArray(data)) {
-        setSchedules(data);
-      } else {
-        throw new Error("Invalid data format received from API");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error fetching schedules");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const createScheduleMutation = useMutation({
+    mutationFn: (newSchedule: Omit<ConsultantSchedule, '_id'>) => axiosInstance.post("/consultant", newSchedule),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schedules'] });
+      setIsDialogOpen(false);
+      reset();
+    },
+  });
 
-  useEffect(() => {
-    fetchSchedules();
-  }, [fetchSchedules]);
-
-  const onSubmit = async (data: ConsultantSchedule) => {
-    try {
-      setLoading(true);
-      if (editingSchedule) {
-        const response = await axiosInstance.put(`/consultant/${editingSchedule.id}`, data);
-        if (response.status === 200) {
-          setSuccessMessage("Schedule updated successfully!");
-        }
-      } else {
-        const response = await axiosInstance.post("/consultant", data);
-        if (response.status === 201) {
-          setSuccessMessage("Schedule created successfully!");
-        }
-      }
+  const updateScheduleMutation = useMutation({
+    mutationFn: (updatedSchedule: ConsultantSchedule) => 
+      axiosInstance.put(`/consultant/${updatedSchedule._id}`, updatedSchedule),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schedules'] });
       setIsDialogOpen(false);
       setEditingSchedule(null);
       reset();
-      fetchSchedules();
-    } catch (err) {
-      setError(
-        axios.isAxiosError(err)
-          ? err.response?.data.message || "Error creating/updating schedule"
-          : "An unexpected error occurred"
-      );
-    } finally {
-      setLoading(false);
+    },
+  });
+
+  const deleteScheduleMutation = useMutation({
+    mutationFn: (id: string) => axiosInstance.delete(`/consultant/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['schedules'] });
+      setIsDeleteDialogOpen(false);
+      setScheduleToDelete(null);
+    },
+  });
+
+  const onSubmit = async (data: ConsultantSchedule) => {
+    const selectedDays = DAYS_OF_WEEK.filter((_, index) => data.days[index]);
+    const scheduleData = {
+      ...data,
+      days: selectedDays,
+    };
+
+    if (editingSchedule) {
+      updateScheduleMutation.mutate({ ...scheduleData, _id: editingSchedule._id });
+    } else {
+      createScheduleMutation.mutate(scheduleData);
     }
   };
 
   const openDialog = (schedule?: ConsultantSchedule) => {
     if (schedule) {
       setEditingSchedule(schedule);
-      reset(schedule);
+      reset({
+        ...schedule,
+        days: DAYS_OF_WEEK.map(day => schedule.days.includes(day)),
+      });
     } else {
       setEditingSchedule(null);
-      reset();
+      reset({ days: DAYS_OF_WEEK.map(day => day === 'Monday') });
     }
     setIsDialogOpen(true);
   };
 
   const confirmDelete = (id: string) => {
-    console.log("del", id);
-    
     setScheduleToDelete(id);
     setIsDeleteDialogOpen(true);
   };
 
   const deleteSchedule = async () => {
-    if (!scheduleToDelete) return;
- console.log("scheduleToDelete", scheduleToDelete);
- 
-    
-    try {
-      setLoading(true);
-      await axiosInstance.delete(`/consultant/${scheduleToDelete}`);
-      setSuccessMessage("Schedule deleted successfully!");
-      fetchSchedules();
-    } catch (err) {
-      setError(
-        axios.isAxiosError(err)
-          ? err.response?.data.message || "Error deleting schedule"
-          : "An unexpected error occurred"
-      );
-    } finally {
-      setLoading(false);
-      setIsDeleteDialogOpen(false);
-      setScheduleToDelete(null);
+    if (scheduleToDelete) {
+      deleteScheduleMutation.mutate(scheduleToDelete);
     }
   };
 
@@ -217,6 +220,7 @@ export default function AdvancedOPDScheduleManagement() {
   };
 
   const sortedSchedules = useMemo(() => {
+    if (!schedules) return [];
     return [...schedules].sort((a, b) => {
       if (!sortConfig) return 0;
       const { key, direction } = sortConfig;
@@ -236,7 +240,6 @@ export default function AdvancedOPDScheduleManagement() {
     hover: { backgroundColor: "#f0f9ff", transition: { duration: 0.2 } },
   };
 
- 
   const SkeletonRow = () => (
     <TableRow>
       <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
@@ -287,7 +290,7 @@ export default function AdvancedOPDScheduleManagement() {
                         Consultants
                       </h3>
                       <p className="text-3xl font-bold text-primary">
-                        {new Set(schedules.map((s) => s.consultantName)).size}
+                        {new Set(schedules?.map((s) => s.consultantName)).size}
                       </p>
                     </CardContent>
                   </Card>
@@ -346,20 +349,11 @@ export default function AdvancedOPDScheduleManagement() {
                     {error && (
                       <Alert variant="destructive" className="mb-4">
                         <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>{error}</AlertDescription>
+                        <AlertDescription>{(error as Error).message}</AlertDescription>
                       </Alert>
                     )}
 
-                    {successMessage && (
-                      <Alert
-                        variant="default"
-                        className="mb-4 bg-green-50 text-green-800 border-green-300"
-                      >
-                        <AlertDescription>{successMessage}</AlertDescription>
-                      </Alert>
-                    )}
-
-                    {loading ? (
+                    {isLoading ? (
                       viewMode === "table" ? (
                         <Table>
                           <TableHeader>
@@ -387,7 +381,7 @@ export default function AdvancedOPDScheduleManagement() {
                                 <Skeleton className="h-4 w-2/3 mb-2" />
                                 <Skeleton className="h-4 w-1/3 mb-2" />
                                 <Skeleton className="h-4 w-full mb-4" />
-                                <div className="flex justify-end  space-x-2">
+                                <div className="flex justify-end space-x-2">
                                   <Skeleton className="h-8 w-8" />
                                   <Skeleton className="h-8 w-8" />
                                 </div>
@@ -402,6 +396,7 @@ export default function AdvancedOPDScheduleManagement() {
                           <TableHeader>
                             <TableRow>
                               {["Consultant Name", "Department", "Designation", "OPD Timing", "Days", "Actions"].map((header) => (
+                                
                                 <TableHead
                                   key={header}
                                   className="whitespace-nowrap"
@@ -458,7 +453,6 @@ export default function AdvancedOPDScheduleManagement() {
                                           Edit schedule
                                         </TooltipContent>
                                       </Tooltip>
-                                  
                                       <Tooltip>
                                         <TooltipTrigger asChild>
                                           <Button
@@ -486,15 +480,15 @@ export default function AdvancedOPDScheduleManagement() {
                         <AnimatePresence>
                           {filteredSchedules.map((schedule) => (
                             <motion.div
-                              key={schedule.id}
+                              key={schedule._id}
                               initial={{ opacity: 0, scale: 0.9 }}
                               animate={{ opacity: 1, scale: 1 }}
                               exit={{ opacity: 0, scale: 0.9 }}
                               transition={{ duration: 0.3 }}
-                              className=" border border-gray-500 shadow-xl rounded-lg hover:border-rose-800"
+                              className="border border-gray-500 shadow-xl rounded-lg hover:border-rose-800"
                             >
                               <Card>
-                                <CardContent className="p-4 ">
+                                <CardContent className="p-4">
                                   <div className="flex items-center mb-4">
                                     <Clock className="w-10 h-10 text-primary mr-3" />
                                     <div>
@@ -523,11 +517,10 @@ export default function AdvancedOPDScheduleManagement() {
                                     >
                                       <Edit className="h-4 w-4" />
                                     </Button>
-                                 
                                     <Button
                                       variant="destructive"
                                       size="sm"
-                                      onClick={() => confirmDelete(schedule.data._id)}
+                                      onClick={() => confirmDelete(schedule._id)}
                                     >
                                       <Trash2 className="h-4 w-4" />
                                     </Button>
@@ -579,7 +572,7 @@ export default function AdvancedOPDScheduleManagement() {
                             render={({ field }) => (
                               <Select
                                 onValueChange={field.onChange}
-                                value={field.value || undefined}
+                                value={field.value}
                               >
                                 <SelectTrigger className="w-full col-span-3">
                                   <SelectValue placeholder="Select Department" />
@@ -658,12 +651,19 @@ export default function AdvancedOPDScheduleManagement() {
                             Available Days
                           </label>
                           <div className="col-span-3 grid grid-cols-2 gap-2">
-                            {DAYS_OF_WEEK.map((day) => (
+                            {DAYS_OF_WEEK.map((day, index) => (
                               <div key={day} className="flex items-center space-x-2">
-                                <Checkbox
-                                  id={day}
-                                  {...register("days")}
-                                  value={day}
+                                <Controller
+                                  name={`days.${index}`}
+                                  control={control}
+                                  defaultValue={false}
+                                  render={({ field }) => (
+                                    <Checkbox
+                                      id={day}
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  )}
                                 />
                                 <label
                                   htmlFor={day}
@@ -680,10 +680,11 @@ export default function AdvancedOPDScheduleManagement() {
                         <Button
                           type="submit"
                           className="bg-primary text-primary-foreground hover:bg-primary/90"
+                          disabled={createScheduleMutation.isPending || updateScheduleMutation.isPending}
                         >
-                          {loading ? (
+                          {(createScheduleMutation.isPending || updateScheduleMutation.isPending) && (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          ) : null}
+                          )}
                           Save
                         </Button>
                       </DialogFooter>
@@ -699,7 +700,16 @@ export default function AdvancedOPDScheduleManagement() {
                     <p>Are you sure you want to delete this schedule? This action cannot be undone.</p>
                     <DialogFooter>
                       <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
-                      <Button variant="destructive" onClick={deleteSchedule}>Delete</Button>
+                      <Button 
+                        variant="destructive" 
+                        onClick={deleteSchedule}
+                        disabled={deleteScheduleMutation.isPending}
+                      >
+                        {deleteScheduleMutation.isPending && (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
+                        Delete
+                      </Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>

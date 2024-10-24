@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import {
   QueryClient,
   QueryClientProvider,
@@ -10,19 +9,15 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import axios from "axios";
 import { format } from "date-fns";
 import {
-  ChevronDown,
-  ChevronUp,
-  Edit,
-  FileText,
-  Loader2,
   MoreHorizontal,
-  Package2,
   Plus,
-  Search,
-  Trash2,
+  CheckCircle,
+  XCircle,
+  Clock,
+  Users,
+  Briefcase,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -36,6 +31,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -54,16 +50,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { toast, useToast } from "@/components/ui/use-toast";
 import {
   Table,
@@ -73,13 +61,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import Link from "next/link";
 import axiosInstance from "@/lib/axiosInstance";
 
-// API base URL
-
-// Interfaces
 interface Job {
   id: number;
   title: string;
@@ -95,21 +78,25 @@ interface Job {
 }
 
 interface ApplicationForm {
-  id?: number;
-  jobId: number;
+  id: string;
+  jobId: string;
   applicantName: string;
   email: string;
   phone: string;
-  resume: File | null;
+  resume: string;
   coverLetter: string;
   linkedInProfile: string;
   portfolio: string;
-  status: "pending" | "reviewed" | "interviewed" | "rejected" | "hired";
+  status: "Applied" | "In Review" | "Shortlisted" | "Rejected" | "Accepted" | "Reviewed" | "Interviewed" | "Hired";
+  appliedAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // API functions
 const fetchJobs = async (): Promise<Job[]> => {
   const response = await axiosInstance.get("/jobs");
+  console.log("Job", response);
   return response;
 };
 
@@ -127,33 +114,23 @@ const deleteJob = async (id: number): Promise<void> => {
   await axiosInstance.delete(`/jobs/${id}`);
 };
 
-const fetchApplications = async (): Promise<ApplicationForm[]> => {
+// Fetch applications function
+const fetchApplications = async () => {
   const response = await axiosInstance.get("/applications");
-  console.log("applications", response.data);
-   
+  return response; // Make sure to return the correct data
+};
+
+// Update application function
+const updateApplication = async (application) => {
+  if (!application._id) {
+    throw new Error("Application ID is missing");
+  }
+  const response = await axiosInstance.put(
+    `/applications/${application._id}/status`,
+    { status: application.status }
+  );
   return response;
 };
-
-const createApplication = async (
-  application: Omit<ApplicationForm, "id">
-): Promise<ApplicationForm> => {
-  const response = await axiosInstance.post(
-    `/applications`,
-    application
-  );
-  return response.data;
-};
-
-const updateApplication = async (
-  application: ApplicationForm
-): Promise<ApplicationForm> => {
-  const response = await axios.put(
-    `/applications/${application.id}`,
-    application
-  );
-  return response.data;
-};
-
 // Create a client
 const queryClient = new QueryClient();
 
@@ -174,7 +151,6 @@ function JobDashboardContent() {
   const [selectedApplication, setSelectedApplication] =
     useState<ApplicationForm | null>(null);
   const { toast } = useToast();
-
   const queryClient = useQueryClient();
 
   // Queries
@@ -224,18 +200,6 @@ function JobDashboardContent() {
     },
   });
 
-  const createApplicationMutation = useMutation({
-    mutationFn: createApplication,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["applications"] });
-      toast({ title: "Application submitted successfully" });
-      setApplicationDialogOpen(false);
-    },
-    onError: () => {
-      toast({ title: "Failed to submit application", variant: "destructive" });
-    },
-  });
-
   const updateApplicationMutation = useMutation({
     mutationFn: updateApplication,
     onSuccess: () => {
@@ -259,121 +223,69 @@ function JobDashboardContent() {
     deleteJobMutation.mutate(id);
   };
 
-  const handleCreateApplication = (data: Omit<ApplicationForm, "id">) => {
-    createApplicationMutation.mutate(data);
-  };
-
-  const handleUpdateApplication = (data: ApplicationForm) => {
+  const handleUpdateApplication = (data) => {
     updateApplicationMutation.mutate(data);
   };
 
   return (
     <div className="flex flex-col w-full min-h-screen">
-  
       <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-4 h-4 text-muted-foreground"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
+              <Briefcase className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {jobsQuery.data?.length || 0}
               </div>
               <p className="text-xs text-muted-foreground">
-                +20.1% from last month
+                +20% from last month
               </p>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Active Applications
               </CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-4 h-4 text-muted-foreground"
-              >
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-              </svg>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {applicationsQuery.data?.filter(
-                  (app) => app.status === "pending"
+                  (app) => app.status === "Applied"
                 ).length || 0}
               </div>
               <p className="text-xs text-muted-foreground">
-                +180.1% from last month
+                +15% from last week
               </p>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Hired Candidates
               </CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-4 h-4 text-muted-foreground"
-              >
-                <rect width="20" height="14" x="2" y="5" rx="2" />
-                <path d="M2 10h20" />
-              </svg>
+              <CheckCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {applicationsQuery.data?.filter((app) => app.status === "hired")
+                {applicationsQuery.data?.filter((app) => app.status === "Hired")
                   .length || 0}
               </div>
               <p className="text-xs text-muted-foreground">
-                +19% from last month
+                +10% from last month
               </p>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
                 Closing Soon
               </CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="w-4 h-4 text-muted-foreground"
-              >
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-              </svg>
+              <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -385,425 +297,420 @@ function JobDashboardContent() {
                   return diffDays <= 7;
                 }).length || 0}
               </div>
-              <p className="text-xs  text-muted-foreground">
-                +201 since last hour
+              <p className="text-xs text-muted-foreground">
+                +5% from last week
               </p>
             </CardContent>
           </Card>
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="col-span-4">
-            <CardHeader>
-              <CardTitle>Job Listings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {jobsQuery.isLoading ? (
-                <div className="flex items-center justify-center h-[200px]">
-                  <Loader2 className="w-6 h-6 animate-spin" />
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[100px]">Job ID</TableHead>
-                      <TableHead>Title</TableHead>
-                      <TableHead>Department</TableHead>
-                      <TableHead>Closing Date</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+        <Tabs defaultValue="jobs" className="mt-6">
+          <TabsList>
+            <TabsTrigger value="jobs">Jobs</TabsTrigger>
+            <TabsTrigger value="applications">Applications</TabsTrigger>
+          </TabsList>
+          <TabsContent value="jobs">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-3xl font-bold tracking-tight">Jobs</h2>
+              <Button onClick={() => setJobDialogOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" /> Add New Job
+              </Button>
+            </div>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    {/* <TableHead className="w-[100px]">ID</TableHead> */}
+                    <TableHead>Title</TableHead>
+                    <TableHead>Department</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Closing Date</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {jobsQuery.data?.map((job) => (
+                    <TableRow key={job._id}>
+                      {/* <TableCell className="font-medium">{job._id}</TableCell> */}
+                      <TableCell>{job.title}</TableCell>
+                      <TableCell>{job.department}</TableCell>
+                      <TableCell>{job.location}</TableCell>
+                      <TableCell>
+                        {format(new Date(job.closingDate), "PP")}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedJob(job);
+                                setJobDialogOpen(true);
+                              }}
+                            >
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleDeleteJob(job.id)}
+                            >
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {jobsQuery.data?.slice(0, 5).map((job) => (
-                      <TableRow key={job.id}>
-                        <TableCell className="font-medium">{job.id}</TableCell>
-                        <TableCell>{job.title}</TableCell>
-                        <TableCell>{job.department}</TableCell>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+          <TabsContent value="applications">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-3xl font-bold tracking-tight">
+                Applications
+              </h2>
+            </div>
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Job ID</TableHead>
+                    <TableHead>Applicant Name</TableHead>
+                    <TableHead>Job Title</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Applied At</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {applicationsQuery.data?.map((application) => (
+                    <TableRow key={application._id}>
+                      <TableCell>{application.jobId?._id || "N/A"}</TableCell>
+                      {/* Job ID */}
+                      <TableCell>{application.applicantName}</TableCell>
+                      <TableCell>
                         <TableCell>
-                          {format(new Date(job.closingDate), "MMM dd, yyyy")}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setSelectedJob(job);
-                                  setJobDialogOpen(true);
-                                }}
-                              >
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleDeleteJob(job.id)}
-                              >
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-          <Card className="col-span-3">
-            <CardHeader>
-              <CardTitle>Recent Applications</CardTitle>
-              <CardDescription>
-                You have {applicationsQuery.data?.length || 0} total
-                applications
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {applicationsQuery.isLoading ? (
-                <div className="flex items-center justify-center h-[200px]">
-                  <Loader2 className="w-6 h-6 animate-spin" />
-                </div>
-              ) : (
-                <ScrollArea className="h-[300px]">
-                  {applicationsQuery.data?.slice(0, 5).map((application) => (
-                    <div
-                      key={application.id}
-                      className="flex items-center mb-4 last:mb-0"
-                    >
-                      {/* <Avatar className="h-9 w-9">
-                        <AvatarImage src="/placeholder-user.jpg" alt="Avatar" />
-                        <AvatarFallback>
-                          {application.applicantName.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar> */}
-                      <div className="ml-4 space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          {application.applicantName}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {application.email}
-                        </p>
-                      </div>
-                      <div className="ml-auto font-medium">
+                          {application.jobId?.title || "N/A"}
+                        </TableCell>{" "}
+                        {/* Job Title */}
+                      </TableCell>
+                      <TableCell>
                         <Badge
                           variant={
-                            application.status === "hired"
+                            application.status === "Hired"
                               ? "default"
                               : "secondary"
                           }
                         >
                           {application.status}
                         </Badge>
-                      </div>
-                    </div>
+                      </TableCell>
+                      <TableCell>
+                        {format(new Date(application.appliedAt), "PP")}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setSelectedApplication(application);
+                                setApplicationDialogOpen(true);
+                              }}
+                            >
+                              View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateApplication({
+                                  ...application,
+                                  status: "In Review",
+                                })
+                              }
+                            >
+                              Mark as In Review
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateApplication({
+                                  ...application,
+                                  status: "Shortlisted",
+                                })
+                              }
+                            >
+                              Mark as Shortlisted
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateApplication({
+                                  ...application,
+                                  status: "Rejected",
+                                })
+                              }
+                            >
+                              Reject Application
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateApplication({
+                                  ...application,
+                                  status: "Accepted",
+                                })
+                              }
+                            >
+                            Interviewed
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateApplication({
+                                  ...application,
+                                  status: "Reviewed",
+                                })
+                              }
+                            >
+                              Mark as Reviewed
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateApplication({
+                                  ...application,
+                                  status: "Interviewed",
+                                })
+                              }
+                            >
+                               Mark as Interviewed
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                handleUpdateApplication({
+                                  ...application,
+                                  status: "Hired",
+                                })
+                              }
+                            >
+                               Mark as Hired
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </ScrollArea>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+        </Tabs>
       </main>
-      <JobDialog
-        open={jobDialogOpen}
-        onOpenChange={setJobDialogOpen}
-        job={selectedJob}
-        onSubmit={(data) => {
-          if (selectedJob) {
-            handleUpdateJob({ ...selectedJob, ...data });
-          } else {
-            handleCreateJob(data);
-          }
-        }}
-      />
-      <ApplicationDialog
+      <Dialog open={jobDialogOpen} onOpenChange={setJobDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedJob ? "Edit Job" : "Create New Job"}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedJob
+                ? "Edit the job details below."
+                : "Fill in the job details below."}
+            </DialogDescription>
+          </DialogHeader>
+          <JobForm
+            job={selectedJob}
+            onSubmit={(data) => {
+              if (selectedJob) {
+                handleUpdateJob({ ...data, id: selectedJob.id });
+              } else {
+                handleCreateJob(data);
+              }
+            }}
+          />
+        </DialogContent>
+      </Dialog>
+      <Dialog
         open={applicationDialogOpen}
         onOpenChange={setApplicationDialogOpen}
-        jobId={selectedJob?.id}
-        onSubmit={handleCreateApplication}
-      />
+      >
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Application Details</DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+          {selectedApplication && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Name
+                </Label>
+                <Input
+                  id="name"
+                  value={selectedApplication.applicantName}
+                  className="col-span-3"
+                  readOnly
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  value={selectedApplication.email}
+                  className="col-span-3"
+                  readOnly
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="status" className="text-right">
+                  Status
+                </Label>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-function JobDialog({
-  open,
-  onOpenChange,
+function JobForm({
   job,
   onSubmit,
 }: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  job: Job | null;
+  job?: Job;
   onSubmit: (data: Omit<Job, "id">) => void;
 }) {
-  const { register, handleSubmit, reset } = useForm<Omit<Job, "id">>({
-    defaultValues: job || {
-      title: "",
-      department: "",
-      location: "",
-      jobType: "",
-      description: "",
-      requirements: "",
-      salaryRange: "",
-      experienceLevel: "",
-      postedBy: "",
-      closingDate: "",
-    },
+  const { register, handleSubmit, control } = useForm<Omit<Job, "id">>({
+    defaultValues: job || {},
   });
 
-  const onSubmitForm = (data: Omit<Job, "id">) => {
-    onSubmit(data);
-    reset();
-  };
-
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{job ? "Edit Job" : "Create New Job"}</DialogTitle>
-          <DialogDescription>
-            {job
-              ? "Edit the job details below."
-              : "Fill in the job details below."}
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmitForm)}>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="title" className="text-right">
-                Title
-              </Label>
-              <Input
-                id="title"
-                className="col-span-3"
-                {...register("title", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="department" className="text-right">
-                Department
-              </Label>
-              <Input
-                id="department"
-                className="col-span-3"
-                {...register("department", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="location" className="text-right">
-                Location
-              </Label>
-              <Input
-                id="location"
-                className="col-span-3"
-                {...register("location", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="jobType" className="text-right">
-                Job Type
-              </Label>
-              <Input
-                id="jobType"
-                className="col-span-3"
-                {...register("jobType", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="description" className="text-right">
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                className="col-span-3"
-                {...register("description", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="requirements" className="text-right">
-                Requirements
-              </Label>
-              <Textarea
-                id="requirements"
-                className="col-span-3"
-                {...register("requirements", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="salaryRange" className="text-right">
-                Salary Range
-              </Label>
-              <Input
-                id="salaryRange"
-                className="col-span-3"
-                {...register("salaryRange", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="experienceLevel" className="text-right">
-                Experience
-              </Label>
-              <Input
-                id="experienceLevel"
-                className="col-span-3"
-                {...register("experienceLevel", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="postedBy" className="text-right">
-                Posted By
-              </Label>
-              <Input
-                id="postedBy"
-                className="col-span-3"
-                {...register("postedBy", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="closingDate" className="text-right">
-                Closing Date
-              </Label>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="grid gap-4 py-4">
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="title" className="text-right">
+            Title
+          </Label>
+          <Input
+            id="title"
+            className="col-span-3"
+            {...register("title", { required: true })}
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="department" className="text-right">
+            Department
+          </Label>
+          <Input
+            id="department"
+            className="col-span-3"
+            {...register("department", { required: true })}
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="location" className="text-right">
+            Location
+          </Label>
+          <Input
+            id="location"
+            className="col-span-3"
+            {...register("location", { required: true })}
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="jobType" className="text-right">
+            Job Type
+          </Label>
+          <Input
+            id="jobType"
+            className="col-span-3"
+            {...register("jobType", { required: true })}
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="description" className="text-right">
+            Description
+          </Label>
+          <Textarea
+            id="description"
+            className="col-span-3"
+            {...register("description", { required: true })}
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="requirements" className="text-right">
+            Requirements
+          </Label>
+          <Textarea
+            id="requirements"
+            className="col-span-3"
+            {...register("requirements", { required: true })}
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="salaryRange" className="text-right">
+            Salary Range
+          </Label>
+          <Input
+            id="salaryRange"
+            className="col-span-3"
+            {...register("salaryRange", { required: true })}
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="experienceLevel" className="text-right">
+            Experience Level
+          </Label>
+          <Input
+            id="experienceLevel"
+            className="col-span-3"
+            {...register("experienceLevel", { required: true })}
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="postedBy" className="text-right">
+            Posted By
+          </Label>
+          <Input
+            id="postedBy"
+            className="col-span-3"
+            {...register("postedBy", { required: true })}
+          />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="closingDate" className="text-right">
+            Closing Date
+          </Label>
+          <Controller
+            name="closingDate"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
               <Input
                 id="closingDate"
                 type="date"
                 className="col-span-3"
-                {...register("closingDate", { required: true })}
+                {...field}
+                value={
+                  field.value
+                    ? new Date(field.value).toISOString().split("T")[0]
+                    : ""
+                }
               />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit">{job ? "Update Job" : "Create Job"}</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function ApplicationDialog({
-  open,
-  onOpenChange,
-  jobId,
-  onSubmit,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  jobId: number | undefined;
-  onSubmit: (data: Omit<ApplicationForm, "id">) => void;
-}) {
-  const { register, handleSubmit, reset } = useForm<
-    Omit<ApplicationForm, "id">
-  >({
-    defaultValues: {
-      jobId: jobId || 0,
-      applicantName: "",
-      email: "",
-      phone: "",
-      resume: null,
-      coverLetter: "",
-      linkedInProfile: "",
-      portfolio: "",
-      status: "pending",
-    },
-  });
-
-  const onSubmitForm = (data: Omit<ApplicationForm, "id">) => {
-    onSubmit(data);
-    reset();
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Submit Job Application</DialogTitle>
-          <DialogDescription>
-            Fill in your details to apply for this job.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmitForm)}>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="applicantName" className="text-right">
-                Name
-              </Label>
-              <Input
-                id="applicantName"
-                className="col-span-3"
-                {...register("applicantName", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="email" className="text-right">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                className="col-span-3"
-                {...register("email", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="phone" className="text-right">
-                Phone
-              </Label>
-              <Input
-                id="phone"
-                className="col-span-3"
-                {...register("phone", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="resume" className="text-right">
-                Resume
-              </Label>
-              <Input
-                id="resume"
-                type="file"
-                className="col-span-3"
-                {...register("resume")}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="coverLetter" className="text-right">
-                Cover Letter
-              </Label>
-              <Textarea
-                id="coverLetter"
-                className="col-span-3"
-                {...register("coverLetter", { required: true })}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="linkedInProfile" className="text-right">
-                LinkedIn
-              </Label>
-              <Input
-                id="linkedInProfile"
-                className="col-span-3"
-                {...register("linkedInProfile")}
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="portfolio" className="text-right">
-                Portfolio
-              </Label>
-              <Input
-                id="portfolio"
-                className="col-span-3"
-                {...register("portfolio")}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit">Submit Application</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+            )}
+          />
+        </div>
+      </div>
+      <DialogFooter>
+        <Button type="submit">Save changes</Button>
+      </DialogFooter>
+    </form>
   );
 }

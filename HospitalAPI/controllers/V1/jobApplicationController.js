@@ -1,19 +1,27 @@
-// controllers/jobApplicationController.js
 const jobApplicationService = require('../../services/jobApplicationService');
+
+// Utility function to handle responses
+const sendResponse = (res, statusCode, data, message) => {
+    if (data) {
+        return res.status(statusCode).json(data);
+    } else {
+        return res.status(statusCode).json({ message });
+    }
+};
 
 const createJobApplication = async (req, res) => {
     try {
-        const { applicantName, email, phone, coverLetter, linkedInProfile, portfolio } = req.body;
+        const { applicantName, email, phone, coverLetter, linkedInProfile, portfolio, jobId } = req.body;
 
         // Ensure resume file is uploaded
         if (!req.file) {
-            return res.status(400).json({ message: "Resume file is required." });
+            return sendResponse(res, 400, null, "Resume file is required.");
         }
 
         const resume = req.file.path; // Get the path of the uploaded file
 
         const jobApplication = await jobApplicationService.createJobApplication({
-            jobId: req.body.jobId,
+            jobId,
             applicantName,
             email,
             phone,
@@ -23,37 +31,36 @@ const createJobApplication = async (req, res) => {
             portfolio
         });
 
-        res.status(201).json(jobApplication);
+        return sendResponse(res, 201, jobApplication);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return sendResponse(res, 500, null, error.message);
     }
 };
 
-
 const getAllJobs = async (req, res) => {
     try {
-        const jobs = await jobApplicationService.getAllJobs(); // Call the service method
-        res.status(200).json(jobs);
+        const jobs = await jobApplicationService.getAllJobs();
+        return sendResponse(res, 200, jobs);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return sendResponse(res, 500, null, error.message);
     }
 };
 
 const getApplicationsByJobId = async (req, res) => {
     try {
         const applications = await jobApplicationService.getApplicationsByJobId(req.params.jobId);
-        res.status(200).json(applications);
+        return sendResponse(res, 200, applications);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return sendResponse(res, 500, null, error.message);
     }
 };
 
 const updateApplicationStatus = async (req, res) => {
     try {
         const updatedApplication = await jobApplicationService.updateApplicationStatus(req.params.id, req.body.status);
-        res.status(200).json(updatedApplication);
+        return sendResponse(res, 200, updatedApplication);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return sendResponse(res, 500, null, error.message);
     }
 };
 

@@ -8,6 +8,7 @@ const router = express.Router();
 router.get('/test', blogController.test);
 router.get('/', blogController.getBlogs); // Get all blogs
 router.get('/:id', blogController.getBlogById); // Get a single blog by ID
+router.get('/:slug', blogController.getBlogBySlug); // Get a single blog by slug
 
 // Admin-only routes
 router.post('/', upload.single('image'), blogController.createBlog); // Create a new blog post with image upload

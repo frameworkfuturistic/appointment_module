@@ -53,7 +53,24 @@ function HospitalHero() {
 
   return (
     <div className="min-h-fit bg-gradient-to-b from-blue-50 to-white ">
+
+<AnimatePresence>
+        <Card className="py-16 md:py-32 bg-rose-800 text-white relative m-8 rounded-2xl">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-8">
+              Experience World-Class Healthcare
+            </h2>
+            <p className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto">
+              Whether you're seeking routine care or specialized treatment, our
+              doors are open. Let us be your partner in health and wellness.
+            </p>
+          </div>
+        </Card>
+      </AnimatePresence>
+
+
       <div className="container mx-auto px-4 py-12">
+
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <motion.div
             initial={{ opacity: 0, x: -50 }}

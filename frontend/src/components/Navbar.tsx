@@ -141,7 +141,7 @@ export default function AdvancedHospitalNavbar() {
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full shadow-xl">
+    <header className="sticky top-0 z-50 w-full shadow-sm bg-rose-200">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-center py-4">
           <div className="hidden lg:flex items-center space-x-4">
@@ -183,7 +183,7 @@ export default function AdvancedHospitalNavbar() {
               </PopoverContent>
             </Popover>
 
-            <div className="animate-bounce">
+            <div className="animate">
               <Link href="/appointment">
                 <Button
                   variant="hms"

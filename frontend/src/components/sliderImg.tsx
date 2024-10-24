@@ -74,7 +74,7 @@ export function CarouselDemo() {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative min-h-[200px] md:min-h-[550px] overflow-hidden">
+    <div ref={containerRef} className="relative min-h-[200px] md:min-h-[650px] overflow-hidden">
       {/* Hero image background */}
       <motion.div className="absolute inset-0 z-0" style={{ y, opacity }}>
         <AnimatePresence mode="wait">
