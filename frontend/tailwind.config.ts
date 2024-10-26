@@ -1,22 +1,19 @@
-import type { Config } from "tailwindcss"
-
+import type { Config } from "tailwindcss";
 const colors = require("tailwindcss/colors");
-const {
-  default: flattenColorPalette,
-} = require("tailwindcss/lib/util/flattenColorPalette");
- 
-const config = {
+const { default: flattenColorPalette } = require("tailwindcss/lib/util/flattenColorPalette");
+
+const config: Config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
-      center: true,
+      center: true, // Changed to boolean (not a string)
       padding: "2rem",
       screens: {
         "2xl": "1400px",
@@ -24,7 +21,7 @@ const config = {
     },
     extend: {
       backgroundImage: {
-        'hero-bg': "url('/images/doctorimg1.png')", // Add your image path here
+        'hero-bg': "url('/images/doctorimg1.png')",
         'pattern1': "url('/pattern-2.png')",
         'pattern2': "url('/pattern-3.png')",
         'pattern3': "url('/pattern-4.png')",
@@ -36,10 +33,8 @@ const config = {
         'pattern8': "url('/pattern8.png')",
         'pattern9': "url('/pattern9.png')",
         'pattern10': "url('/pattern10.png')",
-        'pattern11': "url('/pattern11.png')"
-
+        'pattern11': "url('/pattern11.png')",
       },
-     
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -74,6 +69,16 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -98,20 +103,20 @@ const config = {
   },
   plugins: [
     require("tailwindcss-animate"),
-    addVariablesForColors
+    addVariablesForColors,
   ],
-} satisfies Config
+};
 
-// This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
+// Plugin to add each Tailwind color as a global CSS variable, e.g., var(--gray-200)
 function addVariablesForColors({ addBase, theme }: any) {
   let allColors = flattenColorPalette(theme("colors"));
   let newVars = Object.fromEntries(
     Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
   );
- 
+
   addBase({
     ":root": newVars,
   });
 }
 
-export default config
+export default config;

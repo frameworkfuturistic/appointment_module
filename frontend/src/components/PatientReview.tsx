@@ -1,130 +1,241 @@
-"use client";
+'use client'
 
-import React, { useState, useEffect } from "react";
-import { CalendarDays, Hospital, Stethoscope, User } from "lucide-react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import Title from "./Title";
-import Subtitle from "./Subtitle";
+import React, { useState, useEffect, useRef } from "react"
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
+import { CalendarDays, Hospital, Stethoscope, User, ChevronLeft, ChevronRight, Star, Quote, ExternalLink } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import Image from "next/image"
 
-export function PatientReview() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const autoPlayInterval = 3000;
-  const patientReview = [
-    {
-      id: 1,
-      review:
-        "Doctors took the time to thoroughly explain my treatment plan and answered all of my questions. I left the clinic feeling confident and well-cared for. I highly recommend this practice for anyone seeking top-notch medical care!",
-      image: "/PROFPIC.png",
-      name: "Asish Aggarwal",
-    },
-    {
-      id: 2,
-      review:
-        "The staff was always punctual, and the facilities were clean and comfortable. Within a few weeks, I noticed significant improvements in my mobility. The entire process was seamless, and I’m so grateful for the care I received!",
-      image: "/PROFPIC.png",
-      name: "Raghu Singhania",
-    },
-    {
-      id: 3,
-      review:
-        "My overall experience at the clinic was positive, though there were a few things that could be improved. While the staff was friendly and professional, I did experience a longer-than-expected wait time before my appointment.",
-      image: "/PROFPIC.png",
-      name: "Ganga Mohini",
-    },
-  ];
+const patientReviews = [
+  {
+    id: 1,
+    review: "The care I received was nothing short of exceptional. The doctors' expertise and the staff's compassion made a significant difference in my recovery journey.",
+    image: "/PROFPIC.png",
+    name: "Asish Aggarwal",
+    occupation: "Software Engineer",
+    rating: 5,
+    date: "2023-10-15"
+  },
+  {
+    id: 2,
+    review: "State-of-the-art facilities combined with a patient-first approach. I felt valued and well-cared for throughout my treatment.",
+    image: "/PROFPIC.png",
+    name: "Raghu Singhania",
+    occupation: "Business Analyst",
+    rating: 5,
+    date: "2023-10-20"
+  },
+  {
+    id: 3,
+    review: "The clinic's commitment to using cutting-edge technology while maintaining a warm, personal touch is truly commendable.",
+    image: "/PROFPIC.png",
+    name: "Ganga Mohini",
+    occupation: "Teacher",
+    rating: 4,
+    date: "2023-10-25"
+  },
+  {
+    id: 4,
+    review: "From diagnosis to aftercare, every step was handled with utmost professionalism. I couldn't have asked for better medical attention.",
+    image: "/PROFPIC.png",
+    name: "Vikram Mehta",
+    occupation: "Architect",
+    rating: 5,
+    date: "2023-10-30"
+  },
+  {
+    id: 5,
+    review: "The follow-up care I received was exceptional. Even after my treatment was complete, the staff checked in regularly to ensure my recovery was on track.",
+    image: "/PROFPIC.png",
+    name: "Priya Sharma",
+    occupation: "Marketing Executive",
+    rating: 5,
+    date: "2023-11-05"
+  },
+]
 
-  const itemLength = patientReview.length;
+const stats = [
+  { icon: CalendarDays, label: "Years of Experience", value: "09" },
+  { icon: Stethoscope, label: "Medical Specialists", value: "25" },
+  { icon: Hospital, label: "Advanced Treatments", value: "30" },
+  { icon: User, label: "Happy Patients", value: "150+" },
+]
+
+export function AdvancedPatientReview() {
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const containerRef = useRef(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  })
+
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
+  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
+
+  const nextTestimonial = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' })
+    }
+  }
+
+  const prevTestimonial = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -300, behavior: 'smooth' })
+    }
+  }
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveIndex((prevIndex) =>
-        prevIndex === itemLength - 1 ? 0 : prevIndex + 1
-      );
-    }, autoPlayInterval);
-
-    return () => clearInterval(interval);
-  }, [itemLength]);
-
-  const handlePrevious = () => {
-    setActiveIndex(activeIndex === 0 ? itemLength - 1 : activeIndex - 1);
-  };
-
-  const handleNext = () => {
-    setActiveIndex(activeIndex === itemLength - 1 ? 0 : activeIndex + 1);
-  };
+    const interval = setInterval(nextTestimonial, 8000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
-    <div className="min-h-fit bg-gradient-to-b from-blue-50 to-white py-12">
-      <div className="container mx-auto px-4">
-        <div className="bg-slate-50 rounded-md shadow-md p-6 grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="flex flex-col items-center">
-            <CalendarDays className="bg-white shadow-lg rounded-full h-16 w-16 p-2 text-red-500" />
-            <p className="text-slate-700 font-medium">Years of Experience</p>
-            <p className="text-2xl md:text-3xl">09</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <Stethoscope className="bg-white shadow-lg rounded-full h-16 w-16 p-2 text-red-500" />
-            <p className="text-slate-700 font-medium">Medical Specialists</p>
-            <p className="text-2xl md:text-3xl">25</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <Hospital className="bg-white shadow-lg rounded-full h-16 w-16 p-2 text-red-500" />
-            <p className="text-slate-700 font-medium">Advanced Treatments</p>
-            <p className="text-2xl md:text-3xl">30</p>
-          </div>
-          <div className="flex flex-col items-center">
-            <User className="bg-white shadow-lg rounded-full h-16 w-16 p-2 text-red-500" />
-            <p className="text-slate-700 font-medium">Happy Patients</p>
-            <p className="text-2xl md:text-3xl">150+</p>
+    <div ref={containerRef} className="relative min-h-screen overflow-hidden">
+      <motion.div 
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: "url('/medical-bg.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          y: backgroundY
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-white to-blue-50 z-10" />
+      
+      <div className="relative z-20 container mx-auto px-4 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+          style={{ y: textY }}
+        >
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">Transforming Lives</h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Experience world-class healthcare backed by years of expertise and thousands of satisfied patients.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="relative group"
+            >
+              <div className="absolute inset-0 rounded-2xl blur-lg transition-all duration-300 group-hover:from-white/30 group-hover:to-white/10" />
+              <Card className="relative shadow-xl rounded-xl border overflow-hidden transition-all duration-300 group-hover:bg-white/20">
+                <CardContent className="p-6 flex flex-col items-center">
+                  <motion.div 
+                    className="mb-4 relative"
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full blur-md" />
+                    <div className="relative bg-white rounded-full p-3">
+                      <stat.icon className="h-8 w-8 text-indigo-600" />
+                    </div>
+                  </motion.div>
+                  <p className="text-gray-900 font-medium text-center mb-2">{stat.label}</p>
+                  <p className="text-4xl font-bold text-primary">{stat.value}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mb-8">
+          <h2 className="text-4xl font-bold text-center mb-2 text-gray-900">Patient Stories</h2>
+          <p className="text-xl text-center mb-12 text-gray-600">Hear from those we've had the privilege to serve</p>
+          <div className="relative">
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white/80"
+              onClick={prevTestimonial}
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Button>
+            <div 
+              ref={scrollContainerRef}
+              className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {patientReviews.map((review, index) => (
+                <motion.div
+                  key={review.id}
+                  className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 snap-center px-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.05 }}
+                  onHoverStart={() => setHoveredIndex(index)}
+                  onHoverEnd={() => setHoveredIndex(null)}
+                >
+                  <Card className={`h-full border-none overflow-hidden transition-all duration-300 ${
+                    hoveredIndex === index ? 'shadow-2xl shadow-indigo-500/20' : ''
+                  }`}>
+                    <CardContent className="p-6 h-full flex flex-col">
+                      <Quote className="text-indigo-300 mb-4 h-8 w-8" />
+                      <p className="text-gray-900 mb-4 flex-grow">{review.review}</p>
+                      <div className="flex items-center mt-auto">
+                        <Image
+                          src={review.image}
+                          alt={review.name}
+                          width={50}
+                          height={50}
+                          className="rounded-full mr-4"
+                        />
+                        <div>
+                          <h3 className="font-semibold text-black">{review.name}</h3>
+                          <p className="text-gray-600 text-sm">{review.occupation}</p>
+                        </div>
+                      </div>
+                      <div className="flex mt-4">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-5 w-5 ${
+                              i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white/80"
+              onClick={nextTestimonial}
+            >
+              <ChevronRight className="h-6 w-6" />
+            </Button>
           </div>
         </div>
 
-        {/* Patient's Review Section */}
-        <div className="bg-dottedmap bg-cover bg-slate-200 my-10 p-6 rounded-md">
-          <div className="flex flex-col items-center text-center gap-2">
-            <Title title={"HAPPY PATIENTS"} />
-            <Subtitle subtitle={"What our Patients say"} />
-            <img
-              src="/activity.png"
-              alt="icon"
-              className="h-6 w-8 md:h-6 md:w-10"
-            />
-            <Carousel className="sm:h-64 w-full md:w-[600px]">
-              <CarouselContent
-                style={{
-                  transform: `translateX(-${activeIndex * 100}%)`,
-                  transition: "transform 0.5s ease-in-out",
-                }}
-              >
-                {patientReview.map((review) => (
-                  <CarouselItem key={review.id} className="flex flex-col items-center p-4">
-                    <p className="text-center text-lg font-light mb-4">{review.review}</p>
-                    <img
-                      src={review.image}
-                      alt="Patient"
-                      className="h-20 w-20 rounded-full border-4 border-white shadow-md"
-                    />
-                    <h1 className="text-black font-medium mt-2">{review.name}</h1>
-                    <p className="text-xs text-gray-500">Patient</p>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <div className="flex justify-between mt-4">
-                <CarouselPrevious onClick={handlePrevious} className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition" />
-                <CarouselNext onClick={handleNext} className="bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition" />
-              </div>
-            </Carousel>
-          </div>
+        <div className="text-center mt-12">
+          <Button
+            variant="outline"
+            size="lg"
+            className="bg-indigo-600 text-white hover:bg-indigo-700 transition-colors duration-300"
+            onClick={() => window.open('https://www.google.com/maps/place/Your+Clinic+Name', '_blank')}
+          >
+            View More on Google Reviews
+            <ExternalLink className="ml-2 h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default PatientReview;
+export default AdvancedPatientReview

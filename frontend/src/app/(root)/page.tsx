@@ -44,10 +44,10 @@ const Dashboard = () => {
 
   return (
     <section className="bg-gray-50 overflow-hidden">
-      <main className="w-full p-1">
+      <main className="w-full p-0.5">
         {/* Hero Section with parallax effect */}
         <motion.div
-          className="sticky grid flex-1 items-start mt-4 rounded-md shadow-lg overflow-hidden"
+          className="sticky grid flex-1 items-start  rounded-md shadow-lg overflow-hidden"
           initial="hidden"
           animate="visible"
           variants={parallaxHeroVariants}
@@ -68,20 +68,11 @@ const Dashboard = () => {
           <Ourmedical />
         </motion.div>
 
-        {/* Notice Slider */}
-        <motion.div
-          className="mb-10 w-full"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={fadeInLeft}
-        >
-          <NoticeSlider />
-        </motion.div>
+       
 
         {/* Services Section with staggered animations */}
         <motion.div
-          className="mb-10 w-full"
+          className=" w-full"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
@@ -96,7 +87,7 @@ const Dashboard = () => {
 
         {/* Doctors Section with fade from the right */}
         <motion.div
-          className="mb-10 w-full"
+          className=" w-full"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
@@ -105,22 +96,33 @@ const Dashboard = () => {
           <OurHeads />
         </motion.div>
 
+         {/* Notice Slider */}
+         <motion.div
+          className=" w-full"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={fadeInLeft}
+        >
+          <NoticeSlider />
+        </motion.div>
+
         {/* Patient's Review Section with interactive hover effects */}
         <motion.div
-          className="mb-10 w-full"
+          className="w-full"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
           variants={fadeInUp}
-          whileHover={{ scale: 1.05, }}
-          transition={{ type: "spring", stiffness: 400, damping: 15 }}
+          // whileHover={{ scale: 1.05, }}
+          // transition={{ type: "spring", stiffness: 400, damping: 15 }}
         >
           <PatientsReview />
         </motion.div>
 
         {/* Blog Cards Section with staggered animations */}
         <motion.div
-          className="mb-10 w-full"
+          className=" w-full"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}

@@ -1,19 +1,22 @@
-import { redirect } from "next/dist/server/api-utils"
-import Link from "next/link"
+
 
 const departmentData = [
     {
         id: 1,
         name: "ORTHOPEDICS",
         description: 'The correction of deformities of bones or muscles.',
+        icon: "/speciality/icons/orthopaedic.svg.svg",
+        category: "Surgery",
         indepartment: {
             redirect: "/inDepartment/orthopaedics"
         }
-    },  
+    },
     {
         id: 2,
         name: "OPHTHALMOLOGY (EYE)",
         description: 'Treatment of disorders and diseases of the eye.',
+        icon: "/speciality/icons/ophthalmology.svg.svg",
+        category: "Specialty",
         indepartment: {
             redirect: "/inDepartment/ophthalmology"
         }
@@ -21,23 +24,29 @@ const departmentData = [
     {
         id: 3,
         name: "GENERAL MEDICINE",
-        description: 'All infections related diseases',
+        description: 'All infections related diseases.',
+        icon: "/speciality/icons/ent.svg.svg",
+        category: "Internal Medicine",
         indepartment: {
             redirect: "/inDepartment/generalMedicine"
         }
     },
     {
         id: 4,
-        name: "GENERAL & LAPROSCOPIC SURGERY",
+        name: "GENERAL & LAPAROSCOPIC SURGERY",
         description: 'Surgical management of diseases.',
+        icon: "/speciality/icons/neonatology.svg.svg",
+        category: "Surgery",
         indepartment: {
             redirect: "/inDepartment/generalSurgery"
         }
     },
     {
         id: 5,
-        name: "NEUROSURGERY ",
-        description: 'Treatment of diseases related with nurves.',
+        name: "NEUROSURGERY",
+        description: 'Treatment of diseases related to nerves.',
+        icon: "/speciality/icons/neurology.svg.svg",
+        category: "Surgery",
         indepartment: {
             redirect: "/inDepartment/neuroSurgery"
         }
@@ -45,7 +54,9 @@ const departmentData = [
     {
         id: 6,
         name: "NEPHROLOGY & DIALYSIS",
-        description: 'Treatment of kidney related diseases.',
+        description: 'Treatment of kidney-related diseases.',
+        icon: "/speciality/icons/nephrology.svg.svg",
+        category: "Internal Medicine",
         indepartment: {
             redirect: "/inDepartment/nephrology"
         }
@@ -53,7 +64,9 @@ const departmentData = [
     {
         id: 7,
         name: "CARDIOLOGY",
-        description: 'Treatment of Heart related diseases.',
+        description: 'Treatment of heart-related diseases.',
+        icon: "/speciality/icons/cardiology_icon.svg.svg",
+        category: "Internal Medicine",
         indepartment: {
             redirect: "/inDepartment/cardiology"
         }
@@ -61,7 +74,9 @@ const departmentData = [
     {
         id: 8,
         name: "PHYSIOTHERAPY",
-        description: 'Rehabilitation and Therapy (muscles/joints).',
+        description: 'Rehabilitation and therapy (muscles/joints).',
+        icon: "/speciality/icons/psychiatry.svg.svg",
+        category: "Rehabilitation",
         indepartment: {
             redirect: "/inDepartment/physiotherapy"
         }
@@ -69,7 +84,9 @@ const departmentData = [
     {
         id: 9,
         name: "RADIOLOGY",
-        description: 'Diagnosis of with X-ray,USG,ECHO and CT-Scan.',
+        description: 'Diagnosis with X-ray, USG, ECHO, and CT-Scan.',
+        icon: "/speciality/icons/radiology.svg fill.svg",
+        category: "Diagnostic",
         indepartment: {
             redirect: "/inDepartment/radiology"
         }
@@ -77,7 +94,9 @@ const departmentData = [
     {
         id: 10,
         name: "PATHOLOGY",
-        description: 'Laboratory examination of samples(blood & tissue.)',
+        description: 'Laboratory examination of samples (blood & tissue).',
+        icon: "/speciality/icons/radiology.svg fill.svg",
+        category: "Diagnostic",
         indepartment: {
             redirect: "/inDepartment/pathology"
         }
@@ -86,6 +105,8 @@ const departmentData = [
         id: 11,
         name: "EMERGENCY SERVICES",
         description: 'For all trauma and medical emergency care.',
+        icon: "/speciality/icons/ent.svg.svg",
+        category: "Emergency",
         indepartment: {
             redirect: "/inDepartment/emergencyservices"
         }
@@ -94,6 +115,8 @@ const departmentData = [
         id: 12,
         name: "CRITICAL CARE UNIT",
         description: 'For intensive treatment of serious illnesses.',
+        icon: "/speciality/icons/neonatology.svg.svg",
+        category: "Critical Care",
         indepartment: {
             redirect: "/inDepartment/criticalCare"
         }
@@ -101,7 +124,9 @@ const departmentData = [
     {
         id: 13,
         name: "UROLOGY",
-        description: 'Empowering Urinary Wellness: Breakthroughs Await.',
+        description: 'Empowering urinary wellness: breakthroughs await.',
+        icon: "/speciality/icons/urology.svg.svg",
+        category: "Internal Medicine",
         indepartment: {
             redirect: "/inDepartment/urology"
         }
@@ -109,11 +134,14 @@ const departmentData = [
     {
         id: 14,
         name: "OBS & GYNAE",
-        description: 'Empowering Womens Health: Leaders in Obstetrics & Gynecology.',
+        description: 'Empowering women\'s health: leaders in obstetrics & gynecology.',
+        icon: "/speciality/icons/gynecology.svg.svg",
+        category: "Women’s Health",
         indepartment: {
             redirect: "/inDepartment/obsGynae"
         }
     },
-]
+];
+
 
 export default departmentData

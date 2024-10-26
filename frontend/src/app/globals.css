@@ -2,18 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-
 @layer base {
   :root {
+    /* Light theme colors */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 209, 100%, 22%, 1; /*  blue color */
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -25,23 +23,34 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 221 83% 53%; /* Updated to match primary color */
     --radius: 0.5rem;
+    
+    /* Chart colors */
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
+    /* Dark theme colors */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
+    --primary: 217 91% 60%; /* Updated to a brighter blue for dark mode */
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -53,32 +62,66 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 217 91% 60%; /* Updated to match primary color */
+    
+    /* Dark mode chart colors */
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border ;
+    @apply border-border;
   }
   body {
-    @apply bg-background text-foreground ;
+    @apply bg-background text-foreground;
   }
 }
 
+/* Custom styles */
 html {
   scroll-behavior: smooth;
 }
 
 .section {
-  /* border-width: 5px;
-  border-color: aqua; */
-  margin-bottom: 2rem ;
+  margin-bottom: 2rem;
   padding: 2rem;
 }
 
+.arrow-container {
+  position: relative;
+  width: 100%; /* Full width */
+  /* Main background color */
+  padding: 1rem; /* Adjust padding as needed */
+  overflow: hidden; /* To contain the arrow background */
+}
+
+.arrow-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%; /* Full width */
+  background-color: #319795; /* Arrow background color */
+  /* Adjusted clip-path for a left-positioned right-facing cut */
+  clip-path: polygon(100% 0%, 100% 49%, 100% 100%, 0 100%, 4% 50%, 0 0);/* Cut shape opening to the left */
+  z-index: -1; /* Keep it behind the content */
+}
+
+.arrow-content {
+  position: relative;
+  z-index: 1; /* Ensure content is above the background */
+  color: #ffffff; /* Text color */
+}

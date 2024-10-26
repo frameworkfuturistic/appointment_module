@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, Computer, HousePlus, Stethoscope } from 'lucide-react'
 
 import { Card, CardContent } from "@/components/ui/card"
+import Image from 'next/image'
 
 const facilities = [
   {
@@ -34,27 +35,22 @@ const facilities = [
   },
 ];
 
-const testimonials = [
-  { name: "World-class infrastructure", text: "The care I received was exceptional. Thank you!" },
-  { name: "Latest high-end technology", text: "Professional staff and state-of-the-art facilities." },
-  { name: "Caring systems and processes", text: "Quick, efficient, and compassionate service." },
-  { name: "Trust-based compassionate care", text: "Quick, efficient, and compassionate service." },
+const services = [
+  { name: "Our NABH accredited hospital offer best in class services to our patients", icon: "/hospital/nabh.png", },
+  { name: "Latest high-end technology", icon: Stethoscope,},
+  { name: "Caring systems and processes", icon: Stethoscope, },
+  { name: "Trust-based compassionate care", icon: Stethoscope, },
 ]
 
 function HospitalHero() {
-  const [currentTestimonial, setCurrentTestimonial] = useState(0)
+ 
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)
-    }, 5000)
-    return () => clearInterval(timer)
-  }, [])
+ 
 
   return (
     <div className="min-h-fit bg-gradient-to-b from-blue-50 to-white ">
 
-<AnimatePresence>
+{/* <AnimatePresence>
         <Card className="py-16 md:py-32 bg-rose-800 text-white relative m-8 rounded-2xl">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-4xl md:text-5xl font-bold mb-8">
@@ -66,7 +62,7 @@ function HospitalHero() {
             </p>
           </div>
         </Card>
-      </AnimatePresence>
+      </AnimatePresence> */}
 
 
       <div className="container mx-auto px-4 py-12">
@@ -77,7 +73,7 @@ function HospitalHero() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-2xl md:text-4xl font-bold text-rose-800 mb-4">
+            <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-4">
               Your Health, Our Priority
             </h1>
             <p className="text-md text-gray-600 mb-6">
@@ -94,33 +90,40 @@ function HospitalHero() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <img
-              src="/sliderpic/sjhrchos1.png?height=400&width=600"
-              alt="Hospital Staff"
-              className="rounded-lg shadow-lg object-cover w-full h-full"
-            />
-            <div className="absolute inset-0 bg-blue-800 bg-opacity-20 rounded-lg" />
-            {/* <Card className="absolute bottom-4 left-4 right-4 bg-white bg-opacity-90 backdrop-blur-xl">
-              <CardContent className="p-4">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentTestimonial}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5 }}
-                  >   <p className="text-sm font-semibold text-blue-800 mt-2">{testimonials[currentTestimonial].name}</p>
-                    <p className="text-sm text-gray-600 italic">{testimonials[currentTestimonial].text}</p>
-
-                  </motion.div>
-                </AnimatePresence>
-              </CardContent>
-            </Card> */}
+             <div className="space-y-4">
+                  {services.map((service, index) => (
+                    <motion.div
+                      key={service.name}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                    >
+                      <Card 
+                        className="hover:shadow-lg transition-all duration-300 cursor-pointer"
+                      
+                      >
+                        <CardContent className="p-4 flex items-center">
+                          <Image
+                            src={service.icon}
+                            alt={service.name}
+                            width={48}
+                            height={48}
+                            className="mr-4"
+                          />
+                          <div>
+                            <h3 className="text-sm font-medium text-gray-900 w-fit">{service.name}</h3>
+                            <p className="text-sm text-gray-600">{service.description}</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
           </motion.div>
         </div>
 
         <motion.div
-          className="mt-16  "
+          className="mt-16 hidden lg:flex"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -135,8 +138,8 @@ function HospitalHero() {
               >
                 <Card className="h-full hover:shadow-lg  transition-shadow   ease-in-out delay-150 hover:shadow-rose-200  hover:-translate-y-1 hover:scale-110 hover:bg-white duration-300 ...  shadow-none">
                   <CardContent className="p-6 flex flex-col items-center text-center">
-                    <service.icon className="w-12 h-12 text-rose-600 mb-4" />
-                    <h3 className="text-xl font-semibold text-rose-800 mb-2">{service.title}</h3>
+                    <service.icon className="w-12 h-12 text-teal-600 mb-4" />
+                    <h3 className="text-xl font-semibold text-primary mb-2">{service.title}</h3>
                     <p className="text-gray-600">{service.description}</p>
                   </CardContent>
                 </Card>

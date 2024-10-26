@@ -31,4 +31,26 @@ class DoctorController extends Controller
         return response()->json($doctorData, 200);
     }
 
+
+    public function getAllConsultants()
+{
+    // Eager load the department and consultant shift relationships
+    $consultants = Consultant::with(['department', 'consultantShift'])->get();
+
+    // Transform the data to include department name
+    $consultantData = $consultants->map(function ($consultant) {
+        return [
+            'ConsultantID' => $consultant->ConsultantID,
+            'ConsultantName' => $consultant->ConsultantName,
+            'ProfessionalDegree' => $consultant->ProfessionalDegree,
+            'Fee' => optional($consultant->consultantShift)->Fee, // Safely access Fee
+            'Department' => optional($consultant->department)->Department // Safely access Department Name
+        ];
+    });
+
+    return response()->json($consultantData, 200);
+}
+
+    
+
 }

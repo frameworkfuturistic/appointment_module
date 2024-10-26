@@ -28,6 +28,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\API\V1'], f
     // Department and Doctor Management
     Route::get('/departments', [DepartmentController::class, 'index']);
     Route::get('/doctors/{departmentId}', [DoctorController::class, 'index']);
+    Route::get('/consultants', [DoctorController::class, 'getAllConsultants']);
 
     // Slot Management
     Route::get('slots/{doctorId}/{date}', [SlotController::class, 'availableSlots']); 

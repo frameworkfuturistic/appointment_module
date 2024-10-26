@@ -1,8 +1,18 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import React from "react";
-import { Card } from "./ui/card";
+import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronRight, Search, X, ChevronLeft, ChevronDown, Phone, Mail, Globe } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import {
   Dialog,
   DialogContent,
@@ -10,133 +20,225 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
-import Title from "./Title";
-import Subtitle from "./Subtitle";
-import { motion } from "framer-motion";
+} from "@/components/ui/dialog"
 
-const doctorData = [
+interface Doctor {
+  id: number
+  name: string
+  title: string
+  image: string
+  specialization: string
+  phone: string
+  email: string
+  website: string
+  featured: boolean
+}
+
+const doctorData: Doctor[] = [
   {
     id: 1,
-    name: "Dr. Vandana Prasad",
-    title: "Director",
-    image: "/departmentHeads/vandana1.png",
-    details: "M.B.B.S (B.H.U), M.S. Ophthalmology. (B.H.U)",
-    former:
-      "Lecturer, Dept. of Ophthalmology, (MGIMS), Sevagram, Wardha; H.O.D Dept. Eye, HEC Plant Hospital, Dhurwa, Ranchi",
+    name: "Dr. Ajay Ghosh",
+    title: "DCH, M.D.(Paed)",
+    image: "/departmentHeads/sudhir.png",
+    specialization: "Pediatrics",
+    phone: "+1 (555) 123-4567",
+    email: "ajay.ghosh@example.com",
+    website: "www.drajayghosh.com",
+    featured: true
   },
   {
     id: 2,
-    name: "Dr. Sudhir Kumar",
-    title: "Chairman Cum Managing Director",
-    image: "/departmentHeads/sudhir.png",
-    details:
-      "M.B.B.S (B.H.U), M.S. Ortho. (B.H.U) Fellow in Hand (Bombay Ortho. Society) Fellow in Spine (World Ortho. Concern) Consultant in Orthopedics & Traumatology Hand, Spine and Micro-reconstructive surgeon",
-    former:
-      "Professor in Orthopedics RIMS, Ranchi Specialist & Incharge in Orthopedics HEC Hospital, Ranchi Reader in Orthopedics Mahatma Gandhi Institute of Medical Science, Wardha Lecturer (Jr.) Hand Reconstructive Surgery CMC Vellore, Tamil Nadu",
+    name: "Dr. Shailesh Chandra",
+    title: "Senior Consultant Paediatrics",
+    image: "/departmentHeads/rakesh.png",
+    specialization: "Pediatrics",
+    phone: "+1 (555) 234-5678",
+    email: "shailesh.chandra@example.com",
+    website: "www.drshaileshchandra.com",
+    featured: true
   },
   {
     id: 3,
-    name: "Dr. Rakesh Arya",
-    title: "Chief Medical Superintendent",
-    image: "/departmentHeads/rakesh.png",
-    details: "M.B.B.S (G.R.M.C, Gwalior) M.D. (G.R.M.C, Gwalior)",
-    former:
-      "Teacher in G.R Medical College, (Gwalior) Specialist in Coal India Ltd. Chief of Medical services, CCL, Ranchi Executive Director medical services Coal India Ltd.",
-  },
-  {
-    id: 4,
-    name: "Dr. S.P. Mishra",
-    title: "Medical Superintendent",
+    name: "Dr. Prem Ranjan Kumar",
+    title: "M.D.(Paed)",
     image: "/departmentHeads/spmishra.png",
-    details: "H.O.D, CCL",
-    former:
-      "H.O.D (Dental), CCL Central Hospital, Gandhi Nagar, Ranchi Medical Superintendent (CCL Central Hospital, Ranchi) H.O.D, ISO CELL, CCL Hospital, Ranchi",
+    specialization: "Pediatrics",
+    phone: "+1 (555) 345-6789",
+    email: "prem.kumar@example.com",
+    website: "www.drpremkumar.com",
+    featured: false
   },
-];
+ 
+]
 
-const OurHeads = () => {
+const AdvancedMedicalExperts: React.FC = () => {
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [specialization, setSpecialization] = useState('')
+  const [filteredDoctors, setFilteredDoctors] = useState(doctorData)
+  const [carouselIndex, setCarouselIndex] = useState(0)
+
+  useEffect(() => {
+    const filtered = doctorData.filter(doctor => 
+      doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (specialization === '' || doctor.specialization === specialization)
+    )
+    setFilteredDoctors(filtered)
+  }, [searchTerm, specialization])
+
+  const featuredDoctors = doctorData.filter(doctor => doctor.featured)
+
+  const nextCarousel = () => {
+    setCarouselIndex((prevIndex) => (prevIndex + 1) % featuredDoctors.length)
+  }
+
+  const prevCarousel = () => {
+    setCarouselIndex((prevIndex) => (prevIndex - 1 + featuredDoctors.length) % featuredDoctors.length)
+  }
+
   return (
-    <section className="section py-6">
-      <div className="min-h-fit bg-gradient-to-b from-blue-50 to-white py-12">
-        <div className=" container mx-auto bg-pattern4 grid place-content-center w-full px-4">
-          <div className="flex flex-col items-center text-center mb-8">
-            <Title title={"OUR HEADS"} />
-            <Subtitle subtitle={"Heads Of Medical Department"} />
-            <img
-              src="/activity.png"
-              alt="icon"
-              className="h-12 w-12 md:h-16 md:w-16"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {doctorData.map((doctor) => (
-              <motion.div
-                key={doctor.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Card className="flex flex-col shadow-xl justify-between border-2 transition-transform transform duration-700 ease-in-out hover:scale-105">
-                  <div className="relative w-full h-[300px] rounded-t-lg overflow-hidden">
-                    <img
-                      src={doctor.image}
-                      alt={doctor.name}
-                      className="w-full h-full object-fill bg-cover"
-                    />
-                    <div className="absolute inset-0 bg-black opacity-0 rounded-t-lg"></div>
-                  </div>
-                  <div className="p-4 flex flex-col flex-grow">
-                    <h1 className="text-lg font-semibold font-serif text-gray-800">
-                      {doctor.name}
-                    </h1>
-                    <p className="text-sm text-gray-600 mb-4">{doctor.title}</p>
-                    <Dialog>
-                      <DialogTrigger className="bg-rose-300 shadow-xl text-slate-50 py-2 px-4 hover:bg-rose-200 rounded-md font-medium">
-                        Details
-                      </DialogTrigger>
-                      <DialogContent className="w-full max-w-xs sm:max-w-md lg:max-w-lg rounded-lg mx-4 md:mx-auto">
-                        <DialogHeader>
-                          <DialogTitle className="text-center text-lg sm:text-xl font-semibold text-gray-800 border-b-2 border-rose-500 py-2">
-                            {doctor.name}
-                          </DialogTitle>
-                          <DialogDescription className="flex flex-col items-center gap-4 p-4">
-                            <img
-                              src={doctor.image}
-                              alt={doctor.name}
-                              className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover"
-                            />
-                            <div className="text-base sm:text-lg text-gray-700 leading-relaxed text-center">
-                              <p>{doctor.details}</p>
-                              <p className="mt-4">
-                                <span className="font-semibold text-sky-700">
-                                  Formerly:
-                                </span>{" "}
-                                {doctor.former}
-                              </p>
-                            </div>
-                          </DialogDescription>
-                        </DialogHeader>
-                      </DialogContent>
-                    </Dialog>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          <p className="text-center my-10 text-xs font-extralight">
-            Don’t hesitate, contact us for better help and services{" "}
-            <Link href="" className="text-sky-600">
-              Explore all Dr. Team
-            </Link>
+    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 p-8">
+      <div className="max-w-7xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-12"
+        >
+          <h1 className="text-5xl font-bold text-gray-800 mb-4">Our Medical Experts</h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Rani Hospital is home to 50 eminent doctors in India, most of whom are pioneers in their
+            respective fields. Our experts are renowned for developing innovative and revolutionary
+            clinical procedures.
           </p>
+        </motion.div>
+
+        {/* <div className="mb-12 relative">
+          <h2 className="text-3xl font-semibold text-gray-800 mb-6">Featured Doctors</h2>
+          <div className="relative overflow-hidden">
+            <motion.div
+              className="flex transition-all duration-300 ease-in-out"
+              style={{ transform: `translateX(-${carouselIndex * 100}%)` }}
+            >
+              {featuredDoctors.map((doctor) => (
+                <div key={doctor.id} className="w-full flex-shrink-0">
+                  <div className="bg-white rounded-xl shadow-2xl overflow-hidden flex">
+                    <div className="w-1/3 relative">
+                      <Image
+                        src={doctor.image}
+                        alt={doctor.name}
+                        layout="fill"
+                        objectFit="cover"
+                      />
+                    </div>
+                    <div className="w-2/3 p-8">
+                      <h3 className="text-3xl font-bold text-gray-800 mb-2">{doctor.name}</h3>
+                      <p className="text-xl text-blue-600 mb-4">{doctor.title}</p>
+                      <p className="text-gray-600 mb-6">{doctor.specialization}</p>
+                      <Button
+                        onClick={() => setSelectedDoctor(doctor)}
+                        className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-6 rounded-full hover:from-blue-600 hover:to-indigo-700 transition duration-300"
+                      >
+                        View Profile
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+            <button
+              onClick={prevCarousel}
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-lg"
+              aria-label="Previous doctor"
+            >
+              <ChevronLeft className="text-gray-800" size={24} />
+            </button>
+            <button
+              onClick={nextCarousel}
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-lg"
+              aria-label="Next doctor"
+            >
+              <ChevronRight className="text-gray-800" size={24} />
+            </button>
+          </div>
+        </div> */}
+
+       
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredDoctors.map((doctor, index) => (
+            <motion.div
+              key={doctor.id}
+              layoutId={`doctor-${doctor.id}`}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white rounded-xl shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
+            >
+              <div className="relative h-64">
+                <Image
+                  src={doctor.image}
+                  alt={doctor.name}
+                  layout="fill"
+                  objectFit="cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+              </div>
+              <div className="p-6 relative">
+                <div className="absolute top-0 right-0 bg-blue-500 text-white px-4 py-2 rounded-bl-xl text-sm font-semibold">
+                  {doctor.specialization}
+                </div>
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">{doctor.name}</h2>
+                <p className="text-blue-600 font-medium mb-4">{doctor.title}</p>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 rounded-full hover:from-blue-600 hover:to-indigo-700 transition duration-300"
+                    >
+                      View Profile
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>{doctor.name}</DialogTitle>
+                      <DialogDescription>{doctor.title}</DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="relative w-32 h-32 mx-auto">
+                        <Image
+                          src={doctor.image}
+                          alt={doctor.name}
+                          layout="fill"
+                          objectFit="cover"
+                          className="rounded-full"
+                        />
+                      </div>
+                      <p className="text-center text-gray-600">{doctor.specialization}</p>
+                      <div className="space-y-2">
+                        <div className="flex items-center">
+                          <Phone className="text-blue-500 mr-3" size={20} />
+                          <p>{doctor.phone}</p>
+                        </div>
+                        <div className="flex items-center">
+                          <Mail className="text-blue-500 mr-3" size={20} />
+                          <p>{doctor.email}</p>
+                        </div>
+                        <div className="flex items-center">
+                          <Globe className="text-blue-500 mr-3" size={20} />
+                          <p>{doctor.website}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <Button className="w-full">Book Appointment</Button>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
-    </section>
-  );
-};
+    </div>
+  )
+}
 
-export default OurHeads;
+export default AdvancedMedicalExperts
