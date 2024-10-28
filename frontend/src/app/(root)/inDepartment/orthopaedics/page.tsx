@@ -12,6 +12,7 @@ import { redirect } from "next/dist/server/api-utils";
 import indepartmentData from "@/json/indepartmentData";
 import Title from "@/components/Title";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 const departmentDoctors = [
   {
     id: 1,
@@ -29,11 +30,19 @@ const page = () => {
   return (
     <div className="grid ">
       <div className="relative justify-self-center">
-        <img src="/hospital/speciality.png" alt="img" className="h-80" />
+        <Image
+          src="/hospital/speciality.png"
+          alt="img"
+          width={200}   // Adjust based on the desired aspect ratio
+          height={320}  // Maintain the height for responsiveness
+          layout="responsive" // Makes the image responsive
+          className="h-80" // This will not apply directly since layout="responsive" takes precedence
+        />
+
       </div>
       <div className="grid grid-cols-2 p-2 my-6 ">
         <div className=" bg-pattern5-bg min-w-[800px] space-y-2  mx-8 p-4  text-wrap">
-          <Title title={" Orthopaedics"}/>
+          <Title title={" Orthopaedics"} />
           <h2 className="text-2xl font-medium">Our Orthopaedics Surgeons</h2>
           <p>
             Our orthopaedics surgeons will take a history of your illness or
@@ -90,10 +99,13 @@ const page = () => {
               className="  h-96  max-w-60 grid grid-flow-row justify-center    border-2  "
             >
               <div className="min-h-24 min-w-full">
-                <img
-                  src={doctor.doctorImg}
+                <Image
+                  src={doctor.doctorImg} // Assuming doctor.doctorImg is a valid path
                   alt="img"
-                  className="w-full h-56 object-cover  "
+                  width={500}    // Set width based on your design
+                  height={224}   // Maintain the height for correct aspect ratio
+                  layout="responsive" // Makes the image responsive
+                  className="object-cover" // Use object-cover for maintaining the aspect ratio
                 />
               </div>
               <div className="grid grid-flow-row p-2 gap-y-2 ">
@@ -104,21 +116,24 @@ const page = () => {
                   {doctor.designation}
                 </p>
                 <Dialog>
-                 
+
                   <DialogTrigger className="bg-rose-300 shadow-xl text-slate-800  px-4 hover:bg-rose-200 rounded-md font-medium">
                     Details
                   </DialogTrigger>
-                  
+
                   <DialogContent className="min-h-[500px] min-w-[1000px] rounded-lg ">
                     <DialogHeader>
                       <DialogTitle className="place-self-center m-4 p-2 text-xl  border-b-2 ">
                         {doctor.name}
                       </DialogTitle>
                       <DialogDescription className="grid justify-items-center gap-y-4">
-                        <img
-                          src={doctor.doctorImg}
+                        <Image
+                          src={doctor.doctorImg} // Assuming doctor.doctorImg is a valid path
                           alt="img"
-                          className="rounded-full h-56 min-w-56"
+                          width={500}    // Set width based on your design
+                          height={224}   // Maintain the height for correct aspect ratio
+                          layout="responsive" // Makes the image responsive
+                          className="object-cover" // Use object-cover for maintaining the aspect ratio
                         />
                         <div className=" m-8 text-lg space-y-4 text-wrap">
                           <p>

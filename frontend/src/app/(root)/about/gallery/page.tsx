@@ -10,6 +10,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import Image from "next/image";
 
 
 // Define the Image type
@@ -109,10 +110,13 @@ const ImageGrid: React.FC = () => {
               className="relative overflow-hidden rounded-2xl shadow-lg group cursor-pointer"
               onClick={() => openModal(image)}
             >
-              <img
+              <Image
                 src={image.src}
                 alt={image.alt}
-                className="w-full h-48 object-cover"
+                width={500}   // set an appropriate width
+                height={192}  // set an appropriate height to match "h-48"
+                className="w-full h-48 object-cover" // This can still work for additional styling
+                layout="responsive"
               />
               <div className="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -175,11 +179,13 @@ const ImageGrid: React.FC = () => {
             >
               &times;
             </button>
-            <img
-              src={selectedImage.src}
-              alt={selectedImage.alt}
-              className="w-full h-auto object-cover rounded-lg"
-            />
+            <Image
+  src={selectedImage.src} // Assuming selectedImage.src is a valid path
+  alt={selectedImage.alt}  // Set alt text from selectedImage.alt
+  width={500}              // Set an appropriate width based on your layout
+  height={300}             // Set height to maintain the aspect ratio
+  className="w-full h-auto object-cover rounded-lg" // Use Tailwind CSS classes
+/>
             <div className="mt-4">
               <h2 className="text-2xl font-bold">{selectedImage.title}</h2>
               {selectedImage.description && (

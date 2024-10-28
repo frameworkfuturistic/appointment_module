@@ -1,6 +1,7 @@
 "use client";
 import { Card } from "@/components/ui/card";
 import { Globe, Mail, Smartphone } from "lucide-react";
+import Image from "next/image";
 import React from "react";
 
 import { useState } from "react";
@@ -34,10 +35,13 @@ const ContactPage = () => {
     <section className="section ">
       {/* Hero Section with Image and Overlay */}
       <div className="relative">
-        <img
+        <Image
           src="/contact-img/map.png"
           alt="Contact Cover"
+          width={800}   // Set an appropriate width
+          height={384}  // Set an appropriate height to match "h-96" (384px)
           className="w-full h-96 object-fill"
+          layout="responsive"  // Makes the image responsive to screen size
         />
         <div className="absolute inset-0 flex items-center justify-center  px-4 sm:px-20 bg-black bg-opacity-40 ">
           <h1 className="text-4xl sm:text-4xl font-semibold text-white">
@@ -70,9 +74,12 @@ const ContactPage = () => {
           <h2 className="text-xl font-medium text-black">
             Write us a Message!
           </h2>
-          <img
+
+          <Image
             src="/activity.png"
             alt="Icon"
+            width={40}  // Matches h-10 (40px) height
+            height={40} // Matches w-10 (40px) width
             className="mx-auto mt-4 h-10 w-10"
           />
         </div>

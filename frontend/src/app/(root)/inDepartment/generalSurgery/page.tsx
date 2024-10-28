@@ -11,16 +11,23 @@ import {
 import indepartmentData from "@/json/indepartmentData";
 import { Card } from "@/components/ui/card";
 import Title from "@/components/Title";
+import Image from "next/image";
 
 const page = () => {
   return (
     <div className="grid ">
       <div className="relative justify-self-center">
-        <img src="/hospital/speciality.png" alt="img" className="h-80" />
+        <Image
+          src="/hospital/speciality.png"
+          alt="img"
+          width={200}    // Adjust width based on the desired aspect ratio
+          height={320}   // h-80 in Tailwind corresponds to 320px
+          className="h-80" // This class will set the height
+        />
       </div>
       <div className="grid grid-cols-2 p-2 my-6 ">
         <div className=" bg-pattern5-bg min-w-[800px] space-y-2  mx-8 p-4  text-wrap">
-          <Title title={"General & Laparoscopic Surgery"}/>
+          <Title title={"General & Laparoscopic Surgery"} />
 
           <p>
             The field of general surgery involves evaluation and surgery of the
@@ -51,10 +58,12 @@ const page = () => {
               className=" h-96  max-w-60 grid grid-flow-row justify-center    border-2  "
             >
               <div className="min-h-24 min-w-full">
-                <img
+                <Image
                   src={doctor.doctorImg}
                   alt="img"
-                  className="w-full h-56 object-cover  "
+                  width={500}    // Set an appropriate width based on your layout
+                  height={224}   // Set height to match h-56 (224px)
+                  className="w-full h-56 object-cover"
                 />
               </div>
               <div className="grid grid-flow-row p-2 gap-y-2 ">
@@ -74,10 +83,12 @@ const page = () => {
                         {doctor.name}
                       </DialogTitle>
                       <DialogDescription className="grid justify-items-center gap-y-4">
-                        <img
+                        <Image
                           src={doctor.doctorImg}
                           alt="img"
-                          className="rounded-full h-56 min-w-56"
+                          width={500}    // Set an appropriate width based on your layout
+                          height={224}   // Set height to match h-56 (224px)
+                          className="w-full h-56 object-cover"
                         />
                         <div className=" m-8 text-lg space-y-4 text-wrap">
                           <p>

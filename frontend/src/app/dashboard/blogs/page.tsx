@@ -62,6 +62,7 @@ import { Switch } from "@/components/ui/switch"
 import axiosInstance from "@/lib/axiosInstance"
 import { Toaster } from "@/components/ui/toaster"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import Image from "next/image"
 
 const categories = [
   "wellness",
@@ -398,11 +399,15 @@ export default function AdvancedBlogManagement() {
                     />
                   ) : (
                     formData.image && (
-                      <img
+                      <Image
                         src={typeof formData.image === 'string' ? formData.image : URL.createObjectURL(formData.image)}
                         alt="Blog post image"
+                        width={500}   // Adjust based on layout
+                        height={300}  // Adjust based on layout
                         className="max-w-full h-auto"
                       />
+
+                      
                     )
                   )}
                 </div>

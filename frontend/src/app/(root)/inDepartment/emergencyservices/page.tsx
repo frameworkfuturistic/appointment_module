@@ -10,16 +10,23 @@ import { Dialog } from "@radix-ui/react-dialog";
 import React from "react";
 import indepartmentData from "@/json/indepartmentData";
 import Title from "@/components/Title";
+import Image from "next/image";
 
 const page = () => {
   return (
     <div className="grid ">
       <div className="relative justify-self-center">
-        <img src="/hospital/speciality.png" alt="img" className="h-80" />
+        <Image
+          src="/hospital/speciality.png"
+          alt="img"
+          width={160}    // Adjust width as appropriate, e.g., half the height if square
+          height={320}   // h-80 in Tailwind corresponds to 320px
+          className="h-80"
+        />
       </div>
       <div className="grid grid-cols-2 p-2 my-6 ">
         <div className=" bg-pattern5-bg min-w-[800px] space-y-2  mx-8 p-4  text-wrap">
-          <Title title={"Emergency & Trauma Unit"}/>
+          <Title title={"Emergency & Trauma Unit"} />
 
           <h2 className="font-medium text-lg">
             Reasons why Shree Jagannath Hospital & Research Centre's emergency
@@ -82,8 +89,8 @@ const page = () => {
             <li>Polytrauma</li>
           </ul>
         </div>
-         {/* DOCTOR's Card */}
-         {/* <div className="grid grid-cols-2 gap-2 p-2 place-items-end ">
+        {/* DOCTOR's Card */}
+        {/* <div className="grid grid-cols-2 gap-2 p-2 place-items-end ">
           {indepartmentData.map((doctor) => (
             <Card
               key={doctor.id}

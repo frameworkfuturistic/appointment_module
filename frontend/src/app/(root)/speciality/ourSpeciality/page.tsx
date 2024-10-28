@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertCircle } from "lucide-react";
+import Image from "next/image";
 
 const services = {
   "General Speciality": [
@@ -466,11 +467,15 @@ function ServiceCard({ service, onClick }) {
       onClick={onClick}
     >
       <div className="w-1/3">
-        <img
-          src={service.image}
-          alt={service.title}
-          className="h-full w-full object-cover rounded-l-md"
+        <Image
+          src={service.image}        // Assuming service.image is a valid path
+          alt={service.title}        // Set the alt text dynamically from service.title
+          width={500}                // Set width based on layout
+          height={300}               // Set height based on layout
+          layout="responsive"        // Makes the image responsive
+          className="object-cover rounded-l-md" // Apply other styling
         />
+
       </div>
       <div className="flex-grow p-4">
         <CardHeader>
@@ -496,10 +501,12 @@ function ServiceDetailDialog({ service, onClose }) {
         <div className="grid gap-6 py-4">
           {/* Centered Image */}
           <div className="relative w-full h-64 sm:h-80 lg:h-[400px] flex justify-center">
-            <img
-              src={service.image}
-              alt={service.title}
-              className="h-full w-auto max-w-full object-cover rounded-lg"
+            <Image
+              src={service.image}         // Assuming service.image is a valid path
+              alt={service.title}         // Set alt text from service.title
+              width={500}                 // Set an appropriate width based on your layout
+              height={300}                // Set an appropriate height to maintain aspect ratio
+              className="h-full w-auto max-w-full object-cover rounded-lg" // Use Tailwind CSS classes
               style={{ maxWidth: '100%', height: 'auto' }} // Ensures full responsiveness
             />
           </div>
