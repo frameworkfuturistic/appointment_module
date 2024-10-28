@@ -18,6 +18,7 @@ const jobPostingRoutes = require('./routes/v1/jobPostingRoutes');
 const jobApplicationRoutes = require('./routes/V1/jobApplicationRoutes');
 const contactUsRoutes = require('./routes/V1/contactUsRoutes');
 const errorHandler = require('./middlewares/errorHandler');
+const path = require('path');
 
 // Load environment variables
 dotenv.config();
@@ -67,6 +68,9 @@ app.use(session({
 }));
 
 // ROUTES
+
+app.use('/gallery', express.static(path.join(__dirname, 'uploads')));
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
