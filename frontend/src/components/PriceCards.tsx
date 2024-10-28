@@ -3,6 +3,7 @@ import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Check } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const PriceCards = () => {
   return (
@@ -11,7 +12,13 @@ const PriceCards = () => {
         <div className="  flex flex-col items-center text-center py-8 gap-2 ">
           <h1>OUR PRICING</h1>
           <h2 className="text-2xl font-semibold">Pricing Plan</h2>
-          <img src="/activity.png" alt="icon" className="  h-10 w-10" />
+          <Image
+            src="/activity.png"    // Path to the image
+            alt="icon"             // Alt text for accessibility
+            width={40}             // Set width to match the size (h-10 corresponds to 40px)
+            height={40}            // Set height to match the size (w-10 corresponds to 40px)
+            className="h-10 w-10"  // Use Tailwind CSS classes for styling
+          />
         </div>
 
         <div className="grid grid-cols-4 gap-4 justify-center mx-60 p-4 ">

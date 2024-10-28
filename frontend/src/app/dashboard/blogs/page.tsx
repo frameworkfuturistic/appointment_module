@@ -115,29 +115,30 @@ export default function AdvancedBlogManagement() {
   }
 
   const fetchBlogs = async () => {
+    setIsLoading(true);
+    setError(null);
+  
     try {
-      setIsLoading(true)
-      setError(null)
-
-      const response = await axiosInstance.get<ApiResponse<Blog[]>>('/blogs')
-
-      if (response.data.blogs && response.data.blogs.length > 0) {
-        setBlogs(response.data.blogs)
+      const response = await axiosInstance.get<ApiResponse<Blog[]>>('/blogs');
+  
+      if (response.data.blogs?.length) {
+        setBlogs(response.data.blogs);
       } else {
-        throw new Error("No blogs found")
+        throw new Error("No blogs found");
       }
     } catch (error: any) {
-      console.error("Error fetching blogs:", error.response ? error.response.data : error.message)
-      setError("Failed to fetch blogs. Please try again.")
-      showAlert("Error", "Failed to fetch blogs. Please try again.")
+      console.error("Error fetching blogs:", error.response?.data || error.message);
+      setError("Failed to fetch blogs. Please try again.");
+      showAlert("Error", "Failed to fetch blogs. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
-
+  };
+  
   useEffect(() => {
-    fetchBlogs()
-  }, [])
+    fetchBlogs();
+  }, []);
+  
 
   const handleCreateBlog = async (newBlog: Omit<Blog, '_id' | 'createdAt' | 'updatedAt' | 'slug'>) => {
     try {
@@ -575,7 +576,13 @@ export default function AdvancedBlogManagement() {
                               </TableCell>
                               <TableCell>
                                 {blog.image ? (
-                                  <img src={blog.image} alt={blog.title}  className="w-10 h-10 object-cover rounded" />
+                                 <Image
+                                 src={blog.image}                     // Dynamic source from the blog object
+                                 alt={blog.title}                     // Alt text for accessibility
+                                 width={40}                           // Set width (10px * 4 for Tailwind size)
+                                 height={40}                          // Set height (10px * 4 for Tailwind size)
+                                 className="w-10 h-10 object-cover rounded" // Use Tailwind CSS classes for styling
+                               />
                                 ) : (
                                   <ImageIcon className="w-10 h-10 text-gray-400" />
                                 )}
@@ -625,7 +632,13 @@ export default function AdvancedBlogManagement() {
                             </CardHeader>
                             <CardContent>
                               {blog.image && (
-                                <img src={blog.image} alt={blog.title} className="w-full h-40 object-cover rounded mb-4" />
+                                <Image
+                                src={blog.image}                     // Dynamic source from the blog object
+                                alt={blog.title}                     // Alt text for accessibility
+                                width={500}                           // Set an appropriate width (adjust as needed)
+                                height={160}                          // Set an appropriate height (40px * 4 for Tailwind size)
+                                className="w-full h-40 object-cover rounded mb-4" // Use Tailwind CSS classes for styling
+                              />
                               )}
                               <p className="text-sm text-gray-500 dark:text-gray-400">{blog.content.substring(0, 100)}...</p>
                               <div className="mt-4 flex justify-between items-center">
@@ -700,7 +713,13 @@ export default function AdvancedBlogManagement() {
                               </TableCell>
                               <TableCell>
                                 {blog.image ? (
-                                  <img src={blog.image} alt={blog.title} className="w-10 h-10 object-cover rounded" />
+                                  <Image
+                                  src={blog.image}                     // Dynamic source from the blog object
+                                  alt={blog.title}                     // Alt text for accessibility
+                                  width={40}                           // Set width (10px * 4 for Tailwind size)
+                                  height={40}                          // Set height (10px * 4 for Tailwind size)
+                                  className="w-10 h-10 object-cover rounded" // Use Tailwind CSS classes for styling
+                                />
                                 ) : (
                                   <ImageIcon className="w-10 h-10 text-gray-400" />
                                 )}
@@ -750,7 +769,13 @@ export default function AdvancedBlogManagement() {
                             </CardHeader>
                             <CardContent>
                               {blog.image && (
-                                <img src={blog.image} alt={blog.title} className="w-full h-40 object-cover rounded mb-4" />
+                                <Image
+                                src={blog.image}                     // Dynamic source from the blog object
+                                alt={blog.title}                     // Alt text for accessibility
+                                width={500}                           // Set an appropriate width (adjust as needed)
+                                height={160}                          // Set an appropriate height (40px * 4 for Tailwind size)
+                                className="w-full h-40 object-cover rounded mb-4" // Use Tailwind CSS classes for styling
+                              />
                               )}
                               <p className="text-sm text-gray-500 dark:text-gray-400">{blog.content.substring(0, 100)}...</p>
                               <div className="mt-4 flex justify-between items-center">
@@ -825,7 +850,13 @@ export default function AdvancedBlogManagement() {
                               </TableCell>
                               <TableCell>
                                 {blog.image ? (
-                                  <img src={blog.image} alt={blog.title} className="w-10 h-10 object-cover rounded" />
+                                  <Image
+                                  src={blog.image}                     // Dynamic source from the blog object
+                                  alt={blog.title}                     // Alt text for accessibility
+                                  width={500}                           // Set an appropriate width (adjust as needed)
+                                  height={160}                          // Set an appropriate height (40px * 4 for Tailwind size)
+                                  className="w-full h-40 object-cover rounded mb-4" // Use Tailwind CSS classes for styling
+                                />
                                 ) : (
                                   <ImageIcon className="w-10 h-10 text-gray-400" />
                                 )}
@@ -875,7 +906,13 @@ export default function AdvancedBlogManagement() {
                             </CardHeader>
                             <CardContent>
                               {blog.image && (
-                                <img src={blog.image} alt={blog.title} className="w-full h-40 object-cover rounded mb-4" />
+                               <Image
+                               src={blog.image}                     // Dynamic source from the blog object
+                               alt={blog.title}                     // Alt text for accessibility
+                               width={500}                           // Set an appropriate width (adjust as needed)
+                               height={160}                          // Set an appropriate height (40px * 4 for Tailwind size)
+                               className="w-full h-40 object-cover rounded mb-4" // Use Tailwind CSS classes for styling
+                             />
                               )}
                               <p className="text-sm text-gray-500 dark:text-gray-400">{blog.content.substring(0, 100)}...</p>
                               <div className="mt-4 flex justify-between items-center">

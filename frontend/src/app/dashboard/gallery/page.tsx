@@ -25,6 +25,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import axiosInstance from "@/lib/axiosInstance"
 import { useDropzone } from 'react-dropzone'
 import { log } from "console"
+import Image from "next/image"
 
 interface Image {
   _id: string
@@ -58,13 +59,13 @@ export default function GalleryDashboard() {
     setLoading(true);
     try {
       const response = await axiosInstance.get('/gallery');
-      
+
       // Transform the image URLs to the desired format
       const formattedImages = response.data.images.map((image) => ({
         ...image,
         imageUrl: `http://localhost:5555/gallery/${image.imageUrl.replace(/uploads\\/g, '').replace(/\\/g, '/')}` // Remove 'uploads\\' and replace backslashes
       }));
-  
+
       setImages(formattedImages);
       console.log("Formatted Images:", formattedImages);
     } catch (err) {
@@ -74,9 +75,9 @@ export default function GalleryDashboard() {
       setLoading(false);
     }
   };
-  
 
-  
+
+
 
   const onSubmit = async (data: Image) => {
     const formData = new FormData()
@@ -144,7 +145,7 @@ export default function GalleryDashboard() {
   }
 
   const filteredImages = images
-    .filter(image => 
+    .filter(image =>
       image.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       image.description.toLowerCase().includes(searchTerm.toLowerCase())
     )
@@ -219,10 +220,12 @@ export default function GalleryDashboard() {
                     >
                       <Card>
                         <CardContent className="p-4">
-                          <img
-                            src={image.imageUrl}
-                            alt={image.title}
-                            className="w-full h-48 object-cover rounded-md mb-4"
+                          <Image
+                            src={image.imageUrl}                // Dynamic source from the image object
+                            alt={image.title}                   // Alt text for accessibility
+                            width={500}                          // Set width (adjust as needed)
+                            height={192}                         // Set height (48px * 4 for aspect ratio)
+                            className="w-full h-48 object-cover rounded-md mb-4" // Use Tailwind CSS classes for styling
                           />
                           <p>{image.imageUrl}</p>
                           <h3 className="text-lg font-semibold text-primary mb-2">{image.title}</h3>

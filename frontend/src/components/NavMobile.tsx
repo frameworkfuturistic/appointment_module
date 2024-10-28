@@ -31,6 +31,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import Appointmentform from "./Appointmentform";
+import Image from "next/image";
 
 export interface SubLink {
   title: string;
@@ -138,10 +139,12 @@ const NavMobile: React.FC = () => {
                     className="flex items-center gap-2 text-lg font-bold text-foreground"
                   >
                     <div className="flex items-center py-4">
-                      <img
-                        src="/hospital/hospitallogo.png"
-                        alt="Logo"
-                        className="h-10 w-auto lg:h-12"
+                      <Image
+                        src="/hospital/hospitallogo.png" // Path to the image
+                        alt="Logo"                        // Alt text for accessibility
+                        width={40}                        // Adjust this based on actual dimensions
+                        height={40}                       // Adjust this based on actual dimensions
+                        className="h-10 w-auto lg:h-12"   // Use Tailwind CSS classes for styling
                       />
                       <span className="ml-2 text-xs font-semibold ">
                         Shree Jagannath Hospital & Research Centre
@@ -156,11 +159,10 @@ const NavMobile: React.FC = () => {
                       {link.submenu ? (
                         <>
                           <div
-                            className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 cursor-pointer ${
-                              isActive(link.href)
-                                ? "bg-muted text-foreground font-semibold"
-                                : "hover:text-foreground"
-                            }`}
+                            className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 cursor-pointer ${isActive(link.href)
+                              ? "bg-muted text-foreground font-semibold"
+                              : "hover:text-foreground"
+                              }`}
                             onClick={() => toggleSubmenu(link.title)}
                           >
                             <span>{link.title}</span>
@@ -176,11 +178,10 @@ const NavMobile: React.FC = () => {
                                 <Link
                                   href={sublink.href}
                                   key={sublink.title}
-                                  className={`block text-sm text-muted-foreground hover:text-foreground ${
-                                    isActive(sublink.href)
-                                      ? "text-foreground font-semibold"
-                                      : ""
-                                  }`}
+                                  className={`block text-sm text-muted-foreground hover:text-foreground ${isActive(sublink.href)
+                                    ? "text-foreground font-semibold"
+                                    : ""
+                                    }`}
                                 >
                                   {sublink.title}
                                 </Link>
@@ -191,11 +192,10 @@ const NavMobile: React.FC = () => {
                       ) : (
                         <Link
                           href={link.href}
-                          className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 ${
-                            isActive(link.href)
-                              ? "bg-muted text-foreground font-semibold"
-                              : "hover:text-foreground"
-                          }`}
+                          className={`mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 ${isActive(link.href)
+                            ? "bg-muted text-foreground font-semibold"
+                            : "hover:text-foreground"
+                            }`}
                         >
                           {link.title}
                         </Link>
@@ -205,17 +205,18 @@ const NavMobile: React.FC = () => {
                 </nav>
               </SheetContent>
             </Sheet>
-
-            <img
-              src="/hospital/hospitallogo.png"
-              alt="Logo"
-              className="h-10 w-auto lg:h-12"
+            <Image
+              src="/hospital/hospitallogo.png" // Path to the image
+              alt="Logo"                        // Alt text for accessibility
+              width={40}                        // Set width based on your layout needs (adjust as needed)
+              height={40}                       // Set height based on your layout needs (adjust as needed)
+              className="h-10 w-auto lg:h-12"   // Use Tailwind CSS classes for styling
             />
           </div>
           <div>
             <Link href="/appointment">
               <Button
-                variant="hms"
+                variant="default"
                 className="transition ease-in-out delay-100 hover:translate-4 hover:scale-110 duration-400 group block"
               >
                 Appointment

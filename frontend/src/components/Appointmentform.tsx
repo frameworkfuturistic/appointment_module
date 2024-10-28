@@ -21,6 +21,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Image from "next/image";
 
 const departmentsData = {
   departments: [
@@ -105,11 +106,13 @@ const AppointmentForm = () => {
     <section className="py-10">
       <form onSubmit={handleSubmit}>
         <div className="grid grid-flow-col md:grid-flow-col justify-center gap-x-10 items-center shadow-md shadow-slate-400 p-2 md:p-4">
-          <img
-            src="hospital/hospitallogo.png"
-            alt="Hospital Logo"
-            className="w-32 h-32 md:mb-0"
-          />
+        <Image
+  src="/hospital/hospitallogo.png" // Corrected path to include leading slash
+  alt="Hospital Logo"                // Alt text for accessibility
+  width={128}                        // Set width (32px * 4 for 1 rem)
+  height={128}                       // Set height (32px * 4 for 1 rem)
+  className="w-32 h-32 md:mb-0"     // Use Tailwind CSS classes for styling
+/>
           <div className="grid text-center sm:text-left md:text-left">
             <h1 className="font-bold text-xl md:text-2xl">
               Shree Jagannath Hospital & Research Center

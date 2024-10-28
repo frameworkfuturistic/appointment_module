@@ -15,7 +15,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-const FadeInSection = ({ children }) => {
+const FadeInSection = ({ children }: { children: any }) => {
   const controls = useAnimation();
   const [ref, inView] = useInView();
 
