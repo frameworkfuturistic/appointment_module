@@ -575,7 +575,7 @@ export default function AdvancedBlogManagement() {
                               </TableCell>
                               <TableCell>
                                 {blog.image ? (
-                                  <img src={blog.image} alt={blog.title} className="w-10 h-10 object-cover rounded" />
+                                  <img src={blog.image} alt={blog.title}  className="w-10 h-10 object-cover rounded" />
                                 ) : (
                                   <ImageIcon className="w-10 h-10 text-gray-400" />
                                 )}
