@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import HeaderBanner from "@/components/HeaderBanner";
+import { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import HeaderBanner from "@/components/HeaderBanner"
 import {
   Dialog,
   DialogContent,
@@ -11,19 +11,37 @@ import {
   DialogTitle,
   DialogClose,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/components/ui/dialog"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { AlertCircle } from "lucide-react";
-import Image from "next/image";
+} from "@/components/ui/accordion"
+import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { AlertCircle } from "lucide-react"
+import Image from "next/image"
 
-const services = {
+interface Service {
+  id: string
+  title: string
+  subtitle: string
+  image: string
+  details: string[]
+}
+
+interface ServiceCategory {
+  [key: string]: Service[]
+}
+
+interface EmergencyService {
+  id: number
+  description: string
+}
+
+// Define your services data structure
+const services: ServiceCategory = {
   "General Speciality": [
     {
       id: "gen-1",
@@ -150,7 +168,7 @@ const services = {
   ],
 };
 
-const emergencyServices = [
+const emergencyServices: EmergencyService[] = [
   { id: 1, description: "Time for initial assessment of indoor patients" },
   {
     id: 2,
@@ -355,12 +373,12 @@ const emergencyServices = [
 ];
 
 function OurSpecialties() {
-  const [activeTab, setActiveTab] = useState("General Speciality");
-  const [selectedService, setSelectedService] = useState(null);
+  const [activeTab, setActiveTab] = useState("General Speciality")
+  const [selectedService, setSelectedService] = useState<Service | null>(null)
 
-  const handleServiceClick = (service) => {
-    setSelectedService(service);
-  };
+  const handleServiceClick = (service: Service) => {
+    setSelectedService(service)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 relative overflow-hidden">
@@ -385,7 +403,7 @@ function OurSpecialties() {
               <TabsTrigger
                 key={category}
                 value={category}
-                className="whitespace-nowrap text-lg font-medium "
+                className="whitespace-nowrap text-lg font-medium"
               >
                 {category}
               </TabsTrigger>
@@ -409,7 +427,6 @@ function OurSpecialties() {
       </div>
 
       <div className="container mx-auto py-12 px-4 relative overflow-hidden">
-        {/* Emergency Services Section */}
         <div className="mt-16">
           <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
             Key performance
@@ -424,10 +441,10 @@ function OurSpecialties() {
         />
       )}
     </div>
-  );
+  )
 }
 
-const EmergencyServicesAccordion = () => {
+const EmergencyServicesAccordion: React.FC = () => {
   return (
     <Accordion
       type="single"
@@ -457,10 +474,15 @@ const EmergencyServicesAccordion = () => {
         </AccordionContent>
       </AccordionItem>
     </Accordion>
-  );
-};
+  )
+}
 
-function ServiceCard({ service, onClick }) {
+interface ServiceCardProps {
+  service: Service
+  onClick: () => void
+}
+
+function ServiceCard({ service, onClick }: ServiceCardProps) {
   return (
     <Card
       className="flex flex-row shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
@@ -468,14 +490,13 @@ function ServiceCard({ service, onClick }) {
     >
       <div className="w-1/3">
         <Image
-          src={service.image}        // Assuming service.image is a valid path
-          alt={service.title}        // Set the alt text dynamically from service.title
-          width={500}                // Set width based on layout
-          height={300}               // Set height based on layout
-          layout="responsive"        // Makes the image responsive
-          className="object-cover rounded-l-md" // Apply other styling
+          src={service.image}
+          alt={service.title}
+          width={500}
+          height={300}
+          layout="responsive"
+          className="object-cover rounded-l-md"
         />
-
       </div>
       <div className="flex-grow p-4">
         <CardHeader>
@@ -486,10 +507,15 @@ function ServiceCard({ service, onClick }) {
         </CardHeader>
       </div>
     </Card>
-  );
+  )
 }
 
-function ServiceDetailDialog({ service, onClose }) {
+interface ServiceDetailDialogProps {
+  service: Service
+  onClose: () => void
+}
+
+function ServiceDetailDialog({ service, onClose }: ServiceDetailDialogProps) {
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[70vw] h-[90vh] overflow-y-auto">
@@ -499,19 +525,17 @@ function ServiceDetailDialog({ service, onClose }) {
           </DialogTitle>
         </DialogHeader>
         <div className="grid gap-6 py-4">
-          {/* Centered Image */}
           <div className="relative w-full h-64 sm:h-80 lg:h-[400px] flex justify-center">
             <Image
-              src={service.image}         // Assuming service.image is a valid path
-              alt={service.title}         // Set alt text from service.title
-              width={500}                 // Set an appropriate width based on your layout
-              height={300}                // Set an appropriate height to maintain aspect ratio
-              className="h-full w-auto max-w-full object-cover rounded-lg" // Use Tailwind CSS classes
-              style={{ maxWidth: '100%', height: 'auto' }} // Ensures full responsiveness
+              src={service.image}
+              alt={service.title}
+              width={500}
+              height={300}
+              className="h-full w-auto max-w-full object-cover rounded-lg"
+              style={{ maxWidth: '100%', height: 'auto' }}
             />
           </div>
 
-          {/* Service Details */}
           <div className="space-y-4">
             <h3 className="text-xl font-semibold">About this service:</h3>
             <p className="text-gray-700">{service.subtitle}</p>
@@ -537,8 +561,7 @@ function ServiceDetailDialog({ service, onClose }) {
         </DialogClose>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
 
-
-export default OurSpecialties;
+export default OurSpecialties

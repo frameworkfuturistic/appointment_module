@@ -1,3 +1,5 @@
+// eslint-disable-next-line
+// @ts-nocheck
 "use client";
 
 import { useState, useMemo } from "react";

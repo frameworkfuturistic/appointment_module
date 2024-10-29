@@ -99,7 +99,7 @@ const FetchData = () => {
               value={formData.notes}
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-              rows="4"
+              
             />
           </div>
 

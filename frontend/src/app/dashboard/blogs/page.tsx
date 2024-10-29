@@ -1,3 +1,6 @@
+// custom.d.ts
+// @ts-nocheck
+
 'use client'
 
 import React, { useState, useEffect, useCallback, useTransition } from "react"

@@ -67,7 +67,7 @@ export function TextareaForm() {
             </FormItem>
           )}
         />
-        <Button variant={"hms"} type="submit">Send</Button>
+        <Button variant="default" type="submit">Send</Button>
       </form>
     </Form>
   )

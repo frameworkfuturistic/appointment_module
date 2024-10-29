@@ -55,7 +55,7 @@ const BlogCards = () => {
                           </Link>
                         </div>
                         <Link href={`/blog/${blog.id}`}>
-                          <Button variant="hms">Read More</Button>
+                          <Button variant="gooeyLeft">Read More</Button>
                         </Link>
                       </div>
                     </div>

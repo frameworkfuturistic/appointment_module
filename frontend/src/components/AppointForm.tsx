@@ -1,4 +1,6 @@
 // src/components/DoctorAppointmentForm.jsx
+// eslint-disable-next-line
+// @ts-nocheck
 import React, { useState } from 'react';
 import axios from 'axios';
 

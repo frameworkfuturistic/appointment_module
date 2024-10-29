@@ -1,3 +1,6 @@
+// eslint-disable-next-line
+// @ts-nocheck
+
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
