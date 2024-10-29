@@ -114,13 +114,13 @@ export default function AdvancedBlogManagement() {
     setTimeout(() => setAlert(null), 5000) // Hide alert after 5 seconds
   }
 
-  const fetchBlogs = async () => {
+  const fetchBlogs = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-  
+
     try {
       const response = await axiosInstance.get<ApiResponse<Blog[]>>('/blogs');
-  
+
       if (response.data.blogs?.length) {
         setBlogs(response.data.blogs);
       } else {
@@ -133,11 +133,12 @@ export default function AdvancedBlogManagement() {
     } finally {
       setIsLoading(false);
     }
-  };
-  
+  }, []); // Dependencies can be added if required
+
   useEffect(() => {
-    fetchBlogs();
-  }, []);
+    fetchBlogs(); // Now fetchBlogs is stable and included in the effect
+  }, [fetchBlogs]); // Include fetchBlogs in the dependency array
+
   
 
   const handleCreateBlog = async (newBlog: Omit<Blog, '_id' | 'createdAt' | 'updatedAt' | 'slug'>) => {

@@ -20,9 +20,19 @@ const departments = [
 ]
 
 const FooterSection = ({ title, children }: { title: string; children: React.ReactNode }) => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
   const controls = useAnimation()
   const [ref, inView] = useInView()
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+
+    handleResize(); // Set initial screen size
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (inView) {
@@ -50,7 +60,7 @@ const FooterSection = ({ title, children }: { title: string; children: React.Rea
         <ChevronDown className="h-5 w-5 md:hidden transition-transform duration-300" style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }} />
       </button>
       <AnimatePresence>
-        {(isOpen || window.innerWidth >= 768) && (
+      {(isOpen || isDesktop) && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}

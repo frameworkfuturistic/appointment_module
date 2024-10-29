@@ -47,9 +47,8 @@ const policies = [
 
 const Page = () => {
   return (
-    <div className=" relative justify-center">
+    <div className="relative justify-center">
       {/* Header Image Section */}
-
       <HeaderBanner
         title="Our Policy"
         subtitle="Providing Exceptional Healthcare with Compassion and Excellence"
@@ -57,44 +56,38 @@ const Page = () => {
       />
 
       {/* Values and Policy Section */}
-      <div className="grid grid-cols-1 mx-0  md:mx-28  gap-8 items-center  justify-center bg-pattern5-bg p-8">
-        
+      <div className="grid grid-cols-1 mx-0 md:mx-28 gap-8 items-center justify-center bg-pattern5-bg p-8">
         {/* OUR POLICY */}
         <div className="bg-rose-100 rounded-lg p-6">
-        
-          <ol className="list-decimal space-y-6 gap-4 text-lg p-4 ">
+          <ol className="list-decimal space-y-6 text-lg p-4">
             {policies.map((policy, index) => (
               <li key={index}>
                 <strong>{policy.title}:</strong>
-                {policy.description &&
-                typeof policy.description === "string" ? (
-                  <p className="text-base">{policy.description}</p>
-                ) : (
-                  policy.description &&
-                  policy.description.map((desc, idx) => (
-                    <p key={idx} className="text-base">
-                      {desc}
-                    </p>
-                  ))
-                )}
-                {policy.commitments &&
+                {policy.description ? (
+                  Array.isArray(policy.description) ? (
+                    policy.description.map((desc, idx) => (
+                      <p key={idx} className="text-base">{desc}</p>
+                    ))
+                  ) : (
+                    <p className="text-base">{policy.description}</p>
+                  )
+                ) : null}
+
+                {policy.commitments && policy.commitments.length > 0 && (
                   policy.commitments.map((commitment, idx) => (
-                    <div key={idx}>
-                      <h3 className="text-lg font-semibold">
-                        {commitment.subtitle}
-                      </h3>
+                    <div key={idx} className="mt-4">
+                      <h3 className="text-lg font-semibold">{commitment.subtitle}</h3>
                       <p className="text-base">{commitment.description}</p>
                       {commitment.points && (
                         <ul className="list-disc ml-5 space-y-1">
                           {commitment.points.map((point, pointIdx) => (
-                            <li key={pointIdx} className="text-base">
-                              {point}
-                            </li>
+                            <li key={pointIdx} className="text-base">{point}</li>
                           ))}
                         </ul>
                       )}
                     </div>
-                  ))}
+                  ))
+                )}
               </li>
             ))}
           </ol>

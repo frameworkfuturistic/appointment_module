@@ -97,7 +97,7 @@ function BlogPageContent() {
   const { data, status, error } = useQuery<BlogResponse>({
     queryKey: ["blogs", page, categoryFilter, searchTerm],
     queryFn: () => fetchBlogs(page, limit, categoryFilter, searchTerm),
-    keepPreviousData: true,
+    // keepPreviousData: true,
   });
 
   const handlePageChange = (newPage: number) => {
@@ -249,7 +249,7 @@ function BlogCard({ blog }: { blog: BlogPost }) {
             <span>{blog.readTime} min read</span>
           </div>
           <Link href={`/blog/${blog._id}`} passHref>
-            <Button variant="hms" className="  text-white">
+            <Button variant="default" className=" hover:bg-blue-700  text-white">
               View details
             </Button>
           </Link>
