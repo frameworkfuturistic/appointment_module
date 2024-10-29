@@ -74,6 +74,7 @@ import { jsPDF } from "jspdf";
 import Link from "next/link";
 import ExistAppointment from "./ExistAppointment";
 import RazorpayLoader from "@/lib/RazorpayLoader";
+import Image from "next/image";
 
 const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
 
@@ -1676,9 +1677,11 @@ export default function Component() {
       <div className="bg-[url('/hospital/hospitallogo.png?height=300&width=1920')] bg-cover bg-center">
         <div className="bg-blue-900 bg-opacity-75 py-8 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-            <img
-              src="/hospital/hospitallogo.png?height=80&width=80"
+          <Image
+              src="/hospital/hospitallogo.png"
               alt="Hospital logo"
+              width={80}
+              height={80}
               className="w-16 h-16 sm:w-20 sm:h-20"
             />
             <div className="text-center md:text-left text-white">

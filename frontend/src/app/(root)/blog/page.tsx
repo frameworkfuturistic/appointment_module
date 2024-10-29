@@ -58,13 +58,12 @@ interface BlogPost {
 
 interface BlogResponse {
   success: boolean;
-  data: {
-    blogs: BlogPost[];
-    total: number;
-    page: number;
-    pages: number;
-  };
+  blogs: BlogPost[];
+  total: number;
+  page: number;
+  pages: number;
 }
+
 
 const fetchBlogs = async (
   page: number,
@@ -76,6 +75,8 @@ const fetchBlogs = async (
     params: { page, limit, category, search: searchTerm },
   });
   return response.data;
+  
+  
 };
 
 const queryClient = new QueryClient();
@@ -97,7 +98,6 @@ function BlogPageContent() {
   const { data, status, error } = useQuery<BlogResponse>({
     queryKey: ["blogs", page, categoryFilter, searchTerm],
     queryFn: () => fetchBlogs(page, limit, categoryFilter, searchTerm),
-    // keepPreviousData: true,
   });
 
   const handlePageChange = (newPage: number) => {
@@ -160,7 +160,7 @@ function BlogPageContent() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {status === "loading"
+            {status === "pending"
               ? Array(limit)
                   .fill(0)
                   .map((_, index) => <BlogCardSkeleton key={index} />)
@@ -187,11 +187,11 @@ function BlogPageContent() {
               <ChevronLeft className="mr-2 h-4 w-4" /> Previous
             </Button>
             <span className="text-sm text-gray-600">
-              Page {page} of {data.data.pages}
+              Page {page} of {data.pages}
             </span>
             <Button
               onClick={() => handlePageChange(page + 1)}
-              disabled={page === data.data.pages}
+              disabled={page === data.pages}
               variant="outline"
               className="bg-white hover:bg-blue-50"
             >

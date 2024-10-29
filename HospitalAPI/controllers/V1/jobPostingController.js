@@ -13,11 +13,26 @@ const createJobPosting = async (req, res) => {
 const getAllJobPostings = async (req, res) => {
     try {
         const jobPostings = await jobPostingService.getAllJobPostings();
-        res.status(200).json(jobPostings);
+
+        // Wrap the successful response in a consistent format
+        res.status(200).json({
+            success: true,
+            data: jobPostings, // Directly returning the job postings
+            message: 'Job postings retrieved successfully',
+        });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        // Log the error for debugging purposes
+        console.error('Error retrieving job postings:', error);
+
+        // Return a more structured error response
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while retrieving job postings',
+            error: error.message, // Optional: include the error message for debugging
+        });
     }
 };
+
 
 const getJobPostingById = async (req, res) => {
     try {

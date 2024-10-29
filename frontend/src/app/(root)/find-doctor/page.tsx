@@ -46,7 +46,8 @@ const AdvancedMedicalExperts: React.FC = () => {
   if (error) return <div className="text-red-500 text-center">{error}</div>;
 
   // Specialties for the tabs
-  const specialties = ["All", ...new Set(doctors.map(doctor => doctor.Department || "Unknown"))];
+  const specialties = ["All", ...Array.from(new Set(doctors.map(doctor => doctor.Department || "Unknown")))];
+
 
   // Filter doctors based on active department and search term
   const filteredDoctors = doctors.filter(doctor =>

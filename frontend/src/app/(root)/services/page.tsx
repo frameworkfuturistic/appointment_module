@@ -72,6 +72,36 @@ import { Badge } from "@/components/ui/badge";
 import { FaBacteria } from "react-icons/fa";
 import HeaderBanner from "@/components/HeaderBanner";
 
+type IconProps = React.SVGProps<SVGSVGElement>;
+
+interface Category {
+  icon: React.ComponentType<IconProps>;
+  color: string;
+  name: string;
+  about?: string;
+  items: Item[];
+}
+
+interface Item {
+  id: string;
+  name: string;
+  description: string;
+  image: string; // Assuming the image is a URL string
+  details: string[];
+  icon: React.ComponentType<IconProps>; // Assuming each item has an icon
+}
+
+// Props for ServiceCard
+interface ServiceCardProps {
+  category: Category;
+  isActive: boolean;
+  onClick: () => void;
+}
+interface ServiceItemProps {
+  item: Item;
+  category: Category;
+}
+
 const serviceCategories = [
   {
     name: "24x7 Services",
@@ -604,7 +634,7 @@ const emergencyServices = [
   "The ambulance driver is having valid driving license.",
 ];
 
-const ServiceCard = ({ category, isActive, onClick }) => {
+const ServiceCard = ({ category, isActive, onClick }: ServiceCardProps) => {
   const Icon = category.icon;
   return (
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -625,7 +655,7 @@ const ServiceCard = ({ category, isActive, onClick }) => {
   );
 };
 
-const ServiceItem = ({ item, category }) => {
+const ServiceItem = ({ item, category }: ServiceItemProps) => {
   const Icon = item.icon;
   return (
     <Dialog>
@@ -690,7 +720,7 @@ const ServiceItem = ({ item, category }) => {
   );
 };
 
-const ServiceList = ({ category }) => {
+const ServiceList = ({ category }: ServiceItemProps) => {
   const Icon = category.icon;
   return (
     <motion.div

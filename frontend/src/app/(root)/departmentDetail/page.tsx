@@ -20,7 +20,7 @@ interface Consultant {
   Department: string | null;
 }
 
-const DoctorsPage: React.FC = () => {
+const DoctorsPage = () => {
   const [doctors, setDoctors] = useState<Consultant[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -41,7 +41,7 @@ const DoctorsPage: React.FC = () => {
     fetchDoctors()
   }, [])
 
-  const specialties = ["All", ...new Set(doctors.map(doctor => doctor.Department || "Unknown"))];
+  const specialties = ["All", ...Array.from(new Set(doctors.map(doctor => doctor.Department || "Unknown")))];
 
   const filteredDoctors = doctors.filter(doctor =>
     (selectedSpecialty === "All" || doctor.Department === selectedSpecialty) &&
@@ -68,7 +68,7 @@ const DoctorsPage: React.FC = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full mb-4"
-            icon={<Search className="h-4 w-4 text-gray-500" />}
+           
           />
           <div className="flex overflow-x-auto whitespace-nowrap mb-2">
             {specialties.map(specialty => (

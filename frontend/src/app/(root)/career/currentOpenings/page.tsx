@@ -64,6 +64,7 @@ import HeaderBanner from "@/components/HeaderBanner";
 
 // Types
 interface Job {
+  _id: string;
   id: number;
   title: string;
   department: string;
@@ -75,6 +76,7 @@ interface Job {
   experienceLevel: string;
   postedBy: string;
   closingDate: string;
+  createdAt: string;
 }
 
 interface ApplicationForm {
@@ -90,7 +92,8 @@ interface ApplicationForm {
 // API functions
 const fetchJobs = async (): Promise<Job[]> => {
   const response = await axiosInstance.get<Job[]>("/jobs");
-  return response;
+  console.log("fetchJobs", response.data);
+  return response.data;
 };
 
 const postJobApplication = async (applicationData: FormData): Promise<any> => {
@@ -303,7 +306,7 @@ function CareerPageContent() {
             <div className="mt-12 grid gap-8 md:grid-cols-2 ">
               {filteredJobs.map((job) => (
                 <motion.div
-                  key={job.id}
+                  key={job._id}
                   layout
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}

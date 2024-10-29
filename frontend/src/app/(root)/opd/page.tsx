@@ -53,7 +53,7 @@ interface Consultant {
 
 const fetchDoctors = async (): Promise<Consultant[]> => {
   const response = await axiosInstance.get("/consultant");
-  return response;
+  return response.data;
 };
 
 const queryClient = new QueryClient();
@@ -87,7 +87,7 @@ function DoctorAvailabilityContent() {
   );
 
   const departments = [
-    ...new Set(doctors?.map((doctor) => doctor.departmentName)),
+    ...Array.from(new Set(doctors?.map((doctor) => doctor.departmentName))) // Convert Set to Array
   ];
 
   const formatTime = (timeString: string) => {
