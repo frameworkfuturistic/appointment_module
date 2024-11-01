@@ -20,14 +20,14 @@ const HeaderBanner: React.FC<HeaderBannerProps> = ({
     >
       <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center text-center p-4">
         <motion.h1
-          className="text-3xl sm:text-xl md:text-2xl lg:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-secondary to-secondary"
+          className="text-3xl sm:text-xl md:text-2xl lg:text-4xl font-bold  bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-indigo-200"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
           {title}
         </motion.h1>
-        <p className="text-md sm:text-md md:text-lg lg:text-xl text-white">
+        <p className="text-lg sm:text-xl text-center mb-16 max-w-3xl mx-auto leading-relaxed my-4 text-white">
           {subtitle}
         </p>
       </div>

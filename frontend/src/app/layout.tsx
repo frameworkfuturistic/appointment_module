@@ -7,7 +7,7 @@ import CookieConsent from "@/pages/CookieConsent";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "HMS Medicoz",
+  title: "SJHRC: SHREE JAGANNATH HOSPITAL & RESEARCH CENTRE",
   description: "",
 };
 
