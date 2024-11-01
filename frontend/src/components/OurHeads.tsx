@@ -68,6 +68,17 @@ const doctorData: Doctor[] = [
     website: "www.drpremkumar.com",
     featured: false
   },
+  {
+    id: 4,
+    name: "Dr. Prem Ranjan Kumar",
+    title: "M.D.(Paed)",
+    image: "/departmentHeads/spmishra.png",
+    specialization: "Pediatrics",
+    phone: "+1 (555) 345-6789",
+    email: "prem.kumar@example.com",
+    website: "www.drpremkumar.com",
+    featured: false
+  },
  
 ]
 
@@ -165,7 +176,7 @@ const AdvancedMedicalExperts: React.FC = () => {
 
        
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {filteredDoctors.map((doctor, index) => (
             <motion.div
               key={doctor.id}
@@ -176,62 +187,23 @@ const AdvancedMedicalExperts: React.FC = () => {
               className="bg-white rounded-xl shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
             >
               <div className="relative h-64">
+                
                 <Image
                   src={doctor.image}
                   alt={doctor.name}
                   layout="fill"
                   objectFit="cover"
                 />
+                <div className="absolute right-0 bg-teal-500 text-white px-4 py-2 rounded-bl-xl text-sm font-semibold">
+                  {doctor.specialization}
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
               </div>
               <div className="p-6 relative">
-                <div className="absolute top-0 right-0 bg-blue-500 text-white px-4 py-2 rounded-bl-xl text-sm font-semibold">
-                  {doctor.specialization}
-                </div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">{doctor.name}</h2>
+                
+                <h2 className="text-xl font-bold text-gray-800 mb-2">{doctor.name}</h2>
                 <p className="text-blue-600 font-medium mb-4">{doctor.title}</p>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 rounded-full hover:from-blue-600 hover:to-indigo-700 transition duration-300"
-                    >
-                      View Profile
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>{doctor.name}</DialogTitle>
-                      <DialogDescription>{doctor.title}</DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="relative w-32 h-32 mx-auto">
-                        <Image
-                          src={doctor.image}
-                          alt={doctor.name}
-                          layout="fill"
-                          objectFit="cover"
-                          className="rounded-full"
-                        />
-                      </div>
-                      <p className="text-center text-gray-600">{doctor.specialization}</p>
-                      <div className="space-y-2">
-                        <div className="flex items-center">
-                          <Phone className="text-blue-500 mr-3" size={20} />
-                          <p>{doctor.phone}</p>
-                        </div>
-                        <div className="flex items-center">
-                          <Mail className="text-blue-500 mr-3" size={20} />
-                          <p>{doctor.email}</p>
-                        </div>
-                        <div className="flex items-center">
-                          <Globe className="text-blue-500 mr-3" size={20} />
-                          <p>{doctor.website}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <Button className="w-full">Book Appointment</Button>
-                  </DialogContent>
-                </Dialog>
+                
               </div>
             </motion.div>
           ))}

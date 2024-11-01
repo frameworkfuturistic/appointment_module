@@ -73,11 +73,11 @@ export function CarouselDemo() {
   }
 
   return (
-    <div className="text-white bg-gradient-to-br from-blue-900 to-indigo-900">
+    <div className="text-white bg-gradient-to-br from-blue-900 to-indigo-900 ">
       <div className=" mx-auto ">
-        <div className="flex flex-col lg:flex-row items-center lg:items-stretch">
+        <div className="flex flex-col lg:flex-row items-center lg:items-stretch ">
           {/* Left side - Information */}
-          <div className="w-full lg:w-4/12 space-y-4 sm:space-y-6 p-4 sm:p-8 lg:p-12">
+          <div className="w-full lg:w-4/12 space-y-4 sm:space-y-6 p-4 sm:p-8 lg:p-8">
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
             Shree Jagannath Hospital Ranchi- 834001
           </h1>
@@ -191,7 +191,7 @@ export function CarouselDemo() {
       </div>
 
       {/* Specialties Navigation */}
-      <div className="bg-white text-blue-900 py-6 shadow-lg">
+      <div className="bg-white text-blue-900 py-6 shadow-lg ">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {specialties.map((specialty) => (

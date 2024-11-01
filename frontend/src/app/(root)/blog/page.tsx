@@ -213,6 +213,7 @@ function BlogCard({ blog }: { blog: BlogPost }) {
       transition={{ duration: 0.5 }}
       layout
     >
+       <Link href={`/blog/${blog._id}`} passHref>
       <Card className="h-full flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg bg-white">
         <CardHeader className="p-0 relative">
           <Image
@@ -248,13 +249,11 @@ function BlogCard({ blog }: { blog: BlogPost }) {
             <Clock className="mr-2 h-4 w-4" />
             <span>{blog.readTime} min read</span>
           </div>
-          <Link href={`/blog/${blog._id}`} passHref>
-            <Button variant="default" className=" hover:bg-blue-700  text-white">
-              View details
-            </Button>
-          </Link>
+         
         </CardFooter>
       </Card>
+
+      </Link>
     </motion.div>
   );
 }

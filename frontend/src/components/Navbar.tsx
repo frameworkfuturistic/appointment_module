@@ -82,12 +82,12 @@ const navigationLinks = [
   },
   {
     icon: Stethoscope,
-    title: "Treatments",
+    title: "Departments",
     href: "/departments",
     children: [
       {
         title: "Cardiology",
-        href: "inDepartment/cardiology",
+        href: "/departments",
         description: "Heart and cardiovascular care",
       },
       {
@@ -113,7 +113,7 @@ const navigationLinks = [
       },
       {
         title: "More..",
-        href: "/departmentDetail",
+        href: "/departments",
         description: "View all Departments",
       },
     ],
@@ -143,12 +143,11 @@ const navigationLinks = [
   },
   {
     icon: Stethoscope,
-    title: "Specialty",
+    title: "Specialties",
     href: "/speciality/ourSpeciality",
     children: [
       { title: "General Specialty", href: "/speciality/ourSpeciality", description: "24/7 emergency medical services" },
       { title: "Super Specialty", href: "/speciality/ourSpeciality", description: "24/7 emergency medical services" },
-      { title: "Key Performance", href: "/speciality/keyPerformance", description: "Key Performance" },
     ],
   },
   { icon: PhoneCall, title: "Contact Us", href: "/contact" },
@@ -174,12 +173,12 @@ export default function Component() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white shadow-md">
+    <header className="sticky top-0 z-50 w-full bg-white shadow-md ">
       <style jsx global>{`
         .arrow-container {
           position: relative;
-          width: 100%;
-          padding: 0.5rem 1rem;
+          width: 90%;
+          padding: 0.25rem 0.5rem;
           overflow: hidden;
         }
 
@@ -190,7 +189,7 @@ export default function Component() {
           height: 100%;
           width: 100%;
           background-color: #319795;
-          clip-path: polygon(100% 0%, 100% 49%, 100% 100%, 0 100%, 4% 50%, 0 0);
+          clip-path: polygon(100% 0%, 100% 49%, 100% 100%, 0 100%, 1% 50%, 0 0);
           z-index: -1;
         }
 
@@ -200,17 +199,23 @@ export default function Component() {
           color: #ffffff;
         }
 
-        @media (max-width: 1024px) {
+        @media (min-width: 640px) {
           .arrow-container {
-            padding: 0.25rem 0.5rem;
+            padding: 0.5rem 1rem;
           }
 
           .arrow-bg {
             clip-path: polygon(100% 0%, 100% 49%, 100% 100%, 0 100%, 2% 50%, 0 0);
           }
         }
+
+        @media (min-width: 1024px) {
+          .arrow-bg {
+            clip-path: polygon(100% 0%, 100% 49%, 100% 100%, 0 100%, 4% 50%, 0 0);
+          }
+        }
       `}</style>
-      <div className=" ">
+      <div className="w-full px-2 sm:px-2 lg:px-0 ">
         <div className="flex flex-col">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-2">
@@ -222,28 +227,28 @@ export default function Component() {
                 className="rounded-full"
               />
               <div className="flex flex-col">
-                <span className="text-lg md:text-xl lg:text-2xl xl:text-2xl font-extrabold text-primary">
+                <span className="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-2xl font-extrabold text-primary">
                   Shree Jagannath Hospital & Research Center
                 </span>
-                <span className="text-xs md:text-sm lg:text-base text-gray-600">
+                <span className="text-xs sm:text-sm lg:text-base text-gray-600">
                   Multi Speciality and Trauma center
                 </span>
               </div>
             </Link>
 
-            <div className="hidden lg:flex flex-col items-end">
-              <div className="arrow-container w-full lg:w-auto">
+            <div className="hidden lg:flex flex-col items-end ">
+              <div className="arrow-container w-full lg:w-auto ">
                 <div className="arrow-bg"></div>
-                <div className="arrow-content flex justify-between items-center py-2 px-4 lg:px-8 text-xs lg:text-sm text-gray-100">
-                  <div className="flex items-center space-x-2 lg:space-x-4 flex-wrap">
+                <div className="arrow-content flex justify-between items-center py-2 px-4 lg:px-8 text-xs lg:text-sm text-gray-100 ">
+                  <div className="flex items-center space-x-2 lg:space-x-4 flex-wrap ml-auto">
                     {topNavItems.map((item) => (
                       <Link
                         key={item.label}
                         href={item.href}
-                        className="flex items-center hover:text-primary transition-colors py-1"
+                        className="flex items-center hover:text-primary transition-colors "
                       >
                         <item.icon className="h-3 w-3 lg:h-4 lg:w-4 mr-1" />
-                        <span className="hidden md:inline">{item.label}</span>
+                        <span className="hidden xl:inline">{item.label}</span>
                       </Link>
                     ))}
                   </div>
@@ -325,11 +330,11 @@ export default function Component() {
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="lg:hidden">
-                  <Menu className="h-10 w-10" />
+                  <Menu className="h-6 w-6 sm:h-8 sm:w-8" />
                   <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] sm:w-[400px] p-0">
+              <SheetContent side="left" className="p-0">
                 <div className="flex flex-col h-full">
                   <div className="p-4 border-b">
                     <Link href="/" className="flex items-center space-x-2" onClick={() => setIsOpen(false)}>
@@ -381,6 +386,7 @@ export default function Component() {
                               className="flex items-center py-1 hover:text-primary"
                               onClick={() => setIsOpen(false)}
                             >
+                              
                               <link.icon className="mr-2 h-4 w-4" />
                               {link.title}
                             </Link>
@@ -388,7 +394,6 @@ export default function Component() {
                         </div>
                       ))}
                     </nav>
-                  
                   </div>
                   <div className="p-4 border-t">
                     <Button

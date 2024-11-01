@@ -27,19 +27,7 @@ const DoctorsPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedSpecialty, setSelectedSpecialty] = useState("All")
 
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/consultants`)
-        setDoctors(response.data)
-      } catch (err) {
-        setError("Failed to fetch doctors. Please try again later.")
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchDoctors()
-  }, [])
+
 
   const specialties = ["All", ...Array.from(new Set(doctors.map(doctor => doctor.Department || "Unknown")))];
 
@@ -106,7 +94,7 @@ const DoctorsPage = () => {
                         {doctor.ConsultantName.charAt(0)}
                       </span>
                     </div>
-                    <h2 className="text-xl font-semibold text-center mb-2 text-gray-800">{doctor.ConsultantName}</h2>
+                    <h2 className="text-xl font-semibold text-center mb-2 text-gray-800">ss</h2>
                     <p className="text-sm text-gray-600 text-center mb-4">{doctor.Department || "Unknown Department"}</p>
                     <div className="text-sm text-center text-gray-600 mb-4">
                       {doctor.Fee ? `Consultation Fee: ${doctor.Fee}` : "Fee details unavailable"}

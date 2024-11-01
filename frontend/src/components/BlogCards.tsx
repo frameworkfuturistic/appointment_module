@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react"; 
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Heart, MessageCircle } from "lucide-react";
@@ -11,31 +11,48 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "./ui/carousel";
-import BlogData from "@/json/BlogData";
 import Title from "./Title";
 import Image from "next/image";
+import axiosInstance from "@/lib/axiosInstance";
 
 const BlogCards = () => {
+  const [blogs, setBlogs] = useState([]);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await axiosInstance.get("/blogs"); // Adjust the endpoint as needed
+        console.log("hjhsabh", response.data?.blogs);
+        
+        setBlogs(response.data?.blogs.slice(0, 6)); // Limit to the first 6 blogs
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
   return (
     <section className="section">
       {/* OUR BLOG */}
       <div className="min-h-fit">
-        <div className=" max-w-7xl mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-col items-center text-center gap-2 mb-6">
             <Title title={"LATEST BLOGS"} />
           </div>
 
           <Carousel opts={{ align: "start" }} className="w-full">
             <CarouselContent className="flex">
-              {BlogData.map((blog) => (
+              {blogs.map((blog) => (
                 <CarouselItem key={blog.id} className="md:basis-1/3 lg:basis-1/3 p-4">
                   <Card className="flex flex-col h-full justify-between transition-transform duration-300 transform hover:-translate-y-2 hover:scale-105 hover:shadow-lg hover:border-b-8 hover:border-b-rose-200">
                     <Image
-                      src={blog.featureImage}         // Dynamic source from the blog object
-                      alt={blog.title}                // Alt text for accessibility
-                      width={500}                     // Set an appropriate width (adjust as needed)
-                      height={300}                    // Set an appropriate height (adjust as needed)
-                      className="rounded-t-lg object-cover w-full h-full" // Use Tailwind CSS classes for styling
+                      src={blog.featureImage} // Dynamic source from the blog object
+                      alt={blog.title} // Alt text for accessibility
+                      width={500} // Set an appropriate width (adjust as needed)
+                      height={300} // Set an appropriate height (adjust as needed)
+                      className="rounded-t-lg object-cover w-full h-full"
                     />
                     <Toggle className="bg-sky-600 max-w-32 text-white place-self-end -mt-10 rounded-b-none rounded-r-none">
                       {blog.date}
@@ -73,8 +90,6 @@ const BlogCards = () => {
               </Button>
             </Link>
           </div>
-
-
         </div>
       </div>
     </section>

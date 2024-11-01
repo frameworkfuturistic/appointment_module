@@ -20,7 +20,7 @@ const departments = [
 ]
 
 const FooterSection = ({ title, children }: { title: string; children: React.ReactNode }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [isDesktop, setIsDesktop] = useState(false);
   const controls = useAnimation()
   const [ref, inView] = useInView()
@@ -261,7 +261,7 @@ const Footer = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             onClick={scrollToTop}
-            className="fixed bottom-8 right-8 bg-primary text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-300"
+            className="fixed z-50 bottom-8 right-2 bg-primary text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-300"
             aria-label="Scroll to top"
           >
             <ChevronUp className="h-6 w-6" />

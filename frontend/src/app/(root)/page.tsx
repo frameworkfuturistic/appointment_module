@@ -59,7 +59,7 @@ const Dashboard = () => {
 
         {/* Medical Cards Section */}
         <motion.div
-          className="py-10 sm:py-16 w-full"
+          className=" w-full"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}

@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5555/api', // Replace with your Node API base URL
+  baseURL: 'https://test.sjhrc.in/hospital-api/api', // Replace with your Node API base URL
 });
 
 // Add request interceptor
