@@ -2,7 +2,7 @@ const blogService = require('../../services/blogService');
 
 // Test endpoint
 exports.test = async (req, res) => {
-  res.status(200).json("I'm here for testing");
+  res.status(200).json({ success: true, message: "I'm here for testing" });
 };
 
 // Create a new blog post
@@ -13,9 +13,10 @@ exports.createBlog = async (req, res) => {
       content: req.body.content,
       author: req.body.author,
       category: req.body.category,
-      status: req.body.status || 'draft', // Ensure the status is properly handled
-      tags: req.body.tags ? JSON.parse(req.body.tags) : [], // Ensure tags are parsed
-      image: req.file ? req.file.path.replace(/\\/g, '/') : null, // Normalize file path
+      status: req.body.status || 'draft',
+      tags: req.body.tags ? JSON.parse(req.body.tags) : [],
+      image: req.file ? req.file.path.replace(/\\/g, '/') : null,
+      publishDate: req.body.publishDate || new Date(),
     };
 
     const blog = await blogService.createBlog(blogData);
@@ -28,8 +29,10 @@ exports.createBlog = async (req, res) => {
 // Get paginated list of blogs with optional category filter
 exports.getBlogs = async (req, res) => {
   try {
-    const { page = 1, limit = 8, category } = req.query;
-    const query = category ? { category } : {};
+    const { page = 1, limit = 8, category, status } = req.query;
+    const query = {};
+    if (category) query.category = category;
+    if (status) query.status = status;
 
     const { total, blogs } = await blogService.getBlogs(query, parseInt(page, 10), parseInt(limit, 10));
 
@@ -60,7 +63,6 @@ exports.getBlogById = async (req, res) => {
   }
 };
 
-
 // Get a single blog post by its slug
 exports.getBlogBySlug = async (req, res) => {
   try {
@@ -74,7 +76,6 @@ exports.getBlogBySlug = async (req, res) => {
   }
 };
 
-
 // Update a blog post by ID
 exports.updateBlog = async (req, res) => {
   try {
@@ -83,10 +84,14 @@ exports.updateBlog = async (req, res) => {
       content: req.body.content,
       author: req.body.author,
       category: req.body.category,
-      status: req.body.status || 'draft', // Ensure the status is properly handled
-      tags: req.body.tags ? JSON.parse(req.body.tags) : [], // Ensure tags are parsed
-      image: req.file ? req.file.path.replace(/\\/g, '/') : null, // Normalize file path
+      status: req.body.status,
+      tags: req.body.tags ? JSON.parse(req.body.tags) : undefined,
+      publishDate: req.body.publishDate,
     };
+
+    if (req.file) {
+      blogData.image = req.file.path.replace(/\\/g, '/');
+    }
 
     const blog = await blogService.updateBlog(req.params.id, blogData);
     if (!blog) {

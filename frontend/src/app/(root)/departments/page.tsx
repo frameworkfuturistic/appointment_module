@@ -15,66 +15,58 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { departments } from '@/json/departmentData'
 
-interface Department {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ReactNode;
-  image: string;
-  specialties: string[];
-}
-
-const departments: Department[] = [
-  {
-    id: "cardiology",
-    name: "Cardiology",
-    description: "World-class care for your heart",
-    icon: <Heart className="h-8 w-8 text-red-500" />,
-    image: "/placeholder.svg?height=400&width=600",
-    specialties: ["Interventional Cardiology", "Electrophysiology", "Heart Failure"]
-  },
-  {
-    id: "neurology",
-    name: "Neurology",
-    description: "Advanced care for brain and nervous system",
-    icon: <Brain className="h-8 w-8 text-blue-500" />,
-    image: "/placeholder.svg?height=400&width=600",
-    specialties: ["Stroke Care", "Neurosurgery", "Epilepsy Treatment"]
-  },
-  {
-    id: "orthopedics",
-    name: "Orthopedics",
-    description: "Restoring mobility and function",
-    icon: <Bone className="h-8 w-8 text-green-500" />,
-    image: "/placeholder.svg?height=400&width=600",
-    specialties: ["Joint Replacement", "Sports Medicine", "Spine Surgery"]
-  },
-  {
-    id: "oncology",
-    name: "Oncology",
-    description: "Comprehensive cancer care and research",
-    icon: <Microscope className="h-8 w-8 text-purple-500" />,
-    image: "/placeholder.svg?height=400&width=600",
-    specialties: ["Medical Oncology", "Radiation Therapy", "Surgical Oncology"]
-  },
-  {
-    id: "pediatrics",
-    name: "Pediatrics",
-    description: "Specialized care for children",
-    icon: <Baby className="h-8 w-8 text-pink-500" />,
-    image: "/placeholder.svg?height=400&width=600",
-    specialties: ["Neonatology", "Pediatric Surgery", "Child Development"]
-  },
-  {
-    id: "ophthalmology",
-    name: "Ophthalmology",
-    description: "Expert care for your vision",
-    icon: <Eye className="h-8 w-8 text-amber-500" />,
-    image: "/placeholder.svg?height=400&width=600",
-    specialties: ["Cataract Surgery", "Glaucoma Treatment", "Retinal Disorders"]
-  },
-]
+// const departments: Department[] = [
+//   {
+//     id: "cardiology",
+//     name: "Cardiology",
+//     description: "World-class care for your heart",
+//     icon: <Heart className="h-8 w-8 text-red-500" />,
+//     image: "/placeholder.svg?height=400&width=600",
+//     specialties: ["Interventional Cardiology", "Electrophysiology", "Heart Failure"]
+//   },
+//   {
+//     id: "neurology",
+//     name: "Neurology",
+//     description: "Advanced care for brain and nervous system",
+//     icon: <Brain className="h-8 w-8 text-blue-500" />,
+//     image: "/placeholder.svg?height=400&width=600",
+//     specialties: ["Stroke Care", "Neurosurgery", "Epilepsy Treatment"]
+//   },
+//   {
+//     id: "orthopedics",
+//     name: "Orthopedics",
+//     description: "Restoring mobility and function",
+//     icon: <Bone className="h-8 w-8 text-green-500" />,
+//     image: "/placeholder.svg?height=400&width=600",
+//     specialties: ["Joint Replacement", "Sports Medicine", "Spine Surgery"]
+//   },
+//   {
+//     id: "oncology",
+//     name: "Oncology",
+//     description: "Comprehensive cancer care and research",
+//     icon: <Microscope className="h-8 w-8 text-purple-500" />,
+//     image: "/placeholder.svg?height=400&width=600",
+//     specialties: ["Medical Oncology", "Radiation Therapy", "Surgical Oncology"]
+//   },
+//   {
+//     id: "pediatrics",
+//     name: "Pediatrics",
+//     description: "Specialized care for children",
+//     icon: <Baby className="h-8 w-8 text-pink-500" />,
+//     image: "/placeholder.svg?height=400&width=600",
+//     specialties: ["Neonatology", "Pediatric Surgery", "Child Development"]
+//   },
+//   {
+//     id: "ophthalmology",
+//     name: "Ophthalmology",
+//     description: "Expert care for your vision",
+//     icon: <Eye className="h-8 w-8 text-amber-500" />,
+//     image: "/placeholder.svg?height=400&width=600",
+//     specialties: ["Cataract Surgery", "Glaucoma Treatment", "Retinal Disorders"]
+//   },
+// ]
 
 export default function DepartmentsPage() {
   const [searchTerm, setSearchTerm] = useState("")

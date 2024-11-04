@@ -1,8 +1,10 @@
 // src/lib/axiosInstance.ts
 import axios from 'axios';
+import API_ROUTES from '@/utils/apiConfig';
+
 
 const axiosInstance = axios.create({
-  baseURL: 'https://test.sjhrc.in/hospital-api/api', // Replace with your Node API base URL
+  baseURL: 'http://localhost:5555/api/', // Replace with your Node API base URL || https://test.sjhrc.in/hospital-api/api
 });
 
 // Add request interceptor

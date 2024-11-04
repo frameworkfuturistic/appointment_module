@@ -60,7 +60,7 @@ function HospitalHero() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    <div className="min-h-fit bg-gradient-to-b from-blue-50 to-white border border-red-900">
+    <div className="min-h-fit bg-gradient-to-b from-blue-50 to-white ">
       <div className="container mx-auto px-4 py-12  ">
         <div className="grid lg:grid-cols-2 gap-8 items-start">
           <motion.div

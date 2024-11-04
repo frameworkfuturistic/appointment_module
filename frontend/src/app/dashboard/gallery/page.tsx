@@ -64,7 +64,7 @@ export default function GalleryDashboard() {
       // Transform the image URLs to the desired format
       const formattedImages = response.data.images.map((image) => ({
         ...image,
-        imageUrl: `http://localhost:5555/gallery/${image.imageUrl.replace(/uploads\\/g, '').replace(/\\/g, '/')}` // Remove 'uploads\\' and replace backslashes
+        imageUrl: `http://localhost:5555/gallery/${image.imageUrl.replace(/^uploads[\\/]/, '').replace(/\\/g, '/')}` // Remove 'uploads/' or 'uploads\' at the beginning
       }));
 
       setImages(formattedImages);
@@ -228,7 +228,6 @@ export default function GalleryDashboard() {
                             height={192}                         // Set height (48px * 4 for aspect ratio)
                             className="w-full h-48 object-cover rounded-md mb-4" // Use Tailwind CSS classes for styling
                           />
-                          <p>{image.imageUrl}</p>
                           <h3 className="text-lg font-semibold text-primary mb-2">{image.title}</h3>
                           <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{image.description}</p>
                           <div className="flex justify-between items-center">

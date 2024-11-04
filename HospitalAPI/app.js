@@ -70,6 +70,9 @@ app.use(session({
 // ROUTES
 
 app.use('/gallery', express.static(path.join(__dirname, 'uploads')));
+app.use('/blogs', express.static(path.join(__dirname, 'uploads')));
+app.use('/resume', express.static(path.join(__dirname, 'uploads')));
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

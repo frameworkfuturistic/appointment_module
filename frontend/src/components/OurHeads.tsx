@@ -28,7 +28,7 @@ interface Doctor {
   title: string
   image: string
   specialization: string
-  phone: string
+  study: string
   email: string
   website: string
   featured: boolean
@@ -38,43 +38,43 @@ const doctorData: Doctor[] = [
   {
     id: 1,
     name: "Dr. Ajay Ghosh",
-    title: "DCH, M.D.(Paed)",
+    title: "Chairman Cum Managing director",
     image: "/departmentHeads/sudhir.png",
-    specialization: "Pediatrics",
-    phone: "+1 (555) 123-4567",
+    specialization: "Orthopedics ",
+    study: "M.B.B.S (B.H.U), M.S. Ortho",
     email: "ajay.ghosh@example.com",
     website: "www.drajayghosh.com",
     featured: true
   },
   {
     id: 2,
-    name: "Dr. Shailesh Chandra",
-    title: "Senior Consultant Paediatrics",
-    image: "/departmentHeads/rakesh.png",
-    specialization: "Pediatrics",
-    phone: "+1 (555) 234-5678",
+    name: "Dr. Vandana Prasad",
+    title: "director",
+    image: "/departmentHeads/vandana.png",
+    specialization: "Ophthalmology",
+    study: "M.B.B.S (B.H.U), M.S. Ophthalmology. (B.H.U)",
     email: "shailesh.chandra@example.com",
     website: "www.drshaileshchandra.com",
     featured: true
   },
   {
     id: 3,
-    name: "Dr. Prem Ranjan Kumar",
-    title: "M.D.(Paed)",
-    image: "/departmentHeads/spmishra.png",
-    specialization: "Pediatrics",
-    phone: "+1 (555) 345-6789",
+    name: "Dr. Rakesh Arya",
+    title: "Chief Medical Suprintendent",
+    image: "/departmentHeads/rakesh.png",
+    specialization: "medical ",
+    study: "M.B.B.S (G.R.M.C, Gwalior) M.D. (G.R.M.C, Gwalior)",
     email: "prem.kumar@example.com",
     website: "www.drpremkumar.com",
     featured: false
   },
   {
     id: 4,
-    name: "Dr. Prem Ranjan Kumar",
-    title: "M.D.(Paed)",
+    name: "Dr. S.P. Mishra",
+    title: "Medical Superintendent",
     image: "/departmentHeads/spmishra.png",
-    specialization: "Pediatrics",
-    phone: "+1 (555) 345-6789",
+    specialization: "Medical ",
+    study: "H.O.D (Dental), CCL Central Hospital, Gandhi Nagar, Ranchi",
     email: "prem.kumar@example.com",
     website: "www.drpremkumar.com",
     featured: false
@@ -202,8 +202,8 @@ const AdvancedMedicalExperts: React.FC = () => {
               <div className="p-6 relative">
                 
                 <h2 className="text-xl font-bold text-gray-800 mb-2">{doctor.name}</h2>
-                <p className="text-blue-600 font-medium mb-4">{doctor.title}</p>
-                
+                <p className="text-primary text-sm font-medium mb-2">({doctor.title})</p>
+                <p className="text-black text-sm font-medium ">{doctor.study}</p>
               </div>
             </motion.div>
           ))}

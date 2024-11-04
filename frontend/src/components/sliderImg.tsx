@@ -78,8 +78,8 @@ export function CarouselDemo() {
         <div className="flex flex-col lg:flex-row items-center lg:items-stretch ">
           {/* Left side - Information */}
           <div className="w-full lg:w-4/12 space-y-4 sm:space-y-6 p-4 sm:p-8 lg:p-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
-            Shree Jagannath Hospital Ranchi- 834001
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">
+          Shree Jagannath Hospital & Research Center
           </h1>
           <div className="flex items-center space-x-2">
             <div className="flex">

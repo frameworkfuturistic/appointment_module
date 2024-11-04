@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion'
-import { Calendar, Clock, MapPin, Phone, Mail, ArrowLeft, Star, Users, Award, ChevronRight, ChevronDown, Heart } from 'lucide-react'
+import { Calendar, Clock, MapPin, Phone, Mail, ArrowLeft, Star, Users, Award, ChevronRight, ChevronDown, Heart, Brain, Bone, Microscope, Baby, Eye, Stethoscope } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -29,159 +29,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { departmentDetails } from '@/json/departmentData'
 
-interface Doctor {
-  id: string;
-  name: string;
-  title: string;
-  image: string;
-  specialization: string;
-  experience: string;
-  education: string[];
-  availability: {
-    days: string;
-    hours: string;
-  }[];
-  languages: string[];
-  achievements: string[];
-}
-
-interface Treatment {
-  name: string;
-  description: string;
-  duration: string;
-  preparation: string[];
-}
-
-interface FAQ {
-  question: string;
-  answer: string;
-}
-
-const doctors: Doctor[] = [
-  {
-    id: "dr-smith",
-    name: "Dr. Sarah Smith",
-    title: "Senior Consultant",
-    image: "/placeholder.svg?height=400&width=400",
-    specialization: "Cardiology",
-    experience: "15+ years",
-    education: [
-      "MBBS - Harvard Medical School",
-      "MD - Johns Hopkins University",
-      "Fellowship in Cardiology - Mayo Clinic"
-    ],
-    availability: [
-      { days: "Monday - Friday", hours: "9:00 AM - 5:00 PM" },
-      { days: "Saturday", hours: "9:00 AM - 1:00 PM" }
-    ],
-    languages: ["English", "Spanish", "French"],
-    achievements: [
-      "Best Cardiologist Award 2022",
-      "Published 50+ research papers",
-      "Performed 1000+ successful surgeries"
-    ]
-  },
-  {
-    id: "dr-johnson",
-    name: "Dr. Michael Johnson",
-    title: "Interventional Cardiologist",
-    image: "/placeholder.svg?height=400&width=400",
-    specialization: "Interventional Cardiology",
-    experience: "12+ years",
-    education: [
-      "MBBS - Stanford University",
-      "MD - Yale School of Medicine",
-      "Fellowship in Interventional Cardiology - Cleveland Clinic"
-    ],
-    availability: [
-      { days: "Monday - Thursday", hours: "10:00 AM - 6:00 PM" },
-      { days: "Friday", hours: "10:00 AM - 2:00 PM" }
-    ],
-    languages: ["English", "German"],
-    achievements: [
-      "Pioneer in minimally invasive cardiac procedures",
-      "Developed new stent technology",
-      "Trained over 100 cardiologists"
-    ]
-  },
-  {
-    id: "dr-patel",
-    name: "Dr. Anita Patel",
-    title: "Electrophysiologist",
-    image: "/placeholder.svg?height=400&width=400",
-    specialization: "Cardiac Electrophysiology",
-    experience: "10+ years",
-    education: [
-      "MBBS - University of California, San Francisco",
-      "MD - Duke University School of Medicine",
-      "Fellowship in Cardiac Electrophysiology - Massachusetts General Hospital"
-    ],
-    availability: [
-      { days: "Tuesday - Friday", hours: "9:00 AM - 5:00 PM" },
-      { days: "Saturday", hours: "9:00 AM - 1:00 PM" }
-    ],
-    languages: ["English", "Hindi", "Gujarati"],
-    achievements: [
-      "Innovator in cardiac rhythm management",
-      "Recipient of Young Investigator Award",
-      "Performed 500+ complex ablation procedures"
-    ]
-  }
-]
-
-const treatments: Treatment[] = [
-  {
-    name: "Coronary Angioplasty",
-    description: "A procedure to open blocked or narrowed heart arteries",
-    duration: "1-2 hours",
-    preparation: [
-      "Fast for 6-8 hours before the procedure",
-      "Stop certain medications as advised",
-      "Arrange for someone to drive you home"
-    ]
-  },
-  {
-    name: "Echocardiogram",
-    description: "An ultrasound test to evaluate heart structure and function",
-    duration: "30-60 minutes",
-    preparation: [
-      "No special preparation needed",
-      "Wear comfortable, loose-fitting clothing",
-      "Avoid caffeinated beverages 24 hours before the test"
-    ]
-  },
-  {
-    name: "Cardiac Catheterization",
-    description: "A procedure to diagnose and treat heart conditions",
-    duration: "1-3 hours",
-    preparation: [
-      "Fast for 6-8 hours before the procedure",
-      "Inform your doctor about all medications you're taking",
-      "Arrange for someone to drive you home",
-      "Plan to stay in the hospital overnight"
-    ]
-  }
-]
-
-const faqs: FAQ[] = [
-  {
-    question: "What are the common symptoms of heart disease?",
-    answer: "Common symptoms include chest pain, shortness of breath, irregular heartbeat, fatigue, and dizziness. However, symptoms can vary between individuals and some people may not show any symptoms at all."
-  },
-  {
-    question: "How often should I have my heart checked?",
-    answer: "It's recommended to have a heart health check-up at least once a year, especially if you're over 40 or have risk factors such as high blood pressure, high cholesterol, or a family history of heart disease. Your doctor can advise on the appropriate frequency based on your individual health status."
-  },
-  {
-    question: "Can lifestyle changes really make a difference in heart health?",
-    answer: "Absolutely. Lifestyle changes can significantly improve heart health. Regular exercise, a balanced diet low in saturated fats and high in fruits and vegetables, maintaining a healthy weight, not smoking, and managing stress can all contribute to better heart health and reduce the risk of heart disease."
-  },
-  {
-    question: "What's the difference between a heart attack and cardiac arrest?",
-    answer: "A heart attack occurs when blood flow to the heart is blocked, usually by a build-up of plaque in the coronary arteries. Cardiac arrest is when the heart suddenly stops beating altogether, often due to electrical disturbances in the heart. While a heart attack can lead to cardiac arrest, they are different conditions requiring different treatments."
-  }
-]
 
 export default function DepartmentDetail({ params }: { params: { id: string } }) {
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null)
@@ -191,6 +40,14 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
   const [isSticky, setIsSticky] = useState(false)
   const heroRef = useRef(null)
   const isHeroInView = useInView(heroRef, { once: true })
+  const [department, setDepartment] = useState<DepartmentDetail | null>(null)
+
+  useEffect(() => {
+    const dept = departmentDetails[params.id]
+    if (dept) {
+      setDepartment(dept)
+    }
+  }, [params.id])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -206,6 +63,10 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
     visible: { opacity: 1, y: 0, transition: { duration: 0.8 } }
   }
 
+  if (!department) {
+    return <div>Loading...</div>
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Hero Section */}
@@ -215,8 +76,8 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
         style={{ opacity, scale }}
       >
         <Image
-          src="/placeholder.svg?height=1080&width=1920"
-          alt="Cardiology Department"
+          src={department.image}
+          alt={`${department.name} Department`}
           layout="fill"
           objectFit="cover"
           className="absolute inset-0"
@@ -230,7 +91,7 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
             transition={{ duration: 0.8 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4"
           >
-            Cardiology Department
+            {department.name}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -238,9 +99,8 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-lg sm:text-xl md:text-2xl max-w-2xl mx-auto"
           >
-            World-class cardiac care with advanced technology and expert physicians
+            {department.description}
           </motion.p>
-         
         </div>
         <motion.div
           className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
@@ -289,17 +149,10 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
           <div className="grid md:grid-cols-3 gap-8">
             <div className="md:col-span-2 space-y-6">
               <p className="text-lg text-gray-700 leading-relaxed">
-                Our Cardiology Department is equipped with state-of-the-art technology and staffed by world-renowned heart specialists. We provide comprehensive care for all types of cardiovascular conditions, from preventive screenings to complex surgical procedures.
+                {department.overview}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[
-                  "Advanced Cardiac Imaging",
-                  "24/7 Emergency Care",
-                  "Minimally Invasive Procedures",
-                  "Cardiac Rehabilitation",
-                  "Heart Failure Management",
-                  "Electrophysiology Services"
-                ].map((feature) => (
+                {department.features.map((feature) => (
                   <motion.div
                     key={feature}
                     className="flex items-center space-x-2"
@@ -319,19 +172,19 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
               <CardContent className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <Phone className="h-5 w-5 text-blue-500" />
-                  <span>+1 (555) 123-4567</span>
+                  <span>{department.contactInfo.phone}</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Mail className="h-5 w-5 text-blue-500" />
-                  <span>cardiology@hospital.com</span>
+                  <span>{department.contactInfo.email}</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <MapPin className="h-5 w-5 text-blue-500" />
-                  <span>Floor 3, East Wing</span>
+                  <span>{department.contactInfo.location}</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Clock  className="h-5 w-5 text-blue-500" />
-                  <span>Mon-Fri: 9:00 AM - 5:00 PM</span>
+                  <span>{department.contactInfo.hours}</span>
                 </div>
                 <Button className="w-full mt-4">
                   Book Appointment
@@ -354,7 +207,7 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
             Our Expert Doctors
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {doctors.map((doctor, index) => (
+            {department.doctors.map((doctor, index) => (
               <motion.div
                 key={doctor.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -414,15 +267,15 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
           <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-8">
             Our Treatments
           </h2>
-          <Tabs defaultValue={treatments[0].name} className="w-full">
+          <Tabs defaultValue={department.treatments[0].name} className="w-full">
             <TabsList className="mb-4 flex flex-wrap justify-start">
-              {treatments.map((treatment) => (
+              {department.treatments.map((treatment) => (
                 <TabsTrigger key={treatment.name} value={treatment.name} className="mr-2 mb-2">
                   {treatment.name}
                 </TabsTrigger>
               ))}
             </TabsList>
-            {treatments.map((treatment) => (
+            {department.treatments.map((treatment) => (
               <TabsContent key={treatment.name} value={treatment.name}>
                 <Card>
                   <CardHeader>
@@ -439,8 +292,8 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
                       <div>
                         <h4 className="font-semibold mb-2">Preparation:</h4>
                         <ul className="list-disc list-inside space-y-1">
-                          {treatment.preparation.map((step) => (
-                            <li key={step}>{step}</li>
+                          {treatment.preparation.map((step, index) => (
+                            <li key={index}>{step}</li>
                           ))}
                         </ul>
                       </div>
@@ -467,7 +320,7 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
           <Card>
             <CardContent className="pt-6">
               <Accordion type="single" collapsible className="w-full">
-                {faqs.map((faq, index) => (
+                {department.faqs.map((faq, index) => (
                   <AccordionItem key={index} value={`item-${index}`}>
                     <AccordionTrigger>{faq.question}</AccordionTrigger>
                     <AccordionContent>{faq.answer}</AccordionContent>
@@ -486,11 +339,11 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
           viewport={{ once: true }}
           variants={sectionVariants}
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-4">
-            Take the First Step Towards a Healthier Heart
+          <h2  className="text-3xl md:text-4xl font-bold text-blue-900 mb-4">
+            Take the First Step Towards Better Health
           </h2>
           <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
-            Our team of expert cardiologists is here to provide you with world-class care. Don't wait to prioritize your heart health.
+            Our team of expert specialists is here to provide you with world-class care. Don't wait to prioritize your health.
           </p>
           <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
             Schedule Your Consultation
@@ -520,15 +373,15 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
                   <div>
                     <h4 className="font-semibold mb-2">Education</h4>
                     <ul className="list-disc list-inside space-y-1">
-                      {selectedDoctor.education.map((edu) => (
-                        <li key={edu}>{edu}</li>
+                      {selectedDoctor.education.map((edu, index) => (
+                        <li key={index}>{edu}</li>
                       ))}
                     </ul>
                   </div>
                   <div>
                     <h4 className="font-semibold mb-2">Availability</h4>
-                    {selectedDoctor.availability.map((slot) => (
-                      <div key={slot.days} className="flex justify-between text-sm">
+                    {selectedDoctor.availability.map((slot, index) => (
+                      <div key={index} className="flex justify-between text-sm">
                         <span>{slot.days}</span>
                         <span>{slot.hours}</span>
                       </div>
@@ -537,8 +390,8 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
                   <div>
                     <h4 className="font-semibold mb-2">Languages</h4>
                     <div className="flex flex-wrap gap-2">
-                      {selectedDoctor.languages.map((lang) => (
-                        <Badge key={lang} variant="secondary">
+                      {selectedDoctor.languages.map((lang, index) => (
+                        <Badge key={index} variant="secondary">
                           {lang}
                         </Badge>
                       ))}
@@ -547,8 +400,8 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
                   <div>
                     <h4 className="font-semibold mb-2">Achievements</h4>
                     <ul className="list-disc list-inside space-y-1">
-                      {selectedDoctor.achievements.map((achievement) => (
-                        <li key={achievement}>{achievement}</li>
+                      {selectedDoctor.achievements.map((achievement, index) => (
+                        <li key={index}>{achievement}</li>
                       ))}
                     </ul>
                   </div>

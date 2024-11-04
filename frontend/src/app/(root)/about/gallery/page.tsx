@@ -1,6 +1,19 @@
-"use client";
+'use client'
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import Image from 'next/image'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useInView } from 'react-intersection-observer'
+import axios from 'axios'
+import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   Pagination,
   PaginationContent,
@@ -9,211 +22,240 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@/components/ui/pagination";
-import Image from "next/image";
+} from "@/components/ui/pagination"
+import axiosInstance from '@/lib/axiosInstance'
+import HeaderBanner from '@/components/HeaderBanner'
 
-
-// Define the Image type
 interface Image {
-  src: string;
-  alt: string;
-  title: string;
-  description: string;
+  id: string
+  imageUrl: string
+  title: string
+  description: string
 }
 
-// Define your images array with type annotation
-const images: Image[] = [
-  {
-    src: "/gallery/vandanamam.png",
-    alt: "img",
-    title: "Vandana Mam",
-    description: "",
-  },
-  { src: "/gallery/um1.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/um2.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/um3.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/um4.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/um5.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/um6.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/um7.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/um8.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/paper.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/paper1.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/i1.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/i2.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/i3.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/i4.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/i5.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/i6.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/i7.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/i8.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/gallery1.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/gallery2.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/gallery4.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/gallery5.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/gallery7.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/gallery10.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/gallery11.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/gallery12.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/gallery13.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/gallery14.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/gallery15.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/gallery16.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/camp1.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/camp2.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/camp3.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/camp4.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/camp8.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/awareness.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/26.png", alt: "img", title: "", description: "" },
-  { src: "/gallery/27.png", alt: "img", title: "", description: "" },
+interface PaginationData {
+  images: Image[]
+  total: number
+  page: number
+  pages: number
+}
 
-  // ... add other images here
-];
 
-const ImageGrid: React.FC = () => {
-  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
 
-  // Pagination state
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12; // Number of items per page
+const HospitalGallery: React.FC = () => {
+  const [images, setImages] = useState<Image[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null)
+  const [paginationData, setPaginationData] = useState<PaginationData | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
 
-  // Calculate the total number of pages
-  const totalPages = Math.ceil(images.length / itemsPerPage);
+  const fetchImages = useCallback(async (page: number) => {
+    setLoading(true)
+    try {
+      const response = await axiosInstance.get('/gallery', {
+        params: { page, limit: 12 },
+      })
+      const data = response.data
 
-  // Get the images for the current page
-  const paginatedImages = images.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+      // Transform the image URLs to the desired format
+      const formattedImages = data.images.map((image: Image) => ({
+        ...image,
+        imageUrl: `http://localhost:5555/gallery/${image.imageUrl.replace(/^uploads[\\/]/, '').replace(/\\/g, '/')}`
+      }))
 
-  const openModal = (image: Image) => {
-    setSelectedImage(image);
-  };
+      setImages(formattedImages)
+      setPaginationData({
+        images: formattedImages,
+        total: data.total,
+        page: data.page,
+        pages: data.pages,
+      })
+    } catch (err) {
+      setError('Failed to fetch images')
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
 
-  const closeModal = () => {
-    setSelectedImage(null);
-  };
+  useEffect(() => {
+    fetchImages(currentPage)
+  }, [currentPage, fetchImages])
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+    setCurrentPage(page)
+  }
 
-  return (
-    <div className="bg-pattern4-bg">
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="bg-rose-200 text-4xl font-bold text-center mb-8 p-8 ">Media & Gallery</h1>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {paginatedImages.map((image, index) => (
-            <div
-              key={index}
-              className="relative overflow-hidden rounded-2xl shadow-lg group cursor-pointer"
-              onClick={() => openModal(image)}
-            >
-              <Image
-                src={image.src}
-                alt={image.alt}
-                width={500}   // set an appropriate width
-                height={192}  // set an appropriate height to match "h-48"
-                className="w-full h-48 object-cover" // This can still work for additional styling
-                layout="responsive"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <h4 className="text-xl font-bold text-white">
-                    {image.title}
-                  </h4>
-                  {image.description && (
-                    <p className="text-white">{image.description}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+  const openModal = (image: Image) => {
+    setSelectedImage(image)
+  }
 
-        {/* Pagination */}
-        <div className="flex justify-center mt-8">
-          <Pagination>
-            <PaginationPrevious
-              // disabled={currentPage === 1}
-              onClick={() => handlePageChange(currentPage - 1)}
-            >
-              Previous
-            </PaginationPrevious>
+  const closeModal = () => {
+    setSelectedImage(null)
+  }
 
-            <PaginationContent>
-              {[...Array(totalPages)].map((_, index) => (
-                <PaginationItem
-                  key={index}
-                  // active={currentPage === index + 1}
-                  onClick={() => handlePageChange(index + 1)}
-                >
-                  {index + 1}
-                </PaginationItem>
-              ))}
-            </PaginationContent>
+  const ImageCard: React.FC<{ image: Image }> = ({ image }) => {
+    const [ref, inView] = useInView({
+      triggerOnce: true,
+      rootMargin: '200px 0px',
+    })
 
-            <PaginationNext
-              // disabled={currentPage === totalPages}
-              onClick={() => handlePageChange(currentPage + 1)}
-            >
-              Next
-            </PaginationNext>
-          </Pagination>
-        </div>
-      </div>
-
-      {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
-          onClick={closeModal}
-        >
-          <div
-            className="bg-white p-4 rounded-lg relative max-w-3xl mx-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
-              onClick={closeModal}
-            >
-              &times;
-            </button>
-            <Image
-  src={selectedImage.src} // Assuming selectedImage.src is a valid path
-  alt={selectedImage.alt}  // Set alt text from selectedImage.alt
-  width={500}              // Set an appropriate width based on your layout
-  height={300}             // Set height to maintain the aspect ratio
-  className="w-full h-auto object-cover rounded-lg" // Use Tailwind CSS classes
-/>
-            <div className="mt-4">
-              <h2 className="text-2xl font-bold">{selectedImage.title}</h2>
-              {selectedImage.description && (
-                <p className="mt-2">{selectedImage.description}</p>
-              )}
-            </div>
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 20 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.5 }}
+        className="relative overflow-hidden rounded-2xl shadow-lg group cursor-pointer"
+        onClick={() => openModal(image)}
+      >
+        {inView && (
+          <Image
+            src={image.imageUrl}
+            alt={image.title}
+            width={500}
+            height={300}
+            className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+            loading="lazy"
+          />
+        )}
+        <div className="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <h4 className="text-xl font-bold text-white">{image.title}</h4>
+            {image.description && (
+              <p className="text-white text-sm">{image.description}</p>
+            )}
           </div>
         </div>
-      )}
+      </motion.div>
+    )
+  }
+
+  const memoizedImages = useMemo(() => images, [images])
+
+  const navigateImage = (direction: 'prev' | 'next') => {
+    if (!selectedImage) return
+    const currentIndex = images.findIndex(img => img.id === selectedImage.id)
+    if (direction === 'prev' && currentIndex > 0) {
+      setSelectedImage(images[currentIndex - 1])
+    } else if (direction === 'next' && currentIndex < images.length - 1) {
+      setSelectedImage(images[currentIndex + 1])
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white ">
+         <HeaderBanner
+        title="Gallery"
+        subtitle=""
+        bgImage="/images/hospital-banner.jpg"
+      />
+      <div className="container mx-auto px-4 py-12">
+        {error && (
+          <div className="text-red-500 text-center mb-4">{error}</div>
+        )}
+
+        <AnimatePresence>
+          {loading ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex justify-center items-center h-64"
+            >
+              <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            >
+              {memoizedImages.map((image) => (
+                <ImageCard key={image.id} image={image} />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {paginationData && (
+          <div className="mt-8 flex justify-center">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                  />
+                </PaginationItem>
+                {[...Array(paginationData.pages)].map((_, index) => (
+                  <PaginationItem key={index}>
+                    <PaginationLink
+                      onClick={() => handlePageChange(index + 1)}
+                      isActive={currentPage === index + 1}
+                    >
+                      {index + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className={currentPage === paginationData.pages ? 'pointer-events-none opacity-50' : ''}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
+
+        <Dialog open={!!selectedImage} onOpenChange={closeModal}>
+          <DialogContent className="sm:max-w-[800px]">
+            <DialogHeader>
+              <DialogTitle>{selectedImage?.title}</DialogTitle>
+              <DialogDescription>{selectedImage?.description}</DialogDescription>
+            </DialogHeader>
+            {selectedImage && (
+              <div className="mt-4 relative">
+                <Image
+                  src={selectedImage.imageUrl}
+                  alt={selectedImage.title}
+                  width={800}
+                  height={600}
+                  className="w-full h-auto object-cover rounded-lg"
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="absolute top-1/2 left-4 transform -translate-y-1/2"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    navigateImage('prev')
+                  }}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="absolute top-1/2 right-4 transform -translate-y-1/2"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    navigateImage('next')
+                  }}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+            <Button onClick={closeModal} className="mt-4">Close</Button>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
-  );
-};
+  )
+}
 
-export default ImageGrid;
-
-// Explanation:
-// Pagination State:
-// currentPage tracks the current page number.
-// itemsPerPage defines how many items are displayed per page.
-
-// Pagination Logic:
-// totalPages calculates the total number of pages based on the number of images and items per page.
-// paginatedImages slices the images array to display only the images for the current page.
-
-// Pagination Controls:
-// PaginationPrevious and PaginationNext components handle navigation between pages.
-// PaginationItem components represent each page number and allow navigation to that page.
-// Disabled state for previous/next buttons is managed to prevent invalid page changes.
-
-// Pagination Component Integration:
-// Make sure you have the pagination components (Pagination, PaginationContent, PaginationItem, etc.) available in your project, or implement your own pagination controls if necessary.
+export default HospitalGallery

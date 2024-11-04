@@ -40,10 +40,15 @@ const createJobApplication = async (req, res) => {
 const getAllJobs = async (req, res) => {
     try {
         const jobs = await jobApplicationService.getAllJobs();
-        return sendResponse(res, 200, jobs);
+        return sendResponse(res, 200, {
+            success: true,
+            data: jobs,
+          });
     } catch (error) {
         return sendResponse(res, 500, null, error.message);
     }
+
+    
 };
 
 const getApplicationsByJobId = async (req, res) => {

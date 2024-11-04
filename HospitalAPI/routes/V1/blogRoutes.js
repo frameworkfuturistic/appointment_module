@@ -1,18 +1,18 @@
 const express = require('express');
 const blogController = require('../../controllers/V1/blogController');
-const upload = require('../../middlewares/multer'); // Adjust the path as necessary
+const upload = require('../../middlewares/multer');
 
 const router = express.Router();
 
-// Public routes for users
+// Public routes
 router.get('/test', blogController.test);
-router.get('/', blogController.getBlogs); // Get all blogs
-router.get('/:id', blogController.getBlogById); // Get a single blog by ID
-router.get('/:slug', blogController.getBlogBySlug); // Get a single blog by slug
+router.get('/', blogController.getBlogs);
+router.get('/:id', blogController.getBlogById);
+router.get('/slug/:slug', blogController.getBlogBySlug);
 
-// Admin-only routes
-router.post('/', upload.single('image'), blogController.createBlog); // Create a new blog post with image upload
-router.put('/:id', upload.single('image'), blogController.updateBlog); // Update a blog by ID with image upload
-router.delete('/:id', blogController.deleteBlog); // Delete a blog by ID
+// Admin-only routes (you should add authentication middleware here)
+router.post('/', upload.single('image'), blogController.createBlog);
+router.put('/:id', upload.single('image'), blogController.updateBlog);
+router.delete('/:id', blogController.deleteBlog);
 
 module.exports = router;
