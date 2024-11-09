@@ -1,3 +1,6 @@
+// eslint-disable-next-line
+// @ts-nocheck
+
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
@@ -127,7 +130,9 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
                 <li><a href="#faqs" className="text-sm text-gray-600 hover:text-blue-600">FAQs</a></li>
               </ul>
             </nav>
+            <Link href="/appointment">
             <Button className="mt-2 sm:mt-0 w-full sm:w-auto">Book Appointment</Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -189,6 +194,9 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
                 <Button className="w-full mt-4">
                   Book Appointment
                 </Button>
+                <Button className="w-full mt-4">
+                  Enquiry Now
+                </Button>
               </CardContent>
             </Card>
           </div>
@@ -206,53 +214,41 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
           <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-8">
             Our Expert Doctors
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {department.doctors.map((doctor, index) => (
-              <motion.div
-                key={doctor.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <Card className="h-full flex flex-col hover:shadow-lg transition-shadow duration-300">
-                  <CardHeader>
-                    <div className="relative h-48 w-48 mx-auto mb-4 rounded-full overflow-hidden">
-                      <Image
-                        src={doctor.image}
-                        alt={doctor.name}
-                        layout="fill"
-                        objectFit="cover"
-                      />
-                    </div>
-                    <CardTitle className="text-center">{doctor.name}</CardTitle>
-                    <CardDescription className="text-center">{doctor.title}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <div className="space-y-2 text-sm text-gray-600">
-                      <div className="flex items-center space-x-2">
-                        <Award className="h-4 w-4 text-blue-500" />
-                        <span>{doctor.specialization}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Clock className="h-4 w-4 text-blue-500" />
-                        <span>{doctor.experience}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardContent className="pt-0">
-                    <Button 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={() => setSelectedDoctor(doctor)}
-                    >
-                      View Profile
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+         
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {department.doctors.map((doctor, index) => (
+            <motion.div
+              key={doctor.id}
+              layoutId={`doctor-${doctor.id}`}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              onClick={() => setSelectedDoctor(doctor)}
+              className="bg-white rounded-xl shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
+            >
+              <div className="relative h-64">
+              
+                <Image
+                  src={doctor.image}
+                  alt={doctor.name}
+                  layout="fill"
+                  objectFit="cover"
+                />
+              {/* <div className="absolute right-0  bg-teal-200 text-primary px-2 py-2 rounded-bl-xl text-xs font-semibold">
+                  {doctor.specialization}
+                </div> */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+              </div>
+              <div className="p-6 relative">
+                
+                <h2 className="text-md font-bold text-gray-800 mb-2">{doctor.name}</h2>
+                <p className="text-primary text-sm font-medium mb-2">{doctor.title}</p>
+                
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
         </motion.section>
 
         {/* Treatments Section */}
@@ -284,13 +280,13 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="flex items-center space-x-2">
+                      {/* <div className="flex items-center space-x-2">
                         <Clock className="h-5 w-5 text-blue-500" />
                         <span className="font-semibold">Duration:</span>
                         <span>{treatment.duration}</span>
-                      </div>
+                      </div> */}
                       <div>
-                        <h4 className="font-semibold mb-2">Preparation:</h4>
+                        {/* <h4 className="font-semibold mb-2">Preparation:</h4> */}
                         <ul className="list-disc list-inside space-y-1">
                           {treatment.preparation.map((step, index) => (
                             <li key={index}>{step}</li>
@@ -353,20 +349,21 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
 
       {/* Doctor Details Dialog */}
       <Dialog open={!!selectedDoctor} onOpenChange={() => setSelectedDoctor(null)}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="bg-white text-gray-900 max-w-3xl">
           {selectedDoctor && (
             <>
-              <DialogHeader>
-                <DialogTitle>{selectedDoctor.name}</DialogTitle>
-                <DialogDescription>{selectedDoctor.title}</DialogDescription>
+               <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-blue-600">{selectedDoctor.name}</DialogTitle>
+                <DialogDescription className="text-gray-700">{selectedDoctor.title}</DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="relative h-64 w-64 mx-auto rounded-lg overflow-hidden">
+              <div className="grid md:grid-cols-2 gap-6">
+              <div>
                   <Image
                     src={selectedDoctor.image}
                     alt={selectedDoctor.name}
-                    layout="fill"
-                    objectFit="cover"
+                    width={400}
+                    height={400}
+                    className="rounded-lg"
                   />
                 </div>
                 <div className="space-y-4">
@@ -378,25 +375,8 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
                       ))}
                     </ul>
                   </div>
-                  <div>
-                    <h4 className="font-semibold mb-2">Availability</h4>
-                    {selectedDoctor.availability.map((slot, index) => (
-                      <div key={index} className="flex justify-between text-sm">
-                        <span>{slot.days}</span>
-                        <span>{slot.hours}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-2">Languages</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedDoctor.languages.map((lang, index) => (
-                        <Badge key={index} variant="secondary">
-                          {lang}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
+               
+                 
                   <div>
                     <h4 className="font-semibold mb-2">Achievements</h4>
                     <ul className="list-disc list-inside space-y-1">

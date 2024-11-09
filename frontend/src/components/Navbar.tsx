@@ -52,8 +52,9 @@ const topNavItems = [
   { icon: FileSpreadsheet, label: "My Appointment", href: "/appointment" },
   { icon: Briefcase, label: "Career", href: "/career/currentOpenings" },
   { icon: CalendarRange, label: "Schedules", href: "/opd" },
-  { icon: Heart, label: "Academics", href: "/comingsoon" },
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+  { icon: PhoneCall, label: "Contact Us", href: "/contact" },
+  
 ]
 
 const navigationLinks = [
@@ -87,28 +88,28 @@ const navigationLinks = [
     children: [
       {
         title: "Cardiology",
-        href: "/departments",
+        href: "/departments/cardiology",
         description: "Heart and cardiovascular care",
       },
       {
         title: "Orthopaedics",
-        href: "/inDepartment/orthopaedics",
+        href: "/departments/orthopedics",
         description:
           "Treatment of the musculoskeletal system, includes the bones, joints, ligaments, tendons, and muscles.",
       },
       {
         title: "Medicine",
-        href: "/inDepartment/generalMedicine",
+        href: "/departments/generalmedicine",
         description: "All infections related specialists",
       },
       {
         title: "General Surgery",
-        href: "/inDepartment/generalSurgery",
+        href: "/departments/laproscopic",
         description: "All infections related specialists",
       },
       {
         title: "Neuro Surgery",
-        href: "/departments/oncology",
+        href: "/departments/neurology",
         description: "Treatment of diseases related with nerves",
       },
       {
@@ -150,7 +151,12 @@ const navigationLinks = [
       { title: "Super Specialty", href: "/speciality/ourSpeciality", description: "24/7 emergency medical services" },
     ],
   },
-  { icon: PhoneCall, title: "Contact Us", href: "/contact" },
+  { icon: GraduationCap, title: "Academics", href: "/academics",
+    children: [
+      { title: "DNB Courses", href: "/academics/dnb-course", description: "Elevate Your Expertise with World-Class Training" },
+      { title: "Paramedical Courses", href: "/academics/paramedical-course", description: "Paramedical Course is designed to equip you with the skills and knowledge" },
+    ],
+   },
 ]
 
 const searchOptions = [

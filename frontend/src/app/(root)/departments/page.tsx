@@ -16,57 +16,9 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { departments } from '@/json/departmentData'
+import HeaderBanner from '@/components/HeaderBanner'
 
-// const departments: Department[] = [
-//   {
-//     id: "cardiology",
-//     name: "Cardiology",
-//     description: "World-class care for your heart",
-//     icon: <Heart className="h-8 w-8 text-red-500" />,
-//     image: "/placeholder.svg?height=400&width=600",
-//     specialties: ["Interventional Cardiology", "Electrophysiology", "Heart Failure"]
-//   },
-//   {
-//     id: "neurology",
-//     name: "Neurology",
-//     description: "Advanced care for brain and nervous system",
-//     icon: <Brain className="h-8 w-8 text-blue-500" />,
-//     image: "/placeholder.svg?height=400&width=600",
-//     specialties: ["Stroke Care", "Neurosurgery", "Epilepsy Treatment"]
-//   },
-//   {
-//     id: "orthopedics",
-//     name: "Orthopedics",
-//     description: "Restoring mobility and function",
-//     icon: <Bone className="h-8 w-8 text-green-500" />,
-//     image: "/placeholder.svg?height=400&width=600",
-//     specialties: ["Joint Replacement", "Sports Medicine", "Spine Surgery"]
-//   },
-//   {
-//     id: "oncology",
-//     name: "Oncology",
-//     description: "Comprehensive cancer care and research",
-//     icon: <Microscope className="h-8 w-8 text-purple-500" />,
-//     image: "/placeholder.svg?height=400&width=600",
-//     specialties: ["Medical Oncology", "Radiation Therapy", "Surgical Oncology"]
-//   },
-//   {
-//     id: "pediatrics",
-//     name: "Pediatrics",
-//     description: "Specialized care for children",
-//     icon: <Baby className="h-8 w-8 text-pink-500" />,
-//     image: "/placeholder.svg?height=400&width=600",
-//     specialties: ["Neonatology", "Pediatric Surgery", "Child Development"]
-//   },
-//   {
-//     id: "ophthalmology",
-//     name: "Ophthalmology",
-//     description: "Expert care for your vision",
-//     icon: <Eye className="h-8 w-8 text-amber-500" />,
-//     image: "/placeholder.svg?height=400&width=600",
-//     specialties: ["Cataract Surgery", "Glaucoma Treatment", "Retinal Disorders"]
-//   },
-// ]
+
 
 export default function DepartmentsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -82,20 +34,13 @@ export default function DepartmentsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+         <HeaderBanner
+        title=" Our Departments"
+        subtitle=" Discover world-class healthcare across our specialized departments."
+        bgImage="/images/hospital-banner.jpg"
+      />
       <div className="container mx-auto px-4 py-16">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-4">
-            Our Departments
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Discover world-class healthcare across our specialized departments
-          </p>
-        </motion.div>
+       
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -147,8 +92,7 @@ export default function DepartmentsPage() {
                       <div className="absolute -top-8 right-4 bg-white rounded-full p-3 shadow-lg">
                         {dept.icon}
                       </div>
-                      <h3 className="font-semibold text-lg mb-2 mt-4">Specialties</h3>
-                      <ul className="space-y-1">
+                      <ul className="space-y-1 py-2">
                         {dept.specialties.map((specialty, index) => (
                           <li key={index} className="flex items-center text-sm text-gray-600">
                             <ChevronRight className="h-4 w-4 mr-2 text-blue-500" />

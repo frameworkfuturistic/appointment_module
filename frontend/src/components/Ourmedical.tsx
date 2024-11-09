@@ -50,8 +50,9 @@ const facilities: Facility[] = [
 
 const services: Service[] = [
   { name: "NABH accredited hospital offering best-in-class services", icon: "/hospital/nabhlogo.png", description: "Ensuring quality and safety in healthcare delivery" },
-  { name: "Latest high-end technology", icon: "/hospital/tech.png", description: "State-of-the-art equipment for accurate diagnosis and treatment" },
-  { name: "Caring systems and processes", icon: "/hospital/care.png", description: "Streamlined processes for efficient patient care" },
+  { name: "Latest high-end technology", icon: "/hospital/NABH-2.png", description: "State-of-the-art equipment for accurate diagnosis and treatment" },
+  { name: "International Organization for Standardization ", icon: "/hospital/iso.png", description: "An ISO certified company meets the ISO requirements for its quality management system." },
+  { name: "Quality Council of India", icon: "/hospital/qci.webp", description: "QCI facilitates trade and business across the world" },
 ]
 
 
@@ -90,12 +91,12 @@ function HospitalHero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
               >
-                <Card 
-                  className="hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                <div 
+                  className="hover:transition-all duration-300 cursor-pointer  group"
                   onMouseEnter={() => setHoveredIndex(index)}
                   onMouseLeave={() => setHoveredIndex(null)}
                 >
-                  <CardContent className="p-4 flex items-center">
+                  <div className="p-1 flex items-center">
                     <div className="mr-4 relative">
                       <Image
                         src={service.icon}
@@ -114,11 +115,11 @@ function HospitalHero() {
                       )}
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{service.name}</h3>
-                      <p className="text-sm text-gray-600 mt-1">{service.description}</p>
+                      <h3 className="text-sm font-semibold text-gray-900">{service.name}</h3>
+                      <p className="text-xs text-gray-600 mt-1">{service.description}</p>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </motion.div>

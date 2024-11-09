@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 // Store hashed admin password (hashed version of 'FRIDAY@123')
-const hashedAdminPassword = bcrypt.hashSync('FRIDAY@123', 10);
+const hashedAdminPassword = bcrypt.hashSync('Friday#@123', 10);
 
 // Helper to generate the username based on the date
 const generateUsername = () => moment().format('YYYYMMDD');

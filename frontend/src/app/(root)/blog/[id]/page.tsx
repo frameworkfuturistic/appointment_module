@@ -36,7 +36,7 @@ interface BlogPost {
 
 const formatImageUrl = (imageUrl: string | null): string => {
   if (!imageUrl) return "/images/default-blog-image.jpg"
-  return `http://localhost:5555/blogs/${imageUrl
+  return `https://test.sjhrc.in/hospital-api/blogs/${imageUrl
     .toString()
     .replace(/^uploads[\\/]/, "")
     .replace(/\\/g, "/")}`
@@ -95,7 +95,7 @@ function BlogContent() {
   const likeMutation = useMutation({
     mutationFn: (blogId: string) => axiosInstance.post(`/blogs/${blogId}/like`),
     onSuccess: () => {
-      queryClient.invalidateQueries(["blog", id])
+      queryClient.invalidateQueries({ queryKey: ["blog", id] });
       setToastMessage("Blog post liked!")
     },
   })
@@ -103,7 +103,8 @@ function BlogContent() {
   const dislikeMutation = useMutation({
     mutationFn: (blogId: string) => axiosInstance.post(`/blogs/${blogId}/dislike`),
     onSuccess: () => {
-      queryClient.invalidateQueries(["blog", id])
+      queryClient.invalidateQueries({ queryKey: ["blog", id] });
+
       setToastMessage("Blog post disliked!")
     },
   })

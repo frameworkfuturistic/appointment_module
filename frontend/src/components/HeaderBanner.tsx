@@ -1,4 +1,5 @@
 // HeaderBanner.tsx
+"use client"
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -15,7 +16,7 @@ const HeaderBanner: React.FC<HeaderBannerProps> = ({
 }) => {
   return (
     <div
-      className="relative w-full h-[12vh] md:h-[20vh] lg:h-[30vh] bg-center bg-cover bg-no-repeat"
+      className="relative w-full h-[12vh] md:h-[20vh] lg:h-[40vh] bg-center bg-cover bg-no-repeat"
       style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center text-center p-4">

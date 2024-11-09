@@ -626,7 +626,7 @@ function ApplicationDialog({
 }) {
   if (!application) return null
 
-  const resumeUrl = `http://localhost:5555/blogs/${application.resume.replace(/^uploads[\\/]/, '').replace(/\\/g, '/')}`
+  const resumeUrl = `https://test.sjhrc.in/hospital-api/blogs/${application.resume.replace(/^uploads[\\/]/, '').replace(/\\/g, '/')}`
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

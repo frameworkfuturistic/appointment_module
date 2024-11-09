@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, Search, X, ChevronLeft, ChevronDown, Phone, Mail, Globe } from 'lucide-react'
+import { ChevronRight, Search, X, ChevronLeft, ChevronDown, Phone, Mail, Globe, ChevronsRight, GraduationCap, NotebookTabs } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -29,8 +29,8 @@ interface Doctor {
   image: string
   specialization: string
   study: string
-  email: string
-  website: string
+  intro: string
+  Formerly: string
   featured: boolean
 }
 
@@ -42,8 +42,8 @@ const doctorData: Doctor[] = [
     image: "/departmentHeads/sudhir.png",
     specialization: "Orthopedics ",
     study: "M.B.B.S (B.H.U), M.S. Ortho",
-    email: "ajay.ghosh@example.com",
-    website: "www.drajayghosh.com",
+    intro: "M.B.B.S (B.H.U), M.S. Ortho. (B.H.U) Fellow in Hand (Bombay ortho. Society) Fellow in spine (world Ortho. Concern) Consultant in Orthopedics & Traumatology Hand, Spine and Micro-reconstructive surgeon",
+    Formerly: "Professor in Orthopedics RIMS, Ranchi Specialist & Incharge in Orthopedics HEC Hospital, Ranchi Reader in Orthopedics Mahatma Gandhi Institute of Medical Science, Ward Lecturer (Jr.) Hand Reconstructive Surgery CMC Vellore, Tamil Nadu",
     featured: true
   },
   {
@@ -53,8 +53,8 @@ const doctorData: Doctor[] = [
     image: "/departmentHeads/vandana.png",
     specialization: "Ophthalmology",
     study: "M.B.B.S (B.H.U), M.S. Ophthalmology. (B.H.U)",
-    email: "shailesh.chandra@example.com",
-    website: "www.drshaileshchandra.com",
+    intro: "...",
+    Formerly: "Lecturer, Dept. of Ophthalmology, (MGIMS), seva gram, Wardha H.O.D dept. Eye, HEC Plant Hospital, Dhurwa, Ranchi",
     featured: true
   },
   {
@@ -64,8 +64,8 @@ const doctorData: Doctor[] = [
     image: "/departmentHeads/rakesh.png",
     specialization: "medical ",
     study: "M.B.B.S (G.R.M.C, Gwalior) M.D. (G.R.M.C, Gwalior)",
-    email: "prem.kumar@example.com",
-    website: "www.drpremkumar.com",
+    intro: "...",
+    Formerly: "Teacher in G.R medical College, (Gwalior) Specialist in Coal India Ltd. Chief of Medical services, CCL, Ranchi Executive Director medical services Coal India Ltd.",
     featured: false
   },
   {
@@ -75,8 +75,8 @@ const doctorData: Doctor[] = [
     image: "/departmentHeads/spmishra.png",
     specialization: "Medical ",
     study: "H.O.D (Dental), CCL Central Hospital, Gandhi Nagar, Ranchi",
-    email: "prem.kumar@example.com",
-    website: "www.drpremkumar.com",
+    intro: "...",
+    Formerly: "Medical superintendent (CCL central Hospital, Ranchi) H.O.D, ISO CELL , CCL Hospital, Ranchi",
     featured: false
   },
  
@@ -184,17 +184,18 @@ const AdvancedMedicalExperts: React.FC = () => {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
+              onClick={() => setSelectedDoctor(doctor)}
               className="bg-white rounded-xl shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
             >
               <div className="relative h-64">
-                
+              
                 <Image
                   src={doctor.image}
                   alt={doctor.name}
                   layout="fill"
                   objectFit="cover"
                 />
-                <div className="absolute right-0 bg-teal-500 text-white px-4 py-2 rounded-bl-xl text-sm font-semibold">
+              <div className="absolute right-0  bg-teal-200 text-primary px-2 py-2 rounded-bl-xl text-xs font-semibold">
                   {doctor.specialization}
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
@@ -209,6 +210,58 @@ const AdvancedMedicalExperts: React.FC = () => {
           ))}
         </div>
       </div>
+      <AnimatePresence>
+        {selectedDoctor && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+            onClick={() => setSelectedDoctor(null)}
+          >
+            <motion.div
+              layoutId={`doctor-${selectedDoctor.id}`}
+              className="bg-white rounded-xl p-8 max-w-md w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative w-32 h-32 mx-auto mb-6">
+                <Image
+                  src={selectedDoctor.image}
+                  alt={selectedDoctor.name}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-full"
+                />
+              </div>
+              <h2 className="text-3xl font-bold text-center mb-2">{selectedDoctor.name}</h2>
+              <p className="text-blue-600 text-center font-medium mb-2">{selectedDoctor.title}</p>
+              <p className="text-gray-600 text-center mb-6">{selectedDoctor.specialization}</p>
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <GraduationCap className="text-blue-500 mr-3" size={20} />
+                  <p>{selectedDoctor.study}</p>
+                </div>
+                <div className="flex items-center">
+                  <NotebookTabs className="text-blue-500 mr-3" size={20} />
+                  <p className=' text-sm'>{selectedDoctor.intro}</p>
+                </div>
+                <div className="flex items-center">
+                  <ChevronsRight className="text-blue-500  mr-3" size={36} />
+                  <p className=' text-sm'>{selectedDoctor.Formerly}</p>
+                </div>
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setSelectedDoctor(null)}
+                className="mt-8 w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 px-4 rounded-full hover:from-blue-600 hover:to-indigo-700 transition duration-300 font-bold"
+              >
+                Close
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

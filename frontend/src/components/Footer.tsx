@@ -10,13 +10,23 @@ import { Textarea } from "@/components/ui/textarea"
 import { useForm } from "react-hook-form"
 import { useInView } from "react-intersection-observer"
 
+const quickLinks = [
+  { name: "About Us", href: "/about/aboutUs" },
+  { name: "Privacy Policy", href: "/about/policy" },
+  { name: "Terms & Conditions", href: "/about/policy" },
+  { name: "Contact Us", href: "/contact" },
+  { name: "Careers", href: "/career/currentOpenings" },
+  { name: "Blogs", href: "/blog" },
+  { name: "Find a Doctor", href: "/find-doctor" },
+]
+
 const departments = [
-  { name: "Orthopedics", href: "/orthopedics" },
-  { name: "Neurosurgery", href: "/neurosurgery" },
-  { name: "Nephrology & Dialysis", href: "/nephrology-dialysis" },
-  { name: "Cardiology", href: "/cardiology" },
-  { name: "Physiotherapy", href: "/physiotherapy" },
-  { name: "Emergency Services", href: "/emergency-services" },
+  { name: "Orthopedics", href: "/departments/orthopedics" },
+  { name: "Neurosurgery", href: "/departments/neurology" },
+  { name: "Nephrology & Dialysis", href: "/departments/nephrology" },
+  { name: "Cardiology", href: "/departments/cardiology" },
+  { name: "Physiotherapy", href: "/departments/physiotherapy" },
+  { name: "Emergency Services", href: "/departments" },
 ]
 
 const FooterSection = ({ title, children }: { title: string; children: React.ReactNode }) => {
@@ -139,11 +149,11 @@ const Footer = () => {
 
               <FooterSection title="Quick Links">
                 <div className="grid grid-cols-1 gap-2">
-                  {["About Us", "Privacy Policy", "Terms & Conditions", "Contact Us", "Careers", "FAQ"].map((link) => (
-                    <motion.div key={link} whileHover={{ x: 5 }} className="flex items-center">
+                {quickLinks.map((dept) => (
+                    <motion.div key={dept.href} whileHover={{ x: 5 }} className="flex items-center">
                       <ArrowRight className="h-4 w-4 mr-2 text-primary" />
-                      <Link href={`/${link.toLowerCase().replace(/ /g, '-')}`} className="hover:text-blue-500 transition-colors">
-                        {link}
+                      <Link href={dept.href} className="hover:text-blue-500 transition-colors">
+                      {dept.name}
                       </Link>
                     </motion.div>
                   ))}
