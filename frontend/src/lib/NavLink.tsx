@@ -18,10 +18,10 @@ const navLinks = [
         { href: "/pricing-table", title: "Pricing Table" },
         { href: "/ui-elements", title: "UI Elements" },
         { href: "/coming-soon", title: "Coming Soon" },
-        { href: "/error-404", title: "Error 404" },
+     { href: "/error-404", title: "Error 404" },
         { href: "/terms-and-conditions", title: "Terms And Condition" },
       ],
     },
     // Add other sections like DOCTORS, DEPARTMENTS, BLOG, SHOP, etc.
   ];
-  
+     

@@ -311,7 +311,7 @@ export const departmentDetails: { [key: string]: DepartmentDetail } = {
         title: "Senior Consultant (Orthopaedics)",
         image: "/departmentHeads/sudhir.png?height=400&width=400",
         specialization: "Orthopedic Surgery",
-        experience: "18+ years",
+        experience: "25+ years",
         education: [
           "M.B.B.S (B.H.U), M.S. Ortho. (B.H.U) Fellow in Hand (Bombay ortho. Society) Fellow in spine (world Ortho. Concern) Consultant in Orthopedics & Traumatology Hand, Spine and Micro-reconstructive surgeon"
         ],

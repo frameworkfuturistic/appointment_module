@@ -33,6 +33,8 @@ import {
   MoveLeft,
   Search,
   Edit,
+  Home,
+  ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -946,6 +948,7 @@ export default function Component() {
       <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white">
         <div className="flex justify-between">
           <CardTitle className="text-xl font-bold">Select Slot</CardTitle>
+        
           <ExistAppointment />
         </div>
       </CardHeader>
@@ -1162,7 +1165,16 @@ export default function Component() {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="bg-gray-50 p-6 flex justify-end">
+      <CardFooter className="bg-gray-50 p-6 flex justify-between">
+      <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <Button asChild>
+            <Link href="/" className="inline-flex items-center hover:bg-teal-600">
+              <Home className="mr-2 h-4 w-4" />
+              Go to Homepage
+            </Link>
+          </Button>
+         
+        </div>
         <Button
           type="submit"
           onClick={handleSubmit(onSubmit)}
@@ -1761,6 +1773,9 @@ export default function Component() {
           </Alert>
         )}
       </div>
+
+   
+
       <Dialog>
         <DialogTrigger asChild>
           <Button className="hidden">Open</Button>

@@ -1,6 +1,3 @@
-// eslint-disable-next-line
-// @ts-nocheck
-
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
@@ -32,29 +29,39 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { departmentDetails } from '@/json/departmentData'
-
+import { departmentDetails, DepartmentDetail, Doctor } from '@/json/departmentData'
 
 export default function DepartmentDetail({ params }: { params: { id: string } }) {
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null)
   const { scrollYProgress } = useScroll()
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
-  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.8])
+  // Remove the following line:
+  // const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.8])
   const [isSticky, setIsSticky] = useState(false)
-  const heroRef = useRef(null)
+  const heroRef = useRef<HTMLDivElement>(null)
   const isHeroInView = useInView(heroRef, { once: true })
   const [department, setDepartment] = useState<DepartmentDetail | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const dept = departmentDetails[params.id]
-    if (dept) {
-      setDepartment(dept)
+    const fetchDepartment = async () => {
+      setIsLoading(true)
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      const dept = departmentDetails[params.id]
+      if (dept) {
+        setDepartment(dept)
+      }
+      setIsLoading(false)
     }
+
+    fetchDepartment()
   }, [params.id])
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsSticky(window.scrollY > window.innerHeight - 80)
+      if (heroRef.current) {
+        setIsSticky(window.scrollY > heroRef.current.offsetHeight - 80)
+      }
     }
 
     window.addEventListener('scroll', handleScroll)
@@ -66,76 +73,131 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
     visible: { opacity: 1, y: 0, transition: { duration: 0.8 } }
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-white">
+        <motion.div
+          className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+    )
+  }
+
   if (!department) {
-    return <div>Loading...</div>
+    return <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-white">Department not found</div>
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {/* Hero Section */}
-      <motion.div 
+      {/* Enhanced Hero Section */}
+      <motion.div
         ref={heroRef}
-        className="relative h-screen flex items-center justify-center overflow-hidden"
-        style={{ opacity, scale }}
+        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
       >
         <Image
           src={department.image}
           alt={`${department.name} Department`}
-          layout="fill"
-          objectFit="cover"
-          className="absolute inset-0"
+          fill
+          sizes="100vw"
+          style={{ objectFit: "cover", objectPosition: "center" }}
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/80 to-blue-900/40" />
-        <div className="relative z-10 text-center text-white px-4">
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/80 to-blue-900/40 backdrop-blur-sm" />
+        <div className="relative z-10 text-center text-white px-4 w-full max-w-6xl mx-auto">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
-            animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4"
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6"
           >
             {department.name}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
-            animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg sm:text-xl md:text-2xl max-w-2xl mx-auto"
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto mb-8"
           >
             {department.description}
           </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="flex flex-wrap justify-center gap-4 mb-12"
+          >
+            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white">
+              Book Appointment
+              <Calendar className="ml-2 h-4 w-4" />
+            </Button>
+            <Button size="lg" variant="outline" className="bg-white/10 hover:bg-white/20 text-white border-white">
+              Learn More
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </motion.div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {[
+              { icon: Users, label: "Specialists", value: "20+" },
+              { icon: Award, label: "Years of Excellence", value: "25+" },
+              { icon: Heart, label: "Success Rate", value: "99%" },
+              { icon: Clock, label: "24/7 Care", value: "Always" },
+            ].map((stat, index) => (
+              <motion.div 
+                key={stat.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
+                className="bg-white/10 backdrop-blur-md p-4"
+              >
+                <stat.icon className="h-8 w-8 mb-2 mx-auto text-blue-300" />
+                <div className="text-2xl md:text-3xl font-bold mb-1">{stat.value}</div>
+                <div className="text-sm opacity-80">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
         </div>
-        <motion.div
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
+        <Badge 
+          className="absolute top-4 left-4 bg-blue-600 hover:bg-blue-700"
+          variant="secondary"
         >
-          <ChevronDown className="h-10 w-10 text-white" />
-        </motion.div>
+          Featured Department
+        </Badge>
       </motion.div>
 
       {/* Sticky Navigation */}
-      <div className={`sticky top-0 z-50 bg-white shadow-md transition-all duration-300 ${isSticky ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <motion.nav 
+        className={`sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-md transition-all duration-300`}
+        initial={{ opacity: 0, y: -100 }}
+        animate={{ opacity: isSticky ? 1 : 0, y: isSticky ? 0 : -100 }}
+      >
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-wrap justify-between items-center">
             <Link href="/departments" className="flex items-center text-blue-600 hover:text-blue-800 mb-2 sm:mb-0">
               <ArrowLeft className="mr-2 h-4 w-4" />
               <span className="hidden sm:inline">Back to Departments</span>
             </Link>
-            <nav className="flex-grow sm:flex-grow-0">
+            <nav className="flex-grow sm:flex-grow-0 w-full sm:w-auto">
               <ul className="flex flex-wrap justify-center sm:justify-end space-x-4 sm:space-x-6">
-                <li><a href="#overview" className="text-sm text-gray-600 hover:text-blue-600">Overview</a></li>
-                <li><a href="#doctors" className="text-sm text-gray-600 hover:text-blue-600">Doctors</a></li>
-                <li><a href="#treatments" className="text-sm text-gray-600 hover:text-blue-600">Treatments</a></li>
-                <li><a href="#faqs" className="text-sm text-gray-600 hover:text-blue-600">FAQs</a></li>
+                {['overview', 'doctors', 'treatments', 'faqs'].map((section) => (
+                  <li key={section}>
+                    <a href={`#${section}`} className="text-sm text-gray-600 hover:text-blue-600 capitalize">
+                      {section}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </nav>
-            <Link href="/appointment">
-            <Button className="mt-2 sm:mt-0 w-full sm:w-auto">Book Appointment</Button>
+            <Link href="/appointment" className="mt-2 sm:mt-0 w-full sm:w-auto">
+              <Button className="w-full sm:w-auto">Book Appointment</Button>
             </Link>
           </div>
         </div>
-      </div>
+      </motion.nav>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-16">
@@ -164,7 +226,7 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <ChevronRight className="h-5 w-5 text-blue-500" />
+                    <ChevronRight className="h-5 w-5 text-blue-500 flex-shrink-0" />
                     <span className="text-gray-700">{feature}</span>
                   </motion.div>
                 ))}
@@ -175,26 +237,21 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
                 <CardTitle>Contact Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <Phone className="h-5 w-5 text-blue-500" />
-                  <span>{department.contactInfo.phone}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Mail className="h-5 w-5 text-blue-500" />
-                  <span>{department.contactInfo.email}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <MapPin className="h-5 w-5 text-blue-500" />
-                  <span>{department.contactInfo.location}</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <Clock  className="h-5 w-5 text-blue-500" />
-                  <span>{department.contactInfo.hours}</span>
-                </div>
+                {[
+                  { icon: Phone, text: department.contactInfo.phone },
+                  { icon: Mail, text: department.contactInfo.email },
+                  { icon: MapPin, text: department.contactInfo.location },
+                  { icon: Clock, text: department.contactInfo.hours },
+                ].map(({ icon: Icon, text }, index) => (
+                  <div key={index} className="flex items-center space-x-3">
+                    <Icon className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                    <span className="text-sm">{text}</span>
+                  </div>
+                ))}
                 <Button className="w-full mt-4">
                   Book Appointment
                 </Button>
-                <Button className="w-full mt-4">
+                <Button variant="outline" className="w-full mt-4">
                   Enquiry Now
                 </Button>
               </CardContent>
@@ -214,41 +271,35 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
           <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-8">
             Our Expert Doctors
           </h2>
-         
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {department.doctors.map((doctor, index) => (
-            <motion.div
-              key={doctor.id}
-              layoutId={`doctor-${doctor.id}`}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              onClick={() => setSelectedDoctor(doctor)}
-              className="bg-white rounded-xl shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
-            >
-              <div className="relative h-64">
-              
-                <Image
-                  src={doctor.image}
-                  alt={doctor.name}
-                  layout="fill"
-                  objectFit="cover"
-                />
-              {/* <div className="absolute right-0  bg-teal-200 text-primary px-2 py-2 rounded-bl-xl text-xs font-semibold">
-                  {doctor.specialization}
-                </div> */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-              </div>
-              <div className="p-6 relative">
-                
-                <h2 className="text-md font-bold text-gray-800 mb-2">{doctor.name}</h2>
-                <p className="text-primary text-sm font-medium mb-2">{doctor.title}</p>
-                
-              </div>
-            </motion.div>
-          ))}
-        </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {department.doctors.map((doctor, index) => (
+              <motion.div
+                key={doctor.id}
+                layoutId={`doctor-${doctor.id}`}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                onClick={() => setSelectedDoctor(doctor)}
+                className="bg-white rounded-xl shadow-xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-2xl"
+              >
+                <div className="relative h-64">
+                  <Image
+                    src={doctor.image}
+                    alt={doctor.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    style={{ objectFit: "cover" }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                </div>
+                <div className="p-6 relative">
+                  <h2 className="text-md font-bold text-gray-800 mb-2">{doctor.name}</h2>
+                  <p className="text-primary text-sm font-medium mb-2">{doctor.title}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </motion.section>
 
         {/* Treatments Section */}
@@ -280,13 +331,7 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {/* <div className="flex items-center space-x-2">
-                        <Clock className="h-5 w-5 text-blue-500" />
-                        <span className="font-semibold">Duration:</span>
-                        <span>{treatment.duration}</span>
-                      </div> */}
                       <div>
-                        {/* <h4 className="font-semibold mb-2">Preparation:</h4> */}
                         <ul className="list-disc list-inside space-y-1">
                           {treatment.preparation.map((step, index) => (
                             <li key={index}>{step}</li>
@@ -335,7 +380,7 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
           viewport={{ once: true }}
           variants={sectionVariants}
         >
-          <h2  className="text-3xl md:text-4xl font-bold text-blue-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-blue-900 mb-4">
             Take the First Step Towards Better Health
           </h2>
           <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
@@ -348,53 +393,58 @@ export default function DepartmentDetail({ params }: { params: { id: string } })
       </div>
 
       {/* Doctor Details Dialog */}
-      <Dialog open={!!selectedDoctor} onOpenChange={() => setSelectedDoctor(null)}>
-        <DialogContent className="bg-white text-gray-900 max-w-3xl">
-          {selectedDoctor && (
-            <>
-               <DialogHeader>
-                <DialogTitle className="text-2xl font-bold text-blue-600">{selectedDoctor.name}</DialogTitle>
-                <DialogDescription className="text-gray-700">{selectedDoctor.title}</DialogDescription>
-              </DialogHeader>
-              <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                  <Image
-                    src={selectedDoctor.image}
-                    alt={selectedDoctor.name}
-                    width={400}
-                    height={400}
-                    className="rounded-lg"
-                  />
-                </div>
-                <div className="space-y-4">
+      <AnimatePresence>
+        {selectedDoctor && (
+          <Dialog open={!!selectedDoctor} onOpenChange={() => setSelectedDoctor(null)}>
+            <DialogContent className="bg-white text-gray-900 max-w-3xl">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold text-blue-600">{selectedDoctor.name}</DialogTitle>
+                  <DialogDescription className="text-gray-700">{selectedDoctor.title}</DialogDescription>
+                </DialogHeader>
+                <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="font-semibold mb-2">Education</h4>
-                    <ul className="list-disc list-inside space-y-1">
-                      {selectedDoctor.education.map((edu, index) => (
-                        <li key={index}>{edu}</li>
-                      ))}
-                    </ul>
+                    <Image
+                      src={selectedDoctor.image}
+                      alt={selectedDoctor.name}
+                      width={400}
+                      height={400}
+                      className="rounded-lg"
+                    />
                   </div>
-               
-                 
-                  <div>
-                    <h4 className="font-semibold mb-2">Achievements</h4>
-                    <ul className="list-disc list-inside space-y-1">
-                      {selectedDoctor.achievements.map((achievement, index) => (
-                        <li key={index}>{achievement}</li>
-                      ))}
-                    </ul>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-semibold mb-2">Education</h4>
+                      <ul className="list-disc list-inside space-y-1">
+                        {selectedDoctor.education.map((edu, index) => (
+                          <li key={index}>{edu}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2">Achievements</h4>
+                      <ul className="list-disc list-inside space-y-1">
+                        {selectedDoctor.achievements.map((achievement, index) => (
+                          <li key={index}>{achievement}</li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex justify-end space-x-4">
-                <Button variant="outline" onClick={() => setSelectedDoctor(null)}>Close</Button>
-                <Button>Book Appointment</Button>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+                <div className="flex justify-end space-x-4 mt-6">
+                  <Button variant="outline" onClick={() => setSelectedDoctor(null)}>Close</Button>
+                  <Button>Book Appointment</Button>
+                </div>
+              </motion.div>
+            </DialogContent>
+          </Dialog>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

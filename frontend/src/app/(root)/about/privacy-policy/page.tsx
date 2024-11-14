@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import React from 'react'
 import { motion } from 'framer-motion'
@@ -75,7 +75,7 @@ const policySections: PolicySection[] = [
   }
 ]
 
-const HospitalPolicies: React.FC = () => {
+function HospitalPolicies() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
          <HeaderBanner
@@ -83,7 +83,7 @@ const HospitalPolicies: React.FC = () => {
         subtitle="At Shree Jagannath Hospital, we are committed to protecting your
           privacy and ensuring the security of your personal information. This
           policy outlines how we collect, use, and safeguard your data."
-        bgImage="/images/hospital-banner.jpg"
+        bgImage="/pattern-5.png"
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       
@@ -91,7 +91,7 @@ const HospitalPolicies: React.FC = () => {
         <div className="space-y-16">
           {policySections.map((section, index) => (
             <motion.div
-              key={index}
+            key={`section-${index}`}
               className="bg-white/10 backdrop-blur-md rounded-3xl overflow-hidden shadow-lg"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}

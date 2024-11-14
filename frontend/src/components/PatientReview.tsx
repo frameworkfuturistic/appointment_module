@@ -11,7 +11,7 @@ const patientReviews = [
   {
     id: 1,
     review: "The care I received was nothing short of exceptional. The doctors' expertise and the staff's compassion made a significant difference in my recovery journey.",
-    image: "/PROFPIC.png",
+    image: "/people.png",
     name: "Asish Aggarwal",
     occupation: "Software Engineer",
     rating: 5,
@@ -20,7 +20,7 @@ const patientReviews = [
   {
     id: 2,
     review: "State-of-the-art facilities combined with a patient-first approach. I felt valued and well-cared for throughout my treatment.",
-    image: "/PROFPIC.png",
+    image: "/people.png",
     name: "Raghu Singhania",
     occupation: "Business Analyst",
     rating: 5,
@@ -29,7 +29,7 @@ const patientReviews = [
   {
     id: 3,
     review: "The clinic's commitment to using cutting-edge technology while maintaining a warm, personal touch is truly commendable.",
-    image: "/PROFPIC.png",
+    image: "/people.png",
     name: "Ganga Mohini",
     occupation: "Teacher",
     rating: 4,
@@ -38,7 +38,7 @@ const patientReviews = [
   {
     id: 4,
     review: "From diagnosis to aftercare, every step was handled with utmost professionalism. I couldn't have asked for better medical attention.",
-    image: "/PROFPIC.png",
+    image: "/people.png",
     name: "Vikram Mehta",
     occupation: "Architect",
     rating: 5,
@@ -47,7 +47,7 @@ const patientReviews = [
   {
     id: 5,
     review: "The follow-up care I received was exceptional. Even after my treatment was complete, the staff checked in regularly to ensure my recovery was on track.",
-    image: "/PROFPIC.png",
+    image: "/people.png",
     name: "Priya Sharma",
     occupation: "Marketing Executive",
     rating: 5,

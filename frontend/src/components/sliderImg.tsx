@@ -8,7 +8,7 @@ import Link from "next/link"
 import Image from "next/image"
 
 const heroImages = [
-  "/sliderPic/newicu.png",
+  "/sliderPic/min.png",
   "/sliderPic/newreception.png",
   "/sliderPic/sjhrchos1.png",
 ]
@@ -78,34 +78,34 @@ export function CarouselDemo() {
         <div className="flex flex-col lg:flex-row items-center lg:items-stretch ">
           {/* Left side - Information */}
           <div className="w-full lg:w-4/12 space-y-4 sm:space-y-6 p-4 sm:p-8 lg:p-8">
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">
-          Shree Jagannath Hospital & Research Center
-          </h1>
-          <div className="flex items-center space-x-2">
-            <div className="flex">
-              {[1, 2, 3, 4].map((star) => (
-                <Star key={star} className="text-yellow-400 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 fill-current" />
-              ))}
-              <Star className="text-yellow-400 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">
+              Shree Jagannath Hospital & Research Center
+            </h1>
+            <div className="flex items-center space-x-2">
+              <div className="flex">
+                {[1, 2, 3, 4].map((star) => (
+                  <Star key={star} className="text-yellow-400 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 fill-current" />
+                ))}
+                <Star className="text-yellow-400 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
+              </div>
+              <span className="text-xl sm:text-2xl font-semibold">4.3</span>
             </div>
-            <span className="text-xl sm:text-2xl font-semibold">4.3</span>
+            <div className="space-y-2 sm:space-y-4 text-sm sm:text-base md:text-lg">
+              <div className="flex items-center">
+                <Clock className="mr-2 sm:mr-4 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 flex-shrink-0 text-blue-300" />
+                <span>Open 24/7 for Your Care</span>
+              </div>
+              <div className="flex items-center">
+                <MapPin className="mr-2 sm:mr-4 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 flex-shrink-0 text-blue-300" />
+                <span>Mayor Road, Behind Machhli Ghar, Ranchi</span>
+              </div>
+            </div>
+            <Link href="/find-doctor" className="block w-full sm:w-auto">
+              <Button className="bg-white text-blue-900 hover:bg-blue-100 px-4 sm:px-8 py-2 sm:py-3 text-sm sm:text-base md:text-lg rounded-full transition-all duration-300 shadow-lg hover:shadow-xl w-full">
+                Find a Doctor
+              </Button>
+            </Link>
           </div>
-          <div className="space-y-2 sm:space-y-4 text-sm sm:text-base md:text-lg">
-            <div className="flex items-center">
-              <Clock className="mr-2 sm:mr-4 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 flex-shrink-0 text-blue-300" />
-              <span>Open 24/7 for Your Care</span>
-            </div>
-            <div className="flex items-center">
-              <MapPin className="mr-2 sm:mr-4 h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 flex-shrink-0 text-blue-300" />
-              <span>Mayor Road, Behind Machhli Ghar, Ranchi</span>
-            </div>
-          </div>
-          <Link href="/find-doctor" className="block w-full sm:w-auto">
-            <Button className="bg-white text-blue-900 hover:bg-blue-100 px-4 sm:px-8 py-2 sm:py-3 text-sm sm:text-base md:text-lg rounded-full transition-all duration-300 shadow-lg hover:shadow-xl w-full">
-              Find a Doctor
-            </Button>
-          </Link>
-        </div>
 
           {/* Right side - Advanced Carousel */}
           <div className="w-full lg:w-8/12 relative overflow-hidden">
@@ -115,25 +115,25 @@ export function CarouselDemo() {
                 clipPath: isMobile ? "none" : "polygon(12% 0, 100% 0, 100% 35%, 100% 70%, 100% 100%, 50% 100%, 0 100%)",
               }}
             >
-               <AnimatePresence initial={false} custom={currentHeroImage}>
+              <AnimatePresence initial={false} custom={currentHeroImage}>
                 <motion.div
                   key={currentHeroImage}
                   custom={currentHeroImage}
                   variants={{
-                    enter: (direction: number) => ({ 
-                      x: direction > 0 ? '100%' : '-100%', 
+                    enter: (direction: number) => ({
+                      x: direction > 0 ? '100%' : '-100%',
                       opacity: 0,
                       scale: 1.2,
                     }),
-                    center: { 
-                      zIndex: 1, 
-                      x: 0, 
+                    center: {
+                      zIndex: 1,
+                      x: 0,
                       opacity: 1,
                       scale: 1,
                     },
-                    exit: (direction: number) => ({ 
-                      zIndex: 0, 
-                      x: direction < 0 ? '100%' : '-100%', 
+                    exit: (direction: number) => ({
+                      zIndex: 0,
+                      x: direction < 0 ? '100%' : '-100%',
                       opacity: 0,
                       scale: 0.8,
                     }),
@@ -147,10 +147,11 @@ export function CarouselDemo() {
                   <Image
                     src={heroImages[currentHeroImage]}
                     alt={`Hospital Facility ${currentHeroImage + 1}`}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{ objectFit: "cover" }}
                     className="rounded-lg shadow-2xl"
                   />
+
                 </motion.div>
               </AnimatePresence>
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -177,9 +178,8 @@ export function CarouselDemo() {
               {heroImages.map((_, index) => (
                 <button
                   key={index}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentHeroImage ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/75'
-                  }`}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentHeroImage ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/75'
+                    }`}
                   onClick={() => handleDotClick(index)}
                 >
                   <span className="sr-only">Go to slide {index + 1}</span>

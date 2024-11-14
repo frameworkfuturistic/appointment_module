@@ -67,50 +67,47 @@ type FAQ = {
 
 const doctors: Doctor[] = [
   {
-    id: "dr-sharma",
-    name: "Dr. Arun Sharma",
-    specialty: "Joint Replacement & Arthroscopy",
-    image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=500&h=500&fit=crop",
+    id: "dr-Sudhir-Kumar",
+    name: "Prof.(Dr.) Sudhir Kumar",
+    specialty: "Senior Consultant (Orthopaedics)",
+    image: "/departmentHeads/sudhir.png",
     experience: "25+ years",
     rating: 4.9,
     bio: "Dr. Sharma is a world-renowned orthopedic surgeon specializing in advanced joint replacement and arthroscopic surgeries. With over two decades of experience, he has pioneered several minimally invasive techniques that have revolutionized the field.",
     achievements: [
-      "Performed over 10,000 successful joint replacement surgeries",
-      "Developed patented minimally invasive surgical techniques",
-      "Published 100+ research papers in top international journals",
-      "Recipient of the International Orthopedic Surgeon of the Year Award"
-    ],
+      "Professor in Orthopedics Rims",
+          "Ranchi Specialist & Incharge in Orthopedics HEC Hospital",
+          "Ranchi Reader in Orthopedics Mahatma Gandhi Institute of Medical Science",
+          "Wardha Lecturer (Jr.) Hand Reconstructive Surgery CMC Vellore, Tamil Nadu"
+        ],
     availability: ["Mon", "Wed", "Fri"]
   },
   {
-    id: "dr-patel",
-    name: "Dr. Meera Patel",
-    specialty: "Pediatric Orthopedics",
-    image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=500&h=500&fit=crop",
+    id: "dr-Ajay-Kumar-Verma",
+    name: "Prof. (Dr.) Ajay Kumar Verma",
+    specialty: "Senior Consultant (Orthopaedics)",
+    image: "/departmentHeads/Drverma.jpg",
     experience: "20+ years",
     rating: 4.8,
-    bio: "Dr. Patel is a leading pediatric orthopedic surgeon known for her groundbreaking work in treating complex congenital deformities. Her innovative approaches have improved the lives of thousands of children worldwide.",
+    bio: "Dr. Verma is a leading pediatric orthopedic surgeon known for her groundbreaking work in treating complex congenital deformities. Her innovative approaches have improved the lives of thousands of children worldwide.",
     achievements: [
-      "Pioneered new surgical techniques for clubfoot correction",
-      "Recipient of the Global Pediatric Orthopedic Excellence Award",
-      "Founder of the International Pediatric Orthopedic Foundation",
-      "Conducted over 50 international workshops on pediatric orthopedic surgeries"
-    ],
+    " Medical Officer(Orthopaedics) in Bihar/Jharkhand",
+          "Registrar(RIMS)",
+          "Assistant Professor in Orthopaedics (RIMS)",
+          "Professor Orthopaedics (RIMS)"
+        ],
     availability: ["Tue", "Thu", "Sat"]
   },
   {
-    id: "dr-singh",
-    name: "Dr. Rajiv Singh",
-    specialty: "Spine Surgery",
-    image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=500&h=500&fit=crop",
+    id: "dr-Nilay-Kumar",
+    name: "Dr. Nilay Kumar",
+    specialty: "Specialist & Consultant (Orthopedics)",
+    image: "/departmentHeads/Dr Nilay.jpg",
     experience: "22+ years",
     rating: 4.9,
-    bio: "Dr. Singh is a globally recognized spine surgeon specializing in complex spinal deformities and minimally invasive spine surgeries. He is a pioneer in robotic spine surgery and has trained surgeons worldwide in advanced techniques.",
+    bio: "Dr. Nilay is a globally recognized Orthopedics specializing in complex spinal deformities and minimally invasive spine surgeries. He is a pioneer in robotic spine surgery and has trained surgeons worldwide in advanced techniques.",
     achievements: [
-      "Performed the world's first AI-assisted robotic spine surgery",
-      "Developed a revolutionary technique for scoliosis correction",
-      "Published bestselling textbook on advanced spine surgery techniques",
-      "Holds 5 patents for innovative spinal implants and surgical tools"
+      "M.B.B.S.(M.U.H.S. Nashik), M.S.()"
     ],
     availability: ["Mon", "Tue", "Thu"]
   }
@@ -524,6 +521,7 @@ export default function AdvancedOrthopedicsDNB() {
                         alt={doctor.name}
                         layout="fill"
                         objectFit="cover"
+                        
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent" />
                       <div className="absolute bottom-4 left-4 right-4">
@@ -612,7 +610,7 @@ export default function AdvancedOrthopedicsDNB() {
                           <Star className="h-4 w-4 text-yellow-400 mr-1" />
                           <span className="text-sm font-semibold text-gray-900">{course.rating}</span>
                         </div>
-                        <span className="text-lg font-bold text-teal-600">${course.price.toLocaleString()}</span>
+                        <span className="text-lg font-bold text-teal-600">RS {course.price.toLocaleString()}</span>
                       </div>
                     </CardContent>
                     <CardFooter className="bg-gray-50 border-t border-gray-200">
@@ -753,7 +751,7 @@ export default function AdvancedOrthopedicsDNB() {
 
       {/* Course Details Dialog */}
       <Dialog open={!!selectedCourse} onOpenChange={() => setSelectedCourse(null)}>
-        <DialogContent className="bg-white text-gray-900 max-w-4xl">
+        <DialogContent className="bg-white text-gray-900 max-w-5xl">
           {selectedCourse && (
             <>
               <DialogHeader>
