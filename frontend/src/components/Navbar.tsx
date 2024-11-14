@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { usePathname, useSearchParams } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import {
   NavigationMenu,
@@ -173,11 +173,10 @@ export default function EnhancedHeader() {
   const [isSearchOpen, setIsSearchOpen] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(false)
   const pathname = usePathname()
-  const searchParams = useSearchParams()
 
   React.useEffect(() => {
     setIsLoading(false)
-  }, [pathname, searchParams])
+  }, [pathname])
 
   const handleSearch = (value: string) => {
     setIsSearchOpen(false)
